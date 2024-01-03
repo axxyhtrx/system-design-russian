@@ -35,7 +35,7 @@ _Этот курс также доступен по ссылке [website](https
   - [SQL vs NoSQL](#sql-vs-nosql-databases)
   - [Реплицирование баз данных](#database-replication)
   - [Индексы](#indexes)
-  - [Нормализация и денормализация)(#normalization-and-denormalization)
+  - [Нормализация и денормализация](#normalization-and-denormalization)
   - [ACID и BASE модели согласованности](#acid-and-base-consistency-models)
   - [CAP теорема](#cap-theorem)
   - [PACELC теорема](#pacelc-theorem)
