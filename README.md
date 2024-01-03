@@ -87,92 +87,89 @@ _Этот курс также доступен по ссылке [website](https
   - [Next Steps](#next-steps)
   - [References](#references)
 
-# What is system design?
+# Что такое системный дизайн?
 
-Before we start this course, let's talk about what even is system design.
+Прежде чем мы начнем этот курс, давайте поговорим о том, что вообще такое системный дизайн.
 
-System design is the process of defining the architecture, interfaces, and data
-for a system that satisfies specific requirements. System design meets the needs
-of your business or organization through coherent and efficient systems. It requires
-a systematic approach to building and engineering systems. A good system design requires
-us to think about everything, from infrastructure all the way down to the data and how it's stored.
+Проектирование системы - это процесс определения архитектуры, интерфейсов и данных для системы, удовлетворяющей определенным требованиям. Системный дизайн удовлетворяет потребности вашего бизнеса или организации с помощью слаженных и эффективных систем. Он требует систематического подхода к созданию и проектированию систем. Хороший системный дизайн требует, чтобы мы думали обо всем, начиная с инфраструктуры и заканчивая данными и способами их хранения.
+
 
 ## Why is System Design so important?
 
-System design helps us define a solution that meets the business requirements. It is
-one of the earliest decisions we can make when building a system. Often it is essential
-to think from a high level as these decisions are very difficult to correct later. It
-also makes it easier to reason about and manage architectural changes as the system evolves.
+Проектирование системы помогает нам определить решение, которое отвечает требованиям бизнеса. Это
+одно из самых ранних решений, которые мы можем принять при создании системы. Часто очень важно
+мыслить на высоком уровне, поскольку эти решения очень сложно исправить впоследствии. Это
+также облегчает рассуждения и управление архитектурными изменениями по мере развития системы.
 
 # IP
 
-An IP address is a unique address that identifies a device on the internet or a local network. IP stands for _"Internet Protocol"_, which is the set of rules governing the format of data sent via the internet or local network.
+IP-адрес - это уникальный адрес, идентифицирующий устройство в Интернете или локальной сети. IP расшифровывается как _"Интернет-протокол"_, который представляет собой набор правил, определяющих формат данных, передаваемых через Интернет или локальную сеть.
 
-In essence, IP addresses are the identifier that allows information to be sent between devices on a network. They contain location information and make devices accessible for communication. The internet needs a way to differentiate between different computers, routers, and websites. IP addresses provide a way of doing so and form an essential part of how the internet works.
+По сути, IP-адреса - это идентификатор, позволяющий пересылать информацию между устройствами в сети. Они содержат информацию о местоположении и делают устройства доступными для связи. Интернету необходим способ различать разные компьютеры, маршрутизаторы и веб-сайты. IP-адреса обеспечивают такой способ и являются важной частью работы интернета.
 
 ## Versions
 
-Now, let's learn about the different versions of IP addresses:
+Теперь давайте узнаем о различных версиях IP-адресов:
 
 ### IPv4
 
-The original Internet Protocol is IPv4 which uses a 32-bit numeric dot-decimal notation that only allows for around 4 billion IP addresses. Initially, it was more than enough but as internet adoption grew, we needed something better.
+Оригинальный протокол Интернета - IPv4, использующий 32-битную цифровую десятичную систему счисления, которая позволяет использовать только около 4 миллиардов IP-адресов. Изначально этого было более чем достаточно, но по мере распространения Интернета нам потребовалось что-то лучшее.
 
-_Example: `102.22.192.181`_
+Пример: `102.22.192.181`_.
 
 ### IPv6
 
-IPv6 is a new protocol that was introduced in 1998. Deployment commenced in the mid-2000s and since the internet users have grown exponentially, it is still ongoing.
+IPv6 - это новый протокол, который был представлен в 1998 году. Его развертывание началось в середине 2000-х годов, а поскольку число пользователей Интернета растет в геометрической прогрессии, оно продолжается до сих пор.
 
-This new protocol uses 128-bit alphanumeric hexadecimal notation. This means that IPv6 can provide about ~340e+36 IP addresses. That's more than enough to meet the growing demand for years to come.
+Этот новый протокол использует 128-битную буквенно-цифровую шестнадцатеричную нотацию. Это означает, что IPv6 может предоставить около ~340e+36 IP-адресов. Этого более чем достаточно, чтобы удовлетворить растущий спрос на годы вперед.
 
 _Example: `2001:0db8:85a3:0000:0000:8a2e:0370:7334`_
 
 ## Types
 
-Let's discuss types of IP addresses:
+Давайте обсудим типы IP-адресов:
 
 ### Public
 
-A public IP address is an address where one primary address is associated with your whole network. In this type of IP address, each of the connected devices has the same IP address.
+Публичный IP-адрес - это адрес, в котором один основной адрес связан со всей вашей сетью. При таком типе IP-адреса каждое из подключенных устройств имеет один и тот же IP-адрес.
 
-_Example: IP address provided to your router by the ISP._
+Пример: IP-адрес, предоставленный вашему маршрутизатору интернет-провайдером.
 
 ### Private
 
-A private IP address is a unique IP number assigned to every device that connects to your internet network, which includes devices like computers, tablets, and smartphones, which are used in your household.
+Частный IP-адрес - это уникальный IP-номер, присваиваемый каждому устройству, которое подключается к вашей интернет-сети, включая такие устройства, как компьютеры, планшеты и смартфоны, используемые в вашем доме.
 
-_Example: IP addresses generated by your home router for your devices._
+Пример: IP-адреса, генерируемые домашним маршрутизатором для ваших устройств.
 
 ### Static
 
-A static IP address does not change and is one that was manually created, as opposed to having been assigned. These addresses are usually more expensive but are more reliable.
+Статический IP-адрес не меняется и создается вручную, а не назначается. Такие адреса обычно стоят дороже, но они более надежны.
 
-_Example: They are usually used for important things like reliable geo-location services, remote access, server hosting, etc._
+Пример: Они обычно используются для таких важных вещей, как надежные службы геолокации, удаленный доступ, хостинг серверов и т. д._
 
 ### Dynamic
 
-A dynamic IP address changes from time to time and is not always the same. It has been assigned by a [Dynamic Host Configuration Protocol (DHCP)](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol) server. Dynamic IP addresses are the most common type of internet protocol address. They are cheaper to deploy and allow us to reuse IP addresses within a network as needed.
+Динамический IP-адрес время от времени меняется и не всегда является одним и тем же. Он назначается сервером [Dynamic Host Configuration Protocol (DHCP)](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol). Динамические IP-адреса - самый распространенный тип адресов интернет-протокола. Они дешевле в развертывании и позволяют нам повторно использовать IP-адреса в сети по мере необходимости.
 
-_Example: They are more commonly used for consumer equipment and personal use._
+Пример: Они чаще всего используются для потребительского оборудования и личного пользования._
 
 # OSI Model
 
-The OSI Model is a logical and conceptual model that defines network communication used by systems open to interconnection and communication with other systems. The Open System Interconnection (OSI Model) also defines a logical network and effectively describes computer packet transfer by using various layers of protocols.
+Модель OSI - это логическая и концептуальная модель, определяющая сетевые коммуникации, используемые системами, открытыми для взаимодействия и связи с другими системами. Модель OSI (Open System Interconnection) также определяет логическую сеть и эффективно описывает передачу компьютерных пакетов с помощью протоколов различных уровней.
 
-The OSI Model can be seen as a universal language for computer networking. It's based on the concept of splitting up a communication system into seven abstract layers, each one stacked upon the last.
+Модель OSI можно рассматривать как универсальный язык для компьютерных сетей. В ее основе лежит концепция разделения коммуникационной системы на семь абстрактных уровней, каждый из которых накладывается на предыдущий.
 
 ## Why does the OSI model matter?
 
-The Open System Interconnection (OSI) model has defined the common terminology used in networking discussions and documentation. This allows us to take a very complex communications process apart and evaluate its components.
+Модель Open System Interconnection (OSI) определила общую терминологию, используемую в обсуждениях и документации по сетевым технологиям. Это позволяет нам разобрать очень сложный коммуникационный процесс на части и оценить его компоненты.
 
-While this model is not directly implemented in the TCP/IP networks that are most common today, it can still help us do so much more, such as:
+Хотя эта модель не реализована напрямую в наиболее распространенных сегодня сетях TCP/IP, она все равно может помочь нам сделать гораздо больше, например:
 
-- Make troubleshooting easier and help identify threats across the entire stack.
-- Encourage hardware manufacturers to create networking products that can communicate with each other over the network.
-- Essential for developing a security-first mindset.
-- Separate a complex function into simpler components.
-
+- Облегчить поиск и устранение неисправностей и помочь выявить угрозы во всем стеке.
+- Поощрять производителей оборудования к созданию сетевых продуктов, которые могут взаимодействовать друг с другом по сети.
+- Очень важно для развития мышления, ориентированного на безопасность.
+- Разделение сложной функции на более простые компоненты.
+  
 ## Layers
 
 The seven abstraction layers of the OSI model can be defined as follows, from top to bottom:
