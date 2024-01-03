@@ -1,66 +1,68 @@
-# System Design
+WIP: Это перевод основного репозитория по системному дизайну.
 
-Hey, welcome to the course. I hope this course provides a great learning experience.
+# Системный дизайн
 
-_This course is also available on my [website](https://karanpratapsingh.com/courses/system-design) and as an ebook on [leanpub](https://leanpub.com/systemdesign). Please leave a ⭐ as motivation if this was helpful!_
+Добро пожаловать на курс. Надеюсь, вы получите удовольствие от обучения.
 
-# Table of contents
+_Этот курс также доступен по ссылке [website](https://karanpratapsingh.com/courses/system-design) и в виде электронной книги [leanpub](https://leanpub.com/systemdesign). Пожалуйста поставьте ⭐ для мотивации, если этот курс был полезным для вас!_
 
-- **Getting Started**
+# Содержание
 
-  - [What is system design?](#what-is-system-design)
+- **Приступая к работе**
 
-- **Chapter I**
+  - [Что такое системный дизайн](#what-is-system-design)
+
+- **Часть I**
 
   - [IP](#ip)
-  - [OSI Model](#osi-model)
-  - [TCP and UDP](#tcp-and-udp)
-  - [Domain Name System (DNS)](#domain-name-system-dns)
-  - [Load Balancing](#load-balancing)
-  - [Clustering](#clustering)
-  - [Caching](#caching)
+  - [Модель OSI](#osi-model)
+  - [TCP и UDP](#tcp-and-udp)
+  - [Система доменных имён (DNS)](#domain-name-system-dns)
+  - [Балансировка нагрузки](#load-balancing)
+  - [Кластеры](#clustering)
+  - [Кеширование](#caching)
   - [Content Delivery Network (CDN)](#content-delivery-network-cdn)
-  - [Proxy](#proxy)
-  - [Availability](#availability)
-  - [Scalability](#scalability)
-  - [Storage](#storage)
+  - [Прокси](#proxy)
+  - [Доступность](#availability)
+  - [Масштабируемость](#scalability)
+  - [Хранилище](#storage)
 
-- **Chapter II**
+- **Часть II**
 
-  - [Databases and DBMS](#databases-and-dbms)
-  - [SQL databases](#sql-databases)
-  - [NoSQL databases](#nosql-databases)
-  - [SQL vs NoSQL databases](#sql-vs-nosql-databases)
-  - [Database Replication](#database-replication)
-  - [Indexes](#indexes)
-  - [Normalization and Denormalization](#normalization-and-denormalization)
-  - [ACID and BASE consistency models](#acid-and-base-consistency-models)
-  - [CAP theorem](#cap-theorem)
-  - [PACELC Theorem](#pacelc-theorem)
-  - [Transactions](#transactions)
-  - [Distributed Transactions](#distributed-transactions)
-  - [Sharding](#sharding)
-  - [Consistent Hashing](#consistent-hashing)
-  - [Database Federation](#database-federation)
+  - [Базы данных и СУБД](#databases-and-dbms)
+  - [SQL базы данных](#sql-databases)
+  - [NoSQL базы данных](#nosql-databases)
+  - [SQL vs NoSQL](#sql-vs-nosql-databases)
+  - [Реплицирование баз данных](#database-replication)
+  - [Индексы](#indexes)
+  - [Нормализация и денормализация)(#normalization-and-denormalization)
+  - [ACID и BASE модели согласованности](#acid-and-base-consistency-models)
+  - [CAP теорема](#cap-theorem)
+  - [PACELC теорема](#pacelc-theorem)
+  - [Транзакции](#transactions)
+  - [Распределённые транзакции](#distributed-transactions)
+  - [Шардирование](#sharding)
+  - [Согласованное хеширование](#consistent-hashing)
+  - [Федерация баз данных](#database-federation)
 
-- **Chapter III**
+- **Часть III**
 
-  - [N-tier architecture](#n-tier-architecture)
-  - [Message Brokers](#message-brokers)
-  - [Message Queues](#message-queues)
-  - [Publish-Subscribe](#publish-subscribe)
-  - [Enterprise Service Bus (ESB)](#enterprise-service-bus-esb)
-  - [Monoliths and Microservices](#monoliths-and-microservices)
-  - [Event-Driven Architecture (EDA)](#event-driven-architecture-eda)
-  - [Event Sourcing](#event-sourcing)
+  - [N-уровневая архитектура](#n-tier-architecture)
+  - [Брокеры сообщений](#message-brokers)
+  - [Очереди сообщений](#message-queues)
+  - [Модель Издатель — подписчик(PUB-SUB)](#publish-subscribe)
+  - [Корпоративная сервисная шина (ESB)](#enterprise-service-bus-esb)
+  - [Монолиты и Микросервисы](#monoliths-and-microservices)
+  - [Событийно-ориентированная архитектура (EDA)](#event-driven-architecture-eda)
+  - [Источники событий](#event-sourcing)
   - [Command and Query Responsibility Segregation (CQRS)](#command-and-query-responsibility-segregation-cqrs)
   - [API Gateway](#api-gateway)
   - [REST, GraphQL, gRPC](#rest-graphql-grpc)
-  - [Long polling, WebSockets, Server-Sent Events (SSE)](#long-polling-websockets-server-sent-events-sse)
+  - [Длинные опросы, Web сокеты, Server-Sent Events (SSE)](#long-polling-websockets-server-sent-events-sse)
 
-- **Chapter IV**
+- **Часть IV**
 
-  - [Geohashing and Quadtrees](#geohashing-and-quadtrees)
+  - [Геохеширование и квадродерево](#geohashing-and-quadtrees)
   - [Circuit breaker](#circuit-breaker)
   - [Rate Limiting](#rate-limiting)
   - [Service Discovery](#service-discovery)
@@ -71,7 +73,7 @@ _This course is also available on my [website](https://karanpratapsingh.com/cour
   - [Single Sign-On (SSO)](#single-sign-on-sso)
   - [SSL, TLS, mTLS](#ssl-tls-mtls)
 
-- **Chapter V**
+- **Часть V**
 
   - [System Design Interviews](#system-design-interviews)
   - [URL Shortener](#url-shortener)
@@ -80,7 +82,7 @@ _This course is also available on my [website](https://karanpratapsingh.com/cour
   - [Netflix](#netflix)
   - [Uber](#uber)
 
-- **Appendix**
+- **Дополнения**
 
   - [Next Steps](#next-steps)
   - [References](#references)
