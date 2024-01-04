@@ -172,116 +172,114 @@ _Пример: Они чаще всего используются для пот
   
 ## Layers
 
-The seven abstraction layers of the OSI model can be defined as follows, from top to bottom:
+Семь уровней абстракции модели OSI можно определить следующим образом, сверху вниз:
 
 ![osi-model](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/osi-model/osi-model.png)
 
 ### Application
 
-This is the only layer that directly interacts with data from the user. Software applications like web browsers and email clients rely on the application layer to initiate communication. But it should be made clear that client software applications are not part of the application layer, rather the application layer is responsible for the protocols and data manipulation that the software relies on to present meaningful data to the user. Application layer protocols include HTTP as well as SMTP.
+Это единственный уровень, который напрямую взаимодействует с данными, поступающими от пользователя. Программные приложения, такие как веб-браузеры и почтовые клиенты, полагаются на прикладной уровень для инициирования взаимодействия. Однако следует уточнить, что клиентские приложения не являются частью прикладного уровня, скорее, прикладной уровень отвечает за протоколы и манипуляции с данными, на которые опирается программное обеспечение для представления значимых данных пользователю. К протоколам прикладного уровня относятся такие как HTTP иSMTP.
 
 ### Presentation
 
-The presentation layer is also called the Translation layer. The data from the application layer is extracted here and manipulated as per the required format to transmit over the network. The functions of the presentation layer are translation, encryption/decryption, and compression.
+Презентационный уровень также называют уровнем трансляции. Данные с прикладного уровня извлекаются здесь и манипулируются в соответствии с требуемым форматом для передачи по сети. Функции презентационного уровня - перевод, шифрование/дешифрование и сжатие.
 
 ### Session
 
-This is the layer responsible for opening and closing communication between the two devices. The time between when the communication is opened and closed is known as the session. The session layer ensures that the session stays open long enough to transfer all the data being exchanged, and then promptly closes the session in order to avoid wasting resources. The session layer also synchronizes data transfer with checkpoints.
+Это уровень, отвечающий за открытие и закрытие связи между двумя устройствами. Время между открытием и закрытием связи называется сессией. Сессионный уровень обеспечивает, чтобы сессия оставалась открытой достаточно долго, чтобы передать все данные, которыми обмениваются, а затем быстро закрывает сессию, чтобы не тратить ресурсы впустую. Сессионный уровень также синхронизирует передачу данных с контрольными точками.
 
 ### Transport
 
-The transport layer (also known as layer 4) is responsible for end-to-end communication between the two devices. This includes taking data from the session layer and breaking it up into chunks called segments before sending it to the Network layer (layer 3). It is also responsible for reassembling the segments on the receiving device into data the session layer can consume.
+Транспортный уровень (также известный как уровень 4) отвечает за сквозную передачу данных между двумя устройствами. Он включает в себя получение данных от сеансового уровня и разбиение их на фрагменты, называемые сегментами, перед отправкой на сетевой уровень (уровень 3). Он также отвечает за сборку сегментов на принимающем устройстве в данные, которые может использовать сеансовый уровень.
 
 ### Network
 
-The network layer is responsible for facilitating data transfer between two different networks. The network layer breaks up segments from the transport layer into smaller units, called packets, on the sender's device, and reassembles these packets on the receiving device. The network layer also finds the best physical path for the data to reach its destination this is known as routing. If the two devices communicating are on the same network, then the network layer is unnecessary.
+Сетевой уровень отвечает за передачу данных между двумя различными сетями. Сетевой уровень разбивает сегменты транспортного уровня на более мелкие единицы, называемые пакетами, на устройстве отправителя и собирает эти пакеты на устройстве получателя. Сетевой уровень также находит наилучший физический путь для передачи данных к месту назначения, что называется маршрутизацией. Если два взаимодействующих устройства находятся в одной сети, то сетевой уровень не нужен.
 
 ### Data Link
 
-The data link layer is very similar to the network layer, except the data link layer facilitates data transfer between two devices on the same network. The data link layer takes packets from the network layer and breaks them into smaller pieces called frames.
+Канальный уровень очень похож на сетевой уровень, за исключением того, что канальный уровень облегчает передачу данных между двумя устройствами в одной сети. Канальный уровень получает пакеты с сетевого уровня и разбивает их на более мелкие фрагменты, называемые кадрами.
 
 ### Physical
 
-This layer includes the physical equipment involved in the data transfer, such as the cables and switches. This is also the layer where the data gets converted into a bit stream, which is a string of 1s and 0s. The physical layer of both devices must also agree on a signal convention so that the 1s can be distinguished from the 0s on both devices.
+Этот уровень включает в себя физическое оборудование, участвующее в передаче данных, например кабели и коммутаторы. Именно на этом уровне данные преобразуются в битовый поток, представляющий собой последовательность 1 и 0. Физический уровень обоих устройств также должен согласовать сигнальные соглашения, чтобы 1 и 0 можно было отличить на обоих устройствах.
 
 # TCP and UDP
 
 ## TCP
 
-Transmission Control Protocol (TCP) is connection-oriented, meaning once a connection has been established, data can be transmitted in both directions. TCP has built-in systems to check for errors and to guarantee data will be delivered in the order it was sent, making it the perfect protocol for transferring information like still images, data files, and web pages.
-
+Протокол управления передачей (TCP) ориентирован на соединение, то есть после установления соединения данные могут передаваться в обоих направлениях. TCP имеет встроенные системы проверки на наличие ошибок и гарантирует, что данные будут доставлены в том порядке, в котором они были отправлены, что делает его идеальным протоколом для передачи такой информации, как неподвижные изображения, файлы данных и веб-страницы.
 ![tcp](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/tcp-and-udp/tcp.png)
 
-But while TCP is instinctively reliable, its feedback mechanisms also result in a larger overhead, translating to greater use of the available bandwidth on the network.
+Но хотя TCP инстинктивно надежен, его механизмы обратной связи также приводят к большим накладным расходам, что приводит к большему использованию доступной полосы пропускания в сети.
 
 ## UDP
 
-User Datagram Protocol (UDP) is a simpler, connectionless internet protocol in which error-checking and recovery services are not required. With UDP, there is no overhead for opening a connection, maintaining a connection, or terminating a connection. Data is continuously sent to the recipient, whether or not they receive it.
+User Datagram Protocol (UDP) - это более простой интернет-протокол без соединений, в котором не требуются службы проверки и восстановления ошибок. В UDP нет накладных расходов на открытие соединения, поддержание соединения или его прерывание. Данные постоянно отправляются получателю, независимо от того, получены они или нет.
 
 ![udp](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/tcp-and-udp/udp.png)
 
-It is largely preferred for real-time communications like broadcast or multicast network transmission. We should use UDP over TCP when we need the lowest latency and late data is worse than the loss of data.
+Его предпочитают использовать для связи в реальном времени, например, для широковещательной или многоадресной передачи данных по сети. Мы должны использовать UDP вместо TCP, когда нам нужна наименьшая задержка, а задержка данных хуже, чем их потеря.
 
 ## TCP vs UDP
 
-TCP is a connection-oriented protocol, whereas UDP is a connectionless protocol. A key difference between TCP and UDP is speed, as TCP is comparatively slower than UDP. Overall, UDP is a much faster, simpler, and more efficient protocol, however, retransmission of lost data packets is only possible with TCP.
+TCP - это протокол, ориентированный на соединение, в то время как UDP - протокол без соединения. Ключевым различием между TCP и UDP является скорость, поскольку TCP сравнительно медленнее UDP. В целом UDP является более быстрым, простым и эффективным протоколом, однако повторная передача потерянных пакетов данных возможна только при использовании TCP.
 
-TCP provides ordered delivery of data from user to server (and vice versa), whereas UDP is not dedicated to end-to-end communications, nor does it check the readiness of the receiver.
+TCP обеспечивает упорядоченную доставку данных от пользователя к серверу (и наоборот), в то время как UDP не предназначен для сквозной передачи данных и не проверяет готовность получателя.
 
-| Feature             | TCP                                         | UDP                                |
+| Характеристика | TCP | UDP |
 | ------------------- | ------------------------------------------- | ---------------------------------- |
-| Connection          | Requires an established connection          | Connectionless protocol            |
-| Guaranteed delivery | Can guarantee delivery of data              | Cannot guarantee delivery of data  |
-| Re-transmission     | Re-transmission of lost packets is possible | No re-transmission of lost packets |
-| Speed               | Slower than UDP                             | Faster than TCP                    |
-| Broadcasting        | Does not support broadcasting               | Supports broadcasting              |
-| Use cases           | HTTPS, HTTP, SMTP, POP, FTP, etc            | Video streaming, DNS, VoIP, etc    |
+Соединение | Требуется установленное соединение | Протокол без соединения | Гарантированная доставка | Может гарантировать доставку.
+| Гарантированная доставка | Может гарантировать доставку данных | Не может гарантировать доставку данных |
+| Повторная передача | Повторная передача потерянных пакетов возможна | Повторная передача потерянных пакетов невозможна |
+| Скорость | Медленнее, чем UDP | Быстрее, чем TCP |
+| Широковещание | Не поддерживает широковещание | Поддерживает широковещание |
 
 # Domain Name System (DNS)
 
-Earlier we learned about IP addresses that enable every machine to connect with other machines. But as we know humans are more comfortable with names than numbers. It's easier to remember a name like `google.com` than something like `122.250.192.232`.
+Ранее мы узнали об IP-адресах, которые позволяют каждой машине соединяться с другими машинами. Но, как мы знаем, людям удобнее работать с именами, чем с цифрами. Легче запомнить такое имя, как `google.com`, чем что-то вроде `122.250.192.232`.
 
-This brings us to Domain Name System (DNS) which is a hierarchical and decentralized naming system used for translating human-readable domain names to IP addresses.
+Это привело нас к системе доменных имен (DNS), которая представляет собой иерархическую и децентрализованную систему именования, используемую для преобразования человекочитаемых доменных имен в IP-адреса.
 
 ## How DNS works
 
 ![how-dns-works](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/domain-name-system/how-dns-works.png)
 
-DNS lookup involves the following eight steps:
+Поиск DNS включает в себя следующие восемь шагов:
 
-1. A client types [example.com](http://example.com) into a web browser, the query travels to the internet and is received by a DNS resolver.
-2. The resolver then recursively queries a DNS root nameserver.
-3. The root server responds to the resolver with the address of a Top-Level Domain (TLD).
-4. The resolver then makes a request to the `.com` TLD.
-5. The TLD server then responds with the IP address of the domain's nameserver, [example.com](http://example.com).
-6. Lastly, the recursive resolver sends a query to the domain's nameserver.
-7. The IP address for [example.com](http://example.com) is then returned to the resolver from the nameserver.
-8. The DNS resolver then responds to the web browser with the IP address of the domain requested initially.
+1. Клиент набирает [example.com](http://example.com) в веб-браузере, запрос отправляется в Интернет и поступает на DNS-резольвер.
+2. Затем резолвер рекурсивно запрашивает корневой сервер имен DNS.
+3. Корневой сервер отвечает на запрос с адресом домена верхнего уровня (TLD).
+4. Затем преобразователь делает запрос к ДВУ `.com`.
+5. Сервер ДВУ отвечает IP-адресом сервера имен домена [example.com](http://example.com).
+6. Наконец, рекурсивный преобразователь отправляет запрос серверу имен домена.
+7. IP-адрес [example.com](http://example.com) возвращается на преобразователь с сервера имен.
+8. Затем DNS-резольвер отвечает веб-браузеру IP-адресом домена, запрошенного изначально.
 
-Once the IP address has been resolved, the client should be able to request content from the resolved IP address. For example, the resolved IP may return a webpage to be rendered in the browser.
+После разрешения IP-адреса клиент должен иметь возможность запрашивать содержимое с разрешенного IP-адреса. Например, разрешенный IP-адрес может вернуть веб-страницу для отображения в браузере.
 
 ## Server types
 
-Now, let's look at the four key groups of servers that make up the DNS infrastructure.
+Теперь давайте рассмотрим четыре основные группы серверов, составляющих инфраструктуру DNS.
 
 ### DNS Resolver
 
-A DNS resolver (also known as a DNS recursive resolver) is the first stop in a DNS query. The recursive resolver acts as a middleman between a client and a DNS nameserver. After receiving a DNS query from a web client, a recursive resolver will either respond with cached data, or send a request to a root nameserver, followed by another request to a TLD nameserver, and then one last request to an authoritative nameserver. After receiving a response from the authoritative nameserver containing the requested IP address, the recursive resolver then sends a response to the client.
+DNS-резольвер (также известный как рекурсивный DNS-резольвер) - это первая остановка при выполнении DNS-запроса. Рекурсивный резолвер выступает в роли посредника между клиентом и сервером имен DNS. После получения DNS-запроса от веб-клиента рекурсивный преобразователь либо отвечает кэшированными данными, либо отправляет запрос на корневой сервер имен, затем еще один запрос на сервер имен ДВУ, а затем последний запрос на авторитетный сервер имен. После получения ответа от авторитетного сервера имен, содержащего запрашиваемый IP-адрес, рекурсивный преобразователь отправляет ответ клиенту.
 
 ### DNS root server
 
-A root server accepts a recursive resolver's query which includes a domain name, and the root nameserver responds by directing the recursive resolver to a TLD nameserver, based on the extension of that domain (`.com`, `.net`, `.org`, etc.). The root nameservers are overseen by a nonprofit called the [Internet Corporation for Assigned Names and Numbers (ICANN)](https://www.icann.org).
+Корневой сервер принимает запрос рекурсивного распознавателя, включающий доменное имя, а корневой сервер имен отвечает на него, направляя рекурсивный распознаватель на сервер имен ДВУ, основанный на расширении этого домена (`.com`, `.net`, `.org` и т. д.). Корневые серверы имен контролируются некоммерческой организацией под названием [Internet Corporation for Assigned Names and Numbers (ICANN)](https://www.icann.org).
 
-There are 13 DNS root nameservers known to every recursive resolver. Note that while there are 13 root nameservers, that doesn't mean that there are only 13 machines in the root nameserver system. There are 13 types of root nameservers, but there are multiple copies of each one all over the world, which use [Anycast routing](https://en.wikipedia.org/wiki/Anycast) to provide speedy responses.
+Каждому рекурсивному преобразователю известно 13 корневых серверов имен DNS. Обратите внимание, что, хотя существует 13 корневых серверов имен, это не означает, что в системе корневых серверов имен только 13 машин. Существует 13 типов корневых серверов имен, но каждый из них имеет несколько копий по всему миру, которые используют [Anycast routing](https://en.wikipedia.org/wiki/Anycast) для обеспечения быстрых ответов.
 
 ### TLD nameserver
 
-A TLD nameserver maintains information for all the domain names that share a common domain extension, such as `.com`, `.net`, or whatever comes after the last dot in a URL.
+Сервер имен TLD хранит информацию обо всех доменных именах, имеющих общее расширение домена, например `.com`, `.net` или то, что идет после последней точки в URL.
 
-Management of TLD nameservers is handled by the [Internet Assigned Numbers Authority (IANA)](https://www.iana.org), which is a branch of [ICANN](https://www.icann.org). The IANA breaks up the TLD servers into two main groups:
+Управлением серверами имен TLD занимается [Internet Assigned Numbers Authority (IANA)](https://www.iana.org), который является подразделением [ICANN](https://www.icann.org). IANA разделяет серверы TLD на две основные группы:
 
-- **Generic top-level domains**: These are domains like `.com`, `.org`, `.net`, `.edu`, and `.gov`.
-- **Country code top-level domains**: These include any domains that are specific to a country or state. Examples include `.uk`, `.us`, `.ru`, and `.jp`.
+- **Общие домены верхнего уровня**: Это домены типа `.com`, `.org`, `.net`, `.edu` и `.gov`.
+- **Домены верхнего уровня с кодом страны**: К ним относятся любые домены, относящиеся к определенной стране или государству. Примеры: `.uk`, `.us`, `.ru` и `.jp`.
 
 ### Authoritative DNS server
 
