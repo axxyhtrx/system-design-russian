@@ -283,70 +283,70 @@ DNS-резольвер (также известный как рекурсивн�
 
 ### Authoritative DNS server
 
-The authoritative nameserver is usually the resolver's last step in the journey for an IP address. The authoritative nameserver contains information specific to the domain name it serves (e.g. [google.com](http://google.com)) and it can provide a recursive resolver with the IP address of that server found in the DNS A record, or if the domain has a CNAME record (alias) it will provide the recursive resolver with an alias domain, at which point the recursive resolver will have to perform a whole new DNS lookup to procure a record from an authoritative nameserver (often an A record containing an IP address). If it cannot find the domain, returns the NXDOMAIN message.
+Авторитативный сервер имен обычно является последним шагом в поиске IP-адреса. Авторитативный сервер имен содержит информацию, специфичную для обслуживаемого им доменного имени (например, [google.com](http://google.com)), и он может предоставить рекурсивному резолверу IP-адрес этого сервера, найденный в записи A DNS, или, если домен имеет запись CNAME (псевдоним), он предоставит рекурсивному резолверу псевдоним домена, и тогда рекурсивному резолверу придется выполнить новый поиск DNS, чтобы получить запись от авторитетного сервера имен (часто это запись A, содержащая IP-адрес). Если он не может найти домен, возвращается сообщение NXDOMAIN.
 
 ## Query Types
 
-There are three types of queries in a DNS system:
+В системе DNS существует три типа запросов:
 
 ### Recursive
 
-In a recursive query, a DNS client requires that a DNS server (typically a DNS recursive resolver) will respond to the client with either the requested resource record or an error message if the resolver can't find the record.
+При рекурсивном запросе DNS-клиент требует, чтобы DNS-сервер (обычно рекурсивный преобразователь DNS) ответил клиенту либо запрошенной записью ресурса, либо сообщением об ошибке, если преобразователь не может найти эту запись.
 
 ### Iterative
 
-In an iterative query, a DNS client provides a hostname, and the DNS Resolver returns the best answer it can. If the DNS resolver has the relevant DNS records in its cache, it returns them. If not, it refers the DNS client to the Root Server or another Authoritative Name Server that is nearest to the required DNS zone. The DNS client must then repeat the query directly against the DNS server it was referred.
+При итеративном запросе DNS-клиент указывает имя хоста, а DNS-резольвер возвращает наилучший ответ. Если DNS-резольвер имеет соответствующие записи DNS в своем кэше, он возвращает их. Если нет, он направляет клиента DNS к корневому серверу или другому авторитетному серверу имен, который находится ближе всего к требуемой зоне DNS. Затем DNS-клиент должен повторить запрос непосредственно к DNS-серверу, на который он был направлен.
 
 ### Non-recursive
 
-A non-recursive query is a query in which the DNS Resolver already knows the answer. It either immediately returns a DNS record because it already stores it in a local cache, or queries a DNS Name Server which is authoritative for the record, meaning it definitely holds the correct IP for that hostname. In both cases, there is no need for additional rounds of queries (like in recursive or iterative queries). Rather, a response is immediately returned to the client.
+Нерекурсивный запрос - это запрос, в котором DNS-резольвер уже знает ответ. Он либо сразу возвращает запись DNS, поскольку уже хранит ее в локальном кэше, либо запрашивает сервер имен DNS, который является авторитетным для этой записи, то есть у него точно есть правильный IP для этого имени хоста. В обоих случаях нет необходимости в дополнительных раундах запросов (как в рекурсивных или итеративных запросах). Вместо этого клиенту сразу же возвращается ответ.
 
 ## Record Types
 
-DNS records (aka zone files) are instructions that live in authoritative DNS servers and provide information about a domain including what IP address is associated with that domain and how to handle requests for that domain.
+DNS-записи (они же файлы зон) - это инструкции, которые хранятся на авторитетных DNS-серверах и предоставляют информацию о домене, в том числе о том, какой IP-адрес связан с этим доменом и как обрабатывать запросы для этого домена.
 
-These records consist of a series of text files written in what is known as _DNS syntax_. DNS syntax is just a string of characters used as commands that tell the DNS server what to do. All DNS records also have a _"TTL"_, which stands for time-to-live, and indicates how often a DNS server will refresh that record.
+Эти записи состоят из серии текстовых файлов, записанных в так называемом _синтаксисе DNS_. Синтаксис DNS - это просто строка символов, используемых в качестве команд, которые указывают DNS-серверу, что делать. Все записи DNS также имеют значение _"TTL"_, что означает "время жизни" и указывает, как часто DNS-сервер будет обновлять эту запись.
 
-There are more record types but for now, let's look at some of the most commonly used ones:
+Существует больше типов записей, но сейчас мы рассмотрим некоторые из наиболее часто используемых:
 
-- **A (Address record)**: This is the record that holds the IP address of a domain.
-- **AAAA (IP Version 6 Address record)**: The record that contains the IPv6 address for a domain (as opposed to A records, which stores the IPv4 address).
-- **CNAME (Canonical Name record)**: Forwards one domain or subdomain to another domain, does NOT provide an IP address.
-- **MX (Mail exchanger record)**: Directs mail to an email server.
-- **TXT (Text Record)**: This record lets an admin store text notes in the record. These records are often used for email security.
-- **NS (Name Server records)**: Stores the name server for a DNS entry.
-- **SOA (Start of Authority)**: Stores admin information about a domain.
-- **SRV (Service Location record)**: Specifies a port for specific services.
-- **PTR (Reverse-lookup Pointer record)**: Provides a domain name in reverse lookups.
-- **CERT (Certificate record)**: Stores public key certificates.
+- **A (Address record)**: Это запись, содержащая IP-адрес домена.
+- **AAA (запись адреса IP версии 6)**: Запись, содержащая IPv6-адрес домена (в отличие от A-записей, в которых хранится IPv4-адрес).
+- **CNAME (запись канонического имени)**: Перенаправляет один домен или поддомен на другой домен, НЕ предоставляет IP-адрес.
+- **MX (запись почтового обменника)**: Направляет почту на почтовый сервер.
+- **TXT (текстовая запись)**: Эта запись позволяет администратору хранить в ней текстовые заметки. Эти записи часто используются для обеспечения безопасности электронной почты.
+- **NS (записи сервера имен)**: Хранит сервер имен для записи DNS.
+- **SOA (Start of Authority)**: Хранит информацию администратора о домене.
+- **SRV (Service Location record)**: Определяет порт для определенных служб.
+- **PTR (Reverse-lookup Pointer record)**: Указывает доменное имя при обратном поиске.
+- **CERT (запись сертификата)**: Хранит сертификаты открытых ключей.
 
 ## Subdomains
 
-A subdomain is an additional part of our main domain name. It is commonly used to logically separate a website into sections. We can create multiple subdomains or child domains on the main domain.
+Поддомен - это дополнительная часть основного доменного имени. Обычно он используется для логического разделения сайта на разделы. Мы можем создать несколько поддоменов или дочерних доменов на основном домене.
 
-For example, `blog.example.com` where `blog` is the subdomain, `example` is the primary domain and `.com` is the top-level domain (TLD). Similar examples can be `support.example.com` or `careers.example.com`.
+Например, `blog.example.com`, где `blog` - это поддомен, `example` - основной домен, а `.com` - домен верхнего уровня (TLD). Аналогичными примерами могут быть `support.example.com` или `careers.example.com`.
 
 ## DNS Zones
 
-A DNS zone is a distinct part of the domain namespace which is delegated to a legal entity like a person, organization, or company, who is responsible for maintaining the DNS zone. A DNS zone is also an administrative function, allowing for granular control of DNS components, such as authoritative name servers.
+Зона DNS - это отдельная часть пространства доменных имен, которая делегируется юридическому лицу, например человеку, организации или компании, которые отвечают за поддержание зоны DNS. Зона DNS - это также административная функция, позволяющая осуществлять детальный контроль над компонентами DNS, такими как авторитативные серверы имен.
 
 ## DNS Caching
 
-A DNS cache (sometimes called a DNS resolver cache) is a temporary database, maintained by a computer's operating system, that contains records of all the recent visits and attempted visits to websites and other internet domains. In other words, a DNS cache is just a memory of recent DNS lookups that our computer can quickly refer to when it's trying to figure out how to load a website.
+Кэш DNS (иногда называемый кэшем DNS-резольвера) - это временная база данных, поддерживаемая операционной системой компьютера, которая содержит записи обо всех последних посещениях и попытках посещения веб-сайтов и других интернет-доменов. Другими словами, кэш DNS - это просто память последних обращений к DNS, к которой наш компьютер может быстро обратиться, когда пытается понять, как загрузить веб-сайт.
 
-The Domain Name System implements a time-to-live (TTL) on every DNS record. TTL specifies the number of seconds the record can be cached by a DNS client or server. When the record is stored in a cache, whatever TTL value came with it gets stored as well. The server continues to update the TTL of the record stored in the cache, counting down every second. When it hits zero, the record is deleted or purged from the cache. At that point, if a query for that record is received, the DNS server has to start the resolution process.
+Система доменных имен устанавливает время жизни (TTL) для каждой записи DNS. TTL определяет количество секунд, в течение которых запись может кэшироваться клиентом или сервером DNS. Когда запись сохраняется в кэше, вместе с ней сохраняется и значение TTL. Сервер продолжает обновлять TTL записи, хранящейся в кэше, отсчитывая каждую секунду. Когда оно достигнет нуля, запись будет удалена или очищена из кэша. В этот момент, если поступает запрос на эту запись, DNS-сервер должен начать процесс разрешения.
 
 ## Reverse DNS
 
-A reverse DNS lookup is a DNS query for the domain name associated with a given IP address. This accomplishes the opposite of the more commonly used forward DNS lookup, in which the DNS system is queried to return an IP address. The process of reverse resolving an IP address uses PTR records. If the server does not have a PTR record, it cannot resolve a reverse lookup.
+Обратный поиск DNS - это запрос DNS на получение доменного имени, связанного с заданным IP-адресом. Это противоположно более распространенному прямому DNS-поиску, при котором система DNS запрашивается для возврата IP-адреса. В процессе обратного преобразования IP-адреса используются записи PTR. Если у сервера нет PTR-записи, он не сможет выполнить обратный поиск.
 
-Reverse lookups are commonly used by email servers. Email servers check and see if an email message came from a valid server before bringing it onto their network. Many email servers will reject messages from any server that does not support reverse lookups or from a server that is highly unlikely to be legitimate.
+Обратный поиск обычно используется серверами электронной почты. Серверы электронной почты проверяют, пришло ли сообщение электронной почты с действительного сервера, прежде чем принять его в свою сеть. Многие серверы электронной почты будут отклонять сообщения с серверов, не поддерживающих обратный поиск, или с серверов, которые с большой вероятностью не являются легитимными.
 
-_Note: Reverse DNS lookups are not universally adopted as they are not critical to the normal function of the internet._
+_Примечание: обратный поиск DNS не является общепринятым, поскольку он не является критическим для нормального функционирования Интернета._
 
 ## Examples
 
-These are some widely used managed DNS solutions:
+Вот некоторые широко используемые управляемые решения для DNS:
 
 - [Route53](https://aws.amazon.com/route53)
 - [Cloudflare DNS](https://www.cloudflare.com/dns)
