@@ -1059,7 +1059,7 @@ NoSQL - это широкая категория, в которую входят
 
 База данных документов (также известная как документоориентированная база данных или хранилище документов) - это база данных, хранящая информацию в документах. Это базы данных общего назначения, которые служат для различных целей, как для транзакционных, так и для аналитических приложений.
 
-**Преимущества
+**Преимущества**
 
 - Интуитивно понятная и гибкая
 - Легкое горизонтальное масштабирование
@@ -1080,7 +1080,7 @@ NoSQL - это широкая категория, в которую входят
 
 Один из самых простых типов баз данных NoSQL, базы данных "ключ-значение" сохраняют данные в виде группы пар "ключ-значение", состоящих из двух элементов данных каждый. Их также иногда называют хранилищем ключевых значений.
 
-**Преимущества
+**Преимущества**
 
 - Простота и производительность
 - Высокая масштабируемость при больших объемах трафика
@@ -1593,225 +1593,225 @@ _Теорема PACELC была впервые описана [Daniel J. Abadi](
 
 Например, согласно теореме CAP, база данных может считаться доступной, если запрос возвращает ответ через 30 дней. Очевидно, что такая задержка неприемлема для любого реального приложения.
 
-# Transactions
+# Транзакции
 
-A transaction is a series of database operations that are considered to be a _"single unit of work"_. The operations in a transaction either all succeed, or they all fail. In this way, the notion of a transaction supports data integrity when part of a system fails. Not all databases choose to support ACID transactions, usually because they are prioritizing other optimizations that are hard or theoretically impossible to implement together.
+Транзакция - это серия операций над базой данных, которые рассматриваются как "единое целое". Операции в транзакции либо все успешны, либо все неудачны. Таким образом, понятие транзакции поддерживает целостность данных, когда часть системы выходит из строя. Не все базы данных предпочитают поддерживать ACID-транзакции, обычно потому, что для них приоритетны другие оптимизации, которые трудно или теоретически невозможно реализовать вместе.
 
-_Usually, relational databases support ACID transactions, and non-relational databases don't (there are exceptions)._
+_Обычно реляционные базы данных поддерживают транзакции ACID, а нереляционные - нет (бывают исключения)._
 
-## States
+## Состояния
 
-A transaction in a database can be in one of the following states:
+Транзакция в базе данных может находиться в одном из следующих состояний:
 
 ![transaction-states](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/transactions/transaction-states.png)
 
 ### Active
 
-In this state, the transaction is being executed. This is the initial state of every transaction.
+В этом состоянии транзакция находится в процессе выполнения. Это начальное состояние каждой транзакции.
 
 ### Partially Committed
 
-When a transaction executes its final operation, it is said to be in a partially committed state.
+Когда транзакция выполняет свою заключительную операцию, считается, что она находится в состоянии частичной фиксации.
 
 ### Committed
 
-If a transaction executes all its operations successfully, it is said to be committed. All its effects are now permanently established on the database system.
+Если транзакция успешно выполняет все свои операции, считается, что она зафиксирована. Все ее последствия теперь навсегда закреплены в системе базы данных.
 
 ### Failed
 
-The transaction is said to be in a failed state if any of the checks made by the database recovery system fails. A failed transaction can no longer proceed further.
+Транзакция считается неудачной, если ни одна из проверок, выполненных системой восстановления базы данных, не дала результата. Провалившаяся транзакция больше не может продолжаться.
 
 ### Aborted
 
-If any of the checks fail and the transaction has reached a failed state, then the recovery manager rolls back all its write operations on the database to bring the database back to its original state where it was prior to the execution of the transaction. Transactions in this state are aborted.
+Если любая из проверок не удалась и транзакция достигла состояния неудачи, менеджер восстановления откатывает все свои операции записи в базу данных, чтобы вернуть базу данных в исходное состояние, в котором она находилась до выполнения транзакции. Транзакции в этом состоянии прерываются.
 
-The database recovery module can select one of the two operations after a transaction aborts:
+Модуль восстановления базы данных может выбрать одну из двух операций после прерывания транзакции:
 
-- Restart the transaction
-- Kill the transaction
+- Перезапустить транзакцию
+- Завершить транзакцию
 
 ### Terminated
 
-If there isn't any roll-back or the transaction comes from the _committed state_, then the system is consistent and ready for a new transaction and the old transaction is terminated.
+Если отката не было или транзакция пришла из состояния _committed state_, то система согласована и готова к новой транзакции, а старая транзакция завершается.
 
-# Distributed Transactions
+# Распределенные транзакции
 
-A distributed transaction is a set of operations on data that is performed across two or more databases. It is typically coordinated across separate nodes connected by a network, but may also span multiple databases on a single server.
+Распределенная транзакция - это набор операций над данными, выполняемых в двух или более базах данных. Обычно она координируется на отдельных узлах, соединенных сетью, но может охватывать и несколько баз данных на одном сервере.
 
-## Why do we need distributed transactions?
+## Зачем нужны распределенные транзакции?
 
-Unlike an ACID transaction on a single database, a distributed transaction involves altering data on multiple databases. Consequently, distributed transaction processing is more complicated, because the database must coordinate the committing or rollback of the changes in a transaction as a self-contained unit.
+В отличие от ACID-транзакции в одной базе данных, распределенная транзакция предполагает изменение данных в нескольких базах данных. Следовательно, обработка распределенных транзакций сложнее, поскольку база данных должна координировать фиксацию или откат изменений в транзакции как единое целое.
 
-In other words, all the nodes must commit, or all must abort and the entire transaction rolls back. This is why we need distributed transactions.
+Другими словами, все узлы должны зафиксировать изменения, или все должны прервать транзакцию, и вся транзакция откатывается назад. Вот почему нам нужны распределенные транзакции.
 
-Now, let's look at some popular solutions for distributed transactions:
+Теперь давайте рассмотрим некоторые популярные решения для распределенных транзакций:
 
-## Two-Phase commit
+## Двухфазный коммит
 
 ![two-phase-commit](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/distributed-transactions/two-phase-commit.png)
 
-The two-phase commit (2PC) protocol is a distributed algorithm that coordinates all the processes that participate in a distributed transaction on whether to commit or abort (roll back) the transaction.
+Протокол двухфазной фиксации (2PC) - это распределенный алгоритм, который координирует все процессы, участвующие в распределенной транзакции, по вопросу фиксации или прерывания (отката) транзакции.
 
-This protocol achieves its goal even in many cases of temporary system failure and is thus widely used. However, it is not resilient to all possible failure configurations, and in rare cases, manual intervention is needed to remedy an outcome.
+Этот протокол достигает своей цели даже во многих случаях временного сбоя системы и поэтому широко используется. Однако он не устойчив ко всем возможным конфигурациям сбоев, и в редких случаях для исправления ситуации требуется ручное вмешательство.
 
-This protocol requires a coordinator node, which basically coordinates and oversees the transaction across different nodes. The coordinator tries to establish the consensus among a set of processes in two phases, hence the name.
+Этот протокол требует наличия узла-координатора, который, по сути, координирует и контролирует транзакции между различными узлами. Координатор пытается установить консенсус между множеством процессов в две фазы, отсюда и название.
 
-### Phases
+### Фазы
 
-Two-phase commit consists of the following phases:
+Двухфазная фиксация состоит из следующих фаз:
 
-**Prepare phase**
+**Фаза подготовки**.
 
-The prepare phase involves the coordinator node collecting consensus from each of the participant nodes. The transaction will be aborted unless each of the nodes responds that they're _prepared_.
+В фазе подготовки узел-координатор собирает консенсус от каждого из узлов-участников. Транзакция будет прервана, если каждый из узлов не ответит, что он _подготовлен_.
 
-**Commit phase**
+**Фаза фиксации**.
 
-If all participants respond to the coordinator that they are _prepared_, then the coordinator asks all the nodes to commit the transaction. If a failure occurs, the transaction will be rolled back.
+Если все участники ответили координатору, что они _готовятся_, то координатор просит все узлы зафиксировать транзакцию. Если произойдет сбой, транзакция будет откачена.
 
-### Problems
+### Проблемы
 
-Following problems may arise in the two-phase commit protocol:
+При использовании двухфазного протокола фиксации могут возникнуть следующие проблемы:
 
-- What if one of the nodes crashes?
-- What if the coordinator itself crashes?
-- It is a blocking protocol.
+- Что делать, если один из узлов потерпел крах?
+- Что, если сломается сам координатор?
+- Это блокирующий протокол.
 
-## Three-phase commit
+## Трехфазная фиксация (3PC)
 
 ![three-phase-commit](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/distributed-transactions/three-phase-commit.png)
 
-Three-phase commit (3PC) is an extension of the two-phase commit where the commit phase is split into two phases. This helps with the blocking problem that occurs in the two-phase commit protocol.
+Трехфазная фиксация (3PC) - это расширение двухфазной фиксации, в котором фаза фиксации разбивается на две фазы. Это помогает решить проблему блокировки, которая возникает в протоколе двухфазной фиксации.
 
-### Phases
+### Фазы
 
-Three-phase commit consists of the following phases:
+Трехфазная фиксация состоит из следующих фаз:
 
-**Prepare phase**
+**Фаза подготовки**.
 
-This phase is the same as the two-phase commit.
+Эта фаза аналогична двухфазной фиксации.
 
-**Pre-commit phase**
+**Фаза предварительной фиксации**.
 
-Coordinator issues the pre-commit message and all the participating nodes must acknowledge it. If a participant fails to receive this message in time, then the transaction is aborted.
+Координатор выпускает сообщение pre-commit, и все участвующие узлы должны его подтвердить. Если участник не получает это сообщение вовремя, то транзакция прерывается.
 
-**Commit phase**
+**Фаза коммита**
 
-This step is also similar to the two-phase commit protocol.
+Этот этап также похож на двухфазный протокол фиксации.
 
-### Why is the Pre-commit phase helpful?
+### Почему фаза предварительной фиксации полезна?
 
-The pre-commit phase accomplishes the following:
+Фаза предварительной коммисии выполняет следующее:
 
-- If the participant nodes are found in this phase, that means that _every_ participant has completed the first phase. The completion of prepare phase is guaranteed.
-- Every phase can now time out and avoid indefinite waits.
+- Если узлы-участники найдены в этой фазе, это означает, что _каждый_ участник завершил первую фазу. Завершение фазы подготовки гарантировано.
+- Теперь каждая фаза может отработать по времени и избежать бесконечных ожиданий.
 
-## Sagas
+## Саги
 
 ![sagas](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/distributed-transactions/sagas.png)
 
-A saga is a sequence of local transactions. Each local transaction updates the database and publishes a message or event to trigger the next local transaction in the saga. If a local transaction fails because it violates a business rule then the saga executes a series of compensating transactions that undo the changes that were made by the preceding local transactions.
+Сага - это последовательность локальных транзакций. Каждая локальная транзакция обновляет базу данных и публикует сообщение или событие для запуска следующей локальной транзакции в саге. Если локальная транзакция терпит неудачу из-за нарушения бизнес-правил, сага выполняет серию компенсирующих транзакций, которые отменяют изменения, внесенные предыдущими локальными транзакциями.
 
-### Coordination
+### Координация
 
-There are two common implementation approaches:
+Существует два распространенных подхода к реализации:
 
-- **Choreography**: Each local transaction publishes domain events that trigger local transactions in other services.
-- **Orchestration**: An orchestrator tells the participants what local transactions to execute.
+- **Хореография**: Каждая локальная транзакция публикует события в домене, которые вызывают локальные транзакции в других сервисах.
+- **Оркестрация**: Оркестрант указывает участникам, какие локальные транзакции выполнять.
 
-### Problems
+### Проблемы
 
-- The Saga pattern is particularly hard to debug.
-- There's a risk of cyclic dependency between saga participants.
-- Lack of participant data isolation imposes durability challenges.
-- Testing is difficult because all services must be running to simulate a transaction.
+- Паттерн Saga особенно трудно отлаживать.
+- Существует риск возникновения циклической зависимости между участниками саги.
+- Отсутствие изоляции данных участников создает проблемы с долговечностью.
+- Тестирование затруднено, поскольку для имитации транзакции должны быть запущены все службы.
 
-# Sharding
+# Шардинг
 
-Before we discuss sharding, let's talk about data partitioning:
+Прежде чем обсуждать шардинг, давайте поговорим о разделении данных:
 
-## Data Partitioning
+## Разбиение данных
 
-Data partitioning is a technique to break up a database into many smaller parts. It is the process of splitting up a database or a table across multiple machines to improve the manageability, performance, and availability of a database.
+Разбиение данных - это техника, позволяющая разбить базу данных на множество более мелких частей. Это процесс разделения базы данных или таблицы на несколько машин для улучшения управляемости, производительности и доступности базы данных.
 
-### Methods
+### Методы
 
-There are many different ways one could use to decide how to break up an application database into multiple smaller DBs. Below are two of the most popular methods used by various large-scale applications:
+Существует множество различных способов решить, как разбить базу данных приложения на несколько меньших БД. Ниже приведены два наиболее популярных метода, используемых в различных крупномасштабных приложениях:
 
-**Horizontal Partitioning (or Sharding)**
+**Горизонтальное разбиение (или шардинг)**.
 
-In this strategy, we split the table data horizontally based on the range of values defined by the _partition key_. It is also referred to as **_database sharding_**.
+В этой стратегии мы разбиваем данные таблицы по горизонтали на основе диапазона значений, определяемого _ключом раздела_. Ее также называют **разбиением базы данных на части_**.
 
-**Vertical Partitioning**
+**Вертикальное разбиение**
 
-In vertical partitioning, we partition the data vertically based on columns. We divide tables into relatively smaller tables with few elements, and each part is present in a separate partition.
+При вертикальном разбиении мы разделяем данные по вертикали на основе столбцов. Мы делим таблицы на относительно меньшие таблицы с небольшим количеством элементов, и каждая часть находится в отдельном разделе.
 
-In this tutorial, we will specifically focus on sharding.
+В этом руководстве мы сосредоточимся на шардинге.
 
-## What is sharding?
+## Что такое шардинг?
 
-Sharding is a database architecture pattern related to _horizontal partitioning_, which is the practice of separating one table's rows into multiple different tables, known as _partitions_ or _shards_. Each partition has the same schema and columns, but also a subset of the shared data. Likewise, the data held in each is unique and independent of the data held in other partitions.
+Шардинг - это архитектурный паттерн базы данных, связанный с _горизонтальным разделением_, которое представляет собой практику разделения строк одной таблицы на несколько различных таблиц, известных как _разделы_ или _шарды_. Каждый раздел имеет одну и ту же схему и столбцы, но также подмножество общих данных. Кроме того, данные, хранящиеся в каждом из разделов, уникальны и не зависят от данных, хранящихся в других разделах.
 
 ![sharding](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/sharding/sharding.png)
 
-The justification for data sharding is that, after a certain point, it is cheaper and more feasible to scale horizontally by adding more machines than to scale it vertically by adding powerful servers. Sharding can be implemented at both application or the database level.
+Оправданием шардинга данных является то, что после определенного момента дешевле и целесообразнее масштабировать систему по горизонтали, добавляя больше машин, чем по вертикали, добавляя мощные серверы. Разделение может быть реализовано как на уровне приложения, так и на уровне базы данных.
 
-## Partitioning criteria
+## Критерии разделения
 
-There are a large number of criteria available for data partitioning. Some most commonly used criteria are:
+Существует большое количество критериев для разделения данных. Наиболее часто используются следующие критерии:
 
 ### Hash-Based
 
-This strategy divides the rows into different partitions based on a hashing algorithm rather than grouping database rows based on continuous indexes.
+Эта стратегия разделяет строки на различные разделы на основе алгоритма хэширования, а не группирует строки базы данных на основе непрерывных индексов.
 
-The disadvantage of this method is that dynamically adding/removing database servers becomes expensive.
+Недостатком этого метода является то, что динамическое добавление/удаление серверов базы данных становится дорогостоящим.
 
-### List-Based
+### Разбиение на основе списков
 
-In list-based partitioning, each partition is defined and selected based on the list of values on a column rather than a set of contiguous ranges of values.
+При списочном разбиении каждый раздел определяется и выбирается на основе списка значений в столбце, а не набора смежных диапазонов значений.
 
 ### Range Based
 
-Range partitioning maps data to various partitions based on ranges of values of the partitioning key. In other words, we partition the table in such a way that each partition contains rows within a given range defined by the partition key.
+Разбиение по диапазонам сопоставляет данные с различными разделами на основе диапазонов значений ключа разбиения. Другими словами, мы разбиваем таблицу таким образом, чтобы каждый раздел содержал строки в заданном диапазоне, определяемом ключом разбиения.
 
-Ranges should be contiguous but not overlapping, where each range specifies a non-inclusive lower and upper bound for a partition. Any partitioning key values equal to or higher than the upper bound of the range are added to the next partition.
+Диапазоны должны быть смежными, но не пересекающимися, где каждый диапазон определяет неполную нижнюю и верхнюю границу раздела. Любые значения ключа раздела, равные или превышающие верхнюю границу диапазона, добавляются к следующему разделу.
 
-### Composite
+### Композитный
 
-As the name suggests, composite partitioning partitions the data based on two or more partitioning techniques. Here we first partition the data using one technique, and then each partition is further subdivided into sub-partitions using the same or some other method.
+Как следует из названия, составное разбиение разделяет данные на основе двух или более методов разбиения. Сначала мы разбиваем данные с помощью одного метода, а затем каждый раздел делится на подразделы с помощью того же или другого метода.
 
-## Advantages
+## Преимущества
 
-But why do we need sharding? Here are some advantages:
+Но зачем нам нужно шардинг? Вот некоторые преимущества:
 
-- **Availability**: Provides logical independence to the partitioned database, ensuring the high availability of our application. Here individual partitions can be managed independently.
-- **Scalability**: Proves to increase scalability by distributing the data across multiple partitions.
-- **Security**: Helps improve the system's security by storing sensitive and non-sensitive data in different partitions. This could provide better manageability and security to sensitive data.
-- **Query Performance**: Improves the performance of the system. Instead of querying the whole database, now the system has to query only a smaller partition.
-- **Data Manageability**: Divides tables and indexes into smaller and more manageable units.
+- **Доступность**: Обеспечивает логическую независимость разделенной на разделы базы данных, гарантируя высокую доступность нашего приложения. Отдельные разделы могут управляться независимо друг от друга.
+- **Масштабируемость**: Обеспечивает увеличение масштабируемости за счет распределения данных по нескольким разделам.
+- **Безопасность**: Помогает повысить безопасность системы за счет хранения чувствительных и нечувствительных данных в разных разделах. Это обеспечивает лучшую управляемость и безопасность конфиденциальных данных.
+- **Производительность запросов**: Повышает производительность системы. Вместо того чтобы запрашивать всю базу данных, теперь системе нужно запрашивать только меньший раздел.
+- **Управляемость данных**: Разделение таблиц и индексов на более мелкие и управляемые единицы.
+  
+## Недостатки
 
-## Disadvantages
+- **Сложность**: Шардинг увеличивает сложность системы в целом.
+- **Соединения между шардами**: Когда база данных разбита на разделы и распределена по нескольким машинам, часто бывает нецелесообразно выполнять соединения, охватывающие несколько шардов базы данных. Такие соединения не будут эффективными с точки зрения производительности, поскольку данные придется получать с нескольких серверов.
+- **Ребалансировка**: Если распределение данных неравномерно или на один шард приходится большая нагрузка, в таких случаях необходимо перебалансировать шарды, чтобы запросы распределялись между ними как можно равномернее.
 
-- **Complexity**: Sharding increases the complexity of the system in general.
-- **Joins across shards**: Once a database is partitioned and spread across multiple machines it is often not feasible to perform joins that span multiple database shards. Such joins will not be performance efficient since data has to be retrieved from multiple servers.
-- **Rebalancing**: If the data distribution is not uniform or there is a lot of load on a single shard, in such cases, we have to rebalance our shards so that the requests are as equally distributed among the shards as possible.
+## Когда использовать шардинг?
 
-## When to use sharding?
+Вот несколько причин, по которым шардинг может быть правильным выбором:
 
-Here are some reasons why sharding might be the right choice:
+- Использование существующего оборудования вместо высокопроизводительных машин.
+- Хранение данных в разных географических регионах.
+- Быстрое масштабирование путем добавления новых шардов.
+- Более высокая производительность, поскольку каждая машина испытывает меньшую нагрузку.
+- Когда требуется больше одновременных подключений.
 
-- Leveraging existing hardware instead of high-end machines.
-- Maintain data in distinct geographic regions.
-- Quickly scale by adding more shards.
-- Better performance as each machine is under less load.
-- When more concurrent connections are required.
+# Последовательное хэширование
 
-# Consistent Hashing
+Давайте сначала разберемся, какую проблему мы пытаемся решить.
 
-Let's first understand the problem we're trying to solve.
+## Зачем нам это нужно?
 
-## Why do we need this?
-
-In traditional hashing-based distribution methods, we use a hash function to hash our partition keys (i.e. request ID or IP). Then if we use the modulo against the total number of nodes (server or databases). This will give us the node where we want to route our request.
+В традиционных методах распределения, основанных на хэшировании, мы используем хэш-функцию для хэширования наших ключей раздела (т. е. идентификатора запроса или IP). Затем, если мы используем модуло против общего количества узлов (серверов или баз данных). Это даст нам узел, куда мы хотим направить наш запрос.
 
 ![simple-hashing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/consistent-hashing/simple-hashing.png)
 
@@ -1825,45 +1825,45 @@ $$
 \end{align*}
 $$
 
-Where,
+Где,
 
-`key`: Request ID or IP.
+`key`: Идентификатор запроса или IP.
 
-`H`: Hash function result.
+`H`: Результат хэш-функции.
 
-`N`: Total number of nodes.
+`N`: Общее количество узлов.
 
-`Node`: The node where the request will be routed.
+`Node`: Узел, на который будет направлен запрос.
 
-The problem with this is if we add or remove a node, it will cause `N` to change, meaning our mapping strategy will break as the same requests will now map to a different server. As a consequence, the majority of requests will need to be redistributed which is very inefficient.
+Проблема в том, что если мы добавим или удалим узел, это приведет к изменению `N`, а значит, наша стратегия отображения нарушится, так как те же самые запросы теперь будут направляться на другой сервер. Как следствие, большинство запросов придется перераспределять, что очень неэффективно.
 
-We want to uniformly distribute requests among different nodes such that we should be able to add or remove nodes with minimal effort. Hence, we need a distribution scheme that does not depend directly on the number of nodes (or servers), so that, when adding or removing nodes, the number of keys that need to be relocated is minimized.
+Мы хотим равномерно распределять запросы между различными узлами, чтобы можно было добавлять или удалять узлы с минимальными усилиями. Следовательно, нам нужна схема распределения, которая не зависит напрямую от количества узлов (или серверов), чтобы при добавлении или удалении узлов количество ключей, которые нужно переместить, было минимальным.
 
-Consistent hashing solves this horizontal scalability problem by ensuring that every time we scale up or down, we do not have to re-arrange all the keys or touch all the servers.
+Последовательное хеширование решает эту проблему горизонтальной масштабируемости, гарантируя, что при каждом увеличении или уменьшении масштаба нам не придется переставлять все ключи или трогать все серверы.
 
-Now that we understand the problem, let's discuss consistent hashing in detail.
+Теперь, когда мы поняли суть проблемы, давайте обсудим последовательное хеширование более подробно.
 
-## How does it work
+## Как это работает
 
-Consistent Hashing is a distributed hashing scheme that operates independently of the number of nodes in a distributed hash table by assigning them a position on an abstract circle, or hash ring. This allows servers and objects to scale without affecting the overall system.
+Consistent Hashing - это распределенная схема хеширования, которая работает независимо от количества узлов в распределенной хеш-таблице, присваивая им позицию на абстрактном круге, или хеш-кольце. Это позволяет масштабировать серверы и объекты без ущерба для всей системы.
 
-![consistent-hashing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/consistent-hashing/consistent-hashing.png)
+![последовательное хэширование](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/consistent-hashing/consistent-hashing.png)
 
-Using consistent hashing, only `K/N` data would require re-distributing.
+При использовании последовательного хэширования только данные `K/N` требуют перераспределения.
 
 $$
 R = K/N
 $$
 
-Where,
+Где,
 
-`R`: Data that would require re-distribution.
+`R`: Данные, требующие повторного распространения.
 
-`K`: Number of partition keys.
+`K`: Количество ключей разделов.
 
-`N`: Number of nodes.
+`N`: Количество узлов.
 
-The output of the hash function is a range let's say `0...m-1` which we can represent on our hash ring. We hash the requests and distribute them on the ring depending on what the output was. Similarly, we also hash the node and distribute them on the same ring as well.
+Выход хэш-функции - это диапазон, скажем, `0...m-1`, который мы можем представить на нашем хэш-кольце. Мы хэшируем запросы и распределяем их по кольцу в зависимости от того, что получилось на выходе. Аналогичным образом мы хэшируем узлы и распределяем их по тому же кольцу.
 
 $$
 \begin{align*}
@@ -1875,19 +1875,17 @@ $$
 \end{align*}
 $$
 
-Where,
+Где,
 
-`key`: Request/Node ID or IP.
+`ключ`: Идентификатор запроса/узла или IP.
 
-`P`: Position on the hash ring.
+`P`: Позиция в хэш-кольце.
 
-`m`: Total range of the hash ring.
+`m`: Общий радиус действия хэш-кольца.
 
-Now, when the request comes in we can simply route it to the closest node in a clockwise (can be counterclockwise as well) manner. This means that if a new node is added or removed, we can use the nearest node and only a _fraction_ of the requests need to be re-routed.
+Теперь, когда поступает запрос, мы можем просто направить его на ближайший узел по часовой стрелке (можно и против часовой). Это означает, что если добавляется или удаляется новый узел, мы можем использовать ближайший узел, и только _часть_ запросов нужно будет перенаправлять.
 
-In theory, consistent hashing should distribute the load evenly however it doesn't happen in practice. Usually, the load distribution is uneven and one server may end up handling the majority of the request becoming a _hotspot_, essentially a bottleneck for the system. We can fix this by adding extra nodes but that can be expensive.
-
-Let's see how we can address these issues.
+В теории последовательное хеширование должно равномерно распределять нагрузку, однако на практике этого не происходит. Обычно нагрузка распределяется неравномерно, и один сервер может в итоге обрабатывать большую часть запросов, становясь _горячей точкой_, по сути, узким местом в системе. Это можно исправить, добавив дополнительные узлы, но это может быть дорого.
 
 ## Virtual Nodes
 
