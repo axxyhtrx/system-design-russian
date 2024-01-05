@@ -511,268 +511,270 @@ _Примечание: обратный поиск DNS не является о�
 - Производительность
 - Экономичность
 
-## Load balancing vs Clustering
+## Балансировка нагрузки и кластеризация
 
-Load balancing shares some common traits with clustering, but they are different processes. Clustering provides redundancy and boosts capacity and availability. Servers in a cluster are aware of each other and work together toward a common purpose. But with load balancing, servers are not aware of each other. Instead, they react to the requests they receive from the load balancer.
+Балансировка нагрузки имеет некоторые общие черты с кластеризацией, но это разные процессы. Кластеризация обеспечивает избыточность и повышает производительность и доступность. Серверы в кластере знают друг о друге и работают вместе для достижения общей цели. При балансировке нагрузки серверы не знают друг о друге. Вместо этого они реагируют на запросы, которые получают от балансировщика нагрузки.
 
-We can employ load balancing in conjunction with clustering, but it also is applicable in cases involving independent servers that share a common purpose such as to run a website, business application, web service, or some other IT resource.
+Мы можем использовать балансировку нагрузки в сочетании с кластеризацией, но она также применима в случаях с независимыми серверами, объединенными общей целью, например, для запуска веб-сайта, бизнес-приложения, веб-службы или другого ИТ-ресурса.
 
-## Challenges
+## Проблемы
 
-The most obvious challenge clustering presents is the increased complexity of installation and maintenance. An operating system, the application, and its dependencies must each be installed and updated on every node.
+Наиболее очевидной проблемой кластеризации является повышенная сложность установки и обслуживания. Операционная система, приложение и его зависимости должны быть установлены и обновлены на каждом узле.
 
-This becomes even more complicated if the nodes in the cluster are not homogeneous. Resource utilization for each node must also be closely monitored, and logs should be aggregated to ensure that the software is behaving correctly.
+Это становится еще сложнее, если узлы в кластере неоднородны. Также необходимо тщательно следить за использованием ресурсов на каждом узле и агрегировать журналы, чтобы убедиться в правильности поведения программного обеспечения.
 
-Additionally, storage becomes more difficult to manage, a shared storage device must prevent nodes from overwriting one another and distributed data stores have to be kept in sync.
+Кроме того, усложняется управление хранением данных: общее устройство хранения должно предотвращать перезапись узлов друг другом, а распределенные хранилища данных должны синхронизироваться.
+## Примеры
 
-## Examples
+Кластеризация широко используется в промышленности, и зачастую многие технологии предлагают тот или иной режим кластеризации. Например:
 
-Clustering is commonly used in the industry, and often many technologies offer some sort of clustering mode. For example:
+- Контейнеры ([Kubernetes](https://kubernetes.io), [Amazon ECS](https://aws.amazon.com/ecs)).
+- Базы данных ([Cassandra](https://cassandra.apache.org/_/index.html), [MongoDB](https://www.mongodb.com))
+- Кэш ([Redis](https://redis.io/docs/manual/scaling))
 
-- Containers (e.g. [Kubernetes](https://kubernetes.io), [Amazon ECS](https://aws.amazon.com/ecs))
-- Databases (e.g. [Cassandra](https://cassandra.apache.org/_/index.html), [MongoDB](https://www.mongodb.com))
-- Cache (e.g. [Redis](https://redis.io/docs/manual/scaling))
+# Кэширование
 
-# Caching
+_ "В компьютерных науках есть только две трудные вещи: инвалидация кэша и именование вещей". - Фил Карлтон_
 
-_"There are only two hard things in Computer Science: cache invalidation and naming things." - Phil Karlton_
+![кэширование](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/caching.png)
 
-![caching](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/caching.png)
+Основная задача кэша - повысить производительность поиска данных за счет снижения необходимости обращаться к более медленному слою хранения. В отличие от баз данных, в которых данные обычно полные и долговременные, кэш обычно хранит подмножество данных на временной основе.
 
-A cache's primary purpose is to increase data retrieval performance by reducing the need to access the underlying slower storage layer. Trading off capacity for speed, a cache typically stores a subset of data transiently, in contrast to databases whose data is usually complete and durable.
+Кэши используют принцип _"недавно запрошенные данные, скорее всего, будут запрошены снова"._
 
-Caches take advantage of the locality of reference principle _"recently requested data is likely to be requested again"._
+## Кэширование и память
 
-## Caching and Memory
+Как и память компьютера, кэш - это компактная, быстродействующая память, которая хранит данные в виде иерархии уровней, начиная с первого и последовательно переходя от него. Они обозначаются как L1, L2, L3 и так далее. Кэш также записывается по запросу, например, когда произошло обновление и новое содержимое необходимо сохранить в кэше, заменив им старое.
 
-Like a computer's memory, a cache is a compact, fast-performing memory that stores data in a hierarchy of levels, starting at level one, and progressing from there sequentially. They are labeled as L1, L2, L3, and so on. A cache also gets written if requested, such as when there has been an update and new content needs to be saved to the cache, replacing the older content that was saved.
+Независимо от того, читается или записывается кэш, это происходит по одному блоку за раз. Каждый блок также имеет тег, который содержит место, где данные были сохранены в кэше. Когда данные запрашиваются из кэша, происходит поиск по тегам, чтобы найти нужное содержимое в памяти первого уровня (L1). Если нужные данные не найдены, поиск ведется еще в L2.
 
-No matter whether the cache is read or written, it's done one block at a time. Each block also has a tag that includes the location where the data was stored in the cache. When data is requested from the cache, a search occurs through the tags to find the specific content that's needed in level one (L1) of the memory. If the correct data isn't found, more searches are conducted in L2.
+Если данные не найдены и там, поиск продолжается в L3, затем в L4 и так далее, пока они не будут найдены, после чего они считываются и загружаются. Если данные вообще не найдены в кэше, то они записываются в него для быстрого извлечения в следующий раз.
 
-If the data isn't found there, searches are continued in L3, then L4, and so on until it has been found, then, it's read and loaded. If the data isn't found in the cache at all, then it's written into it for quick retrieval the next time.
+## Попадание в кэш и пропуск кэша
 
-## Cache hit and Cache miss
+### Попадание в кэш
 
-### Cache hit
+Попадание в кэш описывает ситуацию, когда содержимое успешно обслуживается из кэша. Метки быстро перебираются в памяти, и когда данные найдены и прочитаны, это считается попаданием в кэш.
 
-A cache hit describes the situation where content is successfully served from the cache. The tags are searched in the memory rapidly, and when the data is found and read, it's considered a cache hit.
+**Холодный, теплый и горячий кэш**.
 
-**Cold, Warm, and Hot Caches**
+Попадание в кэш также можно назвать холодным, теплым или горячим. В каждом из этих случаев описывается скорость считывания данных.
 
-A cache hit can also be described as cold, warm, or hot. In each of these, the speed at which the data is read is described.
+Горячий кэш - это случай, когда данные были считаны из памяти с максимально возможной скоростью. Это происходит, когда данные извлекаются из L1.
 
-A hot cache is an instance where data was read from the memory at the _fastest_ possible rate. This happens when the data is retrieved from L1.
+Холодный кэш - это чтение данных с _самой_ медленной возможной скоростью, однако оно все равно успешно, поэтому оно все равно считается попаданием в кэш. Данные просто находятся ниже в иерархии памяти, например в L3 или ниже.
 
-A cold cache is the _slowest_ possible rate for data to be read, though, it's still successful so it's still considered a cache hit. The data is just found lower in the memory hierarchy such as in L3, or lower.
+Теплый кэш используется для описания данных, которые находятся в L2 или L3. Он не так быстр, как горячий кэш, но все же быстрее, чем холодный. Как правило, называя кэш теплым, вы хотите сказать, что он медленнее и ближе к холодному кэшу, чем к горячему.
 
-A warm cache is used to describe data that's found in L2 or L3. It's not as fast as a hot cache, but it's still faster than a cold cache. Generally, calling a cache warm is used to express that it's slower and closer to a cold cache than a hot one.
+### Пропуск кэша
 
-### Cache miss
+Под пропуском кэша понимается случай, когда в памяти выполняется поиск, но данные не найдены. Когда это происходит, содержимое передается и записывается в кэш.
 
-A cache miss refers to the instance when the memory is searched, and the data isn't found. When this happens, the content is transferred and written into the cache.
+## Инвалидизация кэша
 
-## Cache Invalidation
+Признание кэша недействительным - это процесс, в ходе которого компьютерная система объявляет записи в кэше недействительными и удаляет или заменяет их. Если данные были изменены, они должны быть аннулированы в кэше, если нет, это может привести к непоследовательной работе приложения. Существует три вида систем кэширования:
 
-Cache invalidation is a process where the computer system declares the cache entries as invalid and removes or replaces them. If the data is modified, it should be invalidated in the cache, if not, this can cause inconsistent application behavior. There are three kinds of caching systems:
-
-### Write-through cache
+###  Запись через кэш (Write-through cache)
 
 ![write-through-cache](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/write-through-cache.png)
 
-Data is written into the cache and the corresponding database simultaneously.
+Данные записываются в кэш и соответствующую базу данных одновременно.
 
-**Pro**: Fast retrieval, complete data consistency between cache and storage.
+**Плюсы**: Быстрый поиск, полная согласованность данных между кэшем и хранилищем.
 
-**Con**: Higher latency for write operations.
+**Минусы**:Более высокая задержка при операциях записи.
 
-### Write-around cache
+### Кэш  с обходом записи (Write-around cache)
 
 ![write-around-cache](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/write-around-cache.png)
 
-Where write directly goes to the database or permanent storage, bypassing the cache.
+Когда запись идет напрямую в базу данных или постоянное хранилище, минуя кэш.
 
-**Pro**: This may reduce latency.
+**Плюсы**:Это может уменьшить задержку.
 
-**Con**: It increases cache misses because the cache system has to read the information from the database in case of a cache miss. As a result, this can lead to higher read latency in the case of applications that write and re-read the information quickly. Read happen from slower back-end storage and experiences higher latency.
+**Минусы**:Увеличивает количество пропусков кэша, поскольку в случае пропусков кэша системе приходится считывать информацию из базы данных. В результате это может привести к увеличению задержки чтения в случае приложений, которые быстро записывают и перечитывают информацию. Чтение происходит из более медленного внутреннего хранилища, что приводит к увеличению задержки.
 
-### Write-back cache
+### Кэш с обратной записью (Write-back cache)
 
 ![write-back-cache](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/write-back-cache.png)
 
-Where the write is only done to the caching layer and the write is confirmed as soon as the write to the cache completes. The cache then asynchronously syncs this write to the database.
+В этом случае запись выполняется только в слой кэширования, и запись подтверждается, как только запись в кэш завершается. Затем кэш асинхронно синхронизирует эту запись с базой данных.
 
-**Pro**: This would lead to reduced latency and high throughput for write-intensive applications.
+**Плюсы**: Это приведет к снижению задержек и высокой пропускной способности приложений, интенсивно работающих с записью.
 
-**Con**: There is a risk of data loss in case the caching layer crashes. We can improve this by having more than one replica acknowledging the write in the cache.
+**Минусы**: Существует риск потери данных в случае сбоя слоя кэширования. Мы можем улучшить эту ситуацию, имея более одной реплики, подтверждающей запись в кэш.
 
-## Eviction policies
+## Политики вытеснения
 
-Following are some of the most common cache eviction policies:
+Ниже перечислены наиболее распространенные политики вытеснения кэша:
 
-- **First In First Out (FIFO)**: The cache evicts the first block accessed first without any regard to how often or how many times it was accessed before.
-- **Last In First Out (LIFO)**: The cache evicts the block accessed most recently first without any regard to how often or how many times it was accessed before.
-- **Least Recently Used (LRU)**: Discards the least recently used items first.
-- **Most Recently Used (MRU)**: Discards, in contrast to LRU, the most recently used items first.
-- **Least Frequently Used (LFU)**: Counts how often an item is needed. Those that are used least often are discarded first.
-- **Random Replacement (RR)**: Randomly selects a candidate item and discards it to make space when necessary.
+- **First In First Out (FIFO)**: Кэш вытесняет первый блок, к которому обратились первым, не обращая внимания на то, как часто или сколько раз к нему обращались до этого.
+- **Last In First Out (LIFO)**: Кэш вытесняет блок, доступ к которому был получен последним, без учета того, как часто или сколько раз к нему обращались до этого.
+- **Least Recently Used (LRU)**: В первую очередь удаляются наименее часто используемые элементы.
+- **Most Recently Used (MRU)**: В отличие от LRU, в первую очередь отбрасываются наиболее часто используемые элементы.
+- **Least Frequently Used (LFU)**: Подсчитывает, как часто требуется тот или иной элемент. Те, которые используются реже всего, отбрасываются первыми.
+- **Random Replacement(RR)**: Случайно выбирает элемент-кандидат и выбрасывает его, чтобы освободить место, когда это необходимо.
 
-## Distributed Cache
+## Распределённый кэш
 
 ![distributed-cache](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/distributed-cache.png)
 
-A distributed cache is a system that pools together the random-access memory (RAM) of multiple networked computers into a single in-memory data store used as a data cache to provide fast access to data. While most caches are traditionally in one physical server or hardware component, a distributed cache can grow beyond the memory limits of a single computer by linking together multiple computers.
+Распределенный кэш - это система, объединяющая память с произвольным доступом (RAM) нескольких компьютеров, подключенных к сети, в единое хранилище данных в памяти, используемое в качестве кэша для обеспечения быстрого доступа к данным. В то время как большинство кэшей традиционно находятся в одном физическом сервере или аппаратном компоненте, распределенный кэш может выходить за пределы памяти одного компьютера, объединяя несколько компьютеров.
 
-## Global Cache
+## Глобальный кэш
 
 ![global-cache](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/caching/global-cache.png)
 
-As the name suggests, we will have a single shared cache that all the application nodes will use. When the requested data is not found in the global cache, it's the responsibility of the cache to find out the missing piece of data from the underlying data store.
+Как следует из названия, у нас будет один общий кэш, который будут использовать все узлы приложения. Если запрашиваемые данные не найдены в глобальном кэше, кэш отвечает за поиск недостающей части данных из базового хранилища данных.
 
-## Use cases
+## Примеры использования
 
-Caching can have many real-world use cases such as:
+Кэширование может иметь множество реальных вариантов использования, например:
 
-- Database Caching
-- Content Delivery Network (CDN)
-- Domain Name System (DNS) Caching
-- API Caching
+- Кэширование баз данных
+- Сеть доставки контента (CDN)
+- Кэширование системы доменных имен (DNS)
+- Кэширование API
 
-**When not to use caching?**
 
-Let's also look at some scenarios where we should not use cache:
+**Когда не стоит использовать кэширование?**
 
-- Caching isn't helpful when it takes just as long to access the cache as it does to access the primary data store.
-- Caching doesn't work as well when requests have low repetition (higher randomness), because caching performance comes from repeated memory access patterns.
-- Caching isn't helpful when the data changes frequently, as the cached version gets out of sync, and the primary data store must be accessed every time.
+Давайте также рассмотрим некоторые сценарии, в которых не следует использовать кэш:
 
-_It's important to note that a cache should not be used as permanent data storage. They are almost always implemented in volatile memory because it is faster, and thus should be considered transient._
+- Кэширование не помогает, если доступ к кэшу занимает столько же времени, сколько и доступ к основному хранилищу данных.
+- Кэширование не работает так же хорошо, когда запросы имеют низкую повторяемость (большую случайность), потому что производительность кэша зависит от повторяющихся шаблонов доступа к памяти.
+- Кэширование не помогает при частых изменениях данных, так как кэшированная версия выходит из синхронизации, а к первичному хранилищу данных приходится обращаться каждый раз.
 
-## Advantages
+_Важно отметить, что кэш не следует использовать в качестве постоянного хранилища данных. Они почти всегда реализуются в энергонезависимой памяти, потому что она быстрее, и поэтому должны рассматриваться как временные._
 
-Below are some advantages of caching:
+## Преимущества
 
-- Improves performance
-- Reduce latency
-- Reduce load on the database
-- Reduce network cost
-- Increase Read Throughput
+Ниже перечислены некоторые преимущества кэширования:
 
-## Examples
+- Повышает производительность
+- Сокращение задержки
+- Снижение нагрузки на базу данных
+- Снижение затрат на сеть
+- Повышение пропускной способности при чтении
 
-Here are some commonly used technologies for caching:
+## Примеры
+
+Вот несколько часто используемых технологий для кэширования:
 
 - [Redis](https://redis.io)
 - [Memcached](https://memcached.org)
 - [Amazon Elasticache](https://aws.amazon.com/elasticache)
 - [Aerospike](https://aerospike.com)
 
-# Content Delivery Network (CDN)
+# Сеть доставки контента (CDN)
 
-A content delivery network (CDN) is a geographically distributed group of servers that work together to provide fast delivery of internet content. Generally, static files such as HTML/CSS/JS, photos, and videos are served from CDN.
+Сеть доставки контента (CDN) - это географически распределенная группа серверов, которые работают вместе, чтобы обеспечить быструю доставку интернет-контента. Как правило, статические файлы, такие как HTML/CSS/JS, фотографии и видео, обслуживаются из CDN.
 
 ![cdn-map](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/content-delivery-network/cdn-map.png)
 
-## Why use a CDN?
+## Зачем использовать CDN?
 
-Content Delivery Network (CDN) increases content availability and redundancy while reducing bandwidth costs and improving security. Serving content from CDNs can significantly improve performance as users receive content from data centers close to them and our servers do not have to serve requests that the CDN fulfills.
+Сеть доставки контента (CDN) повышает доступность и избыточность контента, снижает затраты на пропускную способность и повышает безопасность. Обслуживание контента из CDN может значительно повысить производительность, поскольку пользователи получают контент из близких к ним центров обработки данных, а нашим серверам не приходится обслуживать запросы, которые выполняет CDN.
 
-## How does a CDN work?
+## Как работает CDN?
 
 ![cdn](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/content-delivery-network/cdn.png)
 
-In a CDN, the origin server contains the original versions of the content while the edge servers are numerous and distributed across various locations around the world.
+В CDN оригинальный сервер содержит оригинальные версии контента, в то время как пограничные серверы многочисленны и распределены по различным точкам мира.
 
-To minimize the distance between the visitors and the website's server, a CDN stores a cached version of its content in multiple geographical locations known as edge locations. Each edge location contains several caching servers responsible for content delivery to visitors within its proximity.
+Чтобы минимизировать расстояние между посетителями и сервером сайта, CDN хранит кэшированную версию своего контента в нескольких географических точках, известных как граничные точки. В каждой граничной точке расположено несколько кэширующих серверов, отвечающих за доставку контента посетителям в пределах своей близости.
 
-Once the static assets are cached on all the CDN servers for a particular location, all subsequent website visitor requests for static assets will be delivered from these edge servers instead of the origin, thus reducing the origin load and improving scalability.
+После того как статические активы кэшируются на всех серверах CDN для определенного местоположения, все последующие запросы посетителей сайта на статические активы будут доставляться с этих граничных серверов, а не с исходного, что снижает нагрузку на исходный сервер и улучшает масштабируемость.
 
-For example, when someone in the UK requests our website which might be hosted in the USA, they will be served from the closest edge location such as the London edge location. This is much quicker than having the visitor make a complete request to the origin server which will increase the latency.
+Например, когда кто-то из жителей Великобритании запрашивает наш сайт, который может быть размещен в США, он будет обслуживаться с ближайшего граничного сервера, например с граничного сервера в Лондоне. Это гораздо быстрее, чем если бы посетитель делал полный запрос к исходному серверу, что увеличивает задержку.
 
-## Types
+## Типы
 
-CDNs are generally divided into two types:
+CDN обычно делятся на два типа:
 
 ### Push CDNs
 
-Push CDNs receive new content whenever changes occur on the server. We take full responsibility for providing content, uploading directly to the CDN, and rewriting URLs to point to the CDN. We can configure when content expires and when it is updated. Content is uploaded only when it is new or changed, minimizing traffic, but maximizing storage.
+Push CDN получают новый контент каждый раз, когда на сервере происходят изменения. Мы берем на себя полную ответственность за предоставление контента, загрузку непосредственно в CDN и переписывание URL-адресов для указания на CDN. Мы можем настроить время истечения срока действия контента и время его обновления. Контент загружается только тогда, когда он новый или измененный, что минимизирует трафик, но максимизирует хранение.
 
-Sites with a small amount of traffic or sites with content that isn't often updated work well with push CDNs. Content is placed on the CDNs once, instead of being re-pulled at regular intervals.
+Сайты с небольшим объемом трафика или сайты с нечасто обновляемым контентом хорошо работают с push CDN. Контент размещается в CDN один раз, а не извлекается заново через регулярные промежутки времени.
 
-### Pull CDNs
+### Pull CDN
 
-In a Pull CDN situation, the cache is updated based on request. When the client sends a request that requires static assets to be fetched from the CDN if the CDN doesn't have it, then it will fetch the newly updated assets from the origin server and populate its cache with this new asset, and then send this new cached asset to the user.
+В ситуации с Pull CDN кэш обновляется на основе запроса. Когда клиент отправляет запрос, требующий статические активы из CDN, если у CDN их нет, то она получает только что обновленные активы с исходного сервера и заполняет свой кэш этими новыми активами, а затем отправляет эти новые кэшированные активы пользователю.
 
-Contrary to the Push CDN, this requires less maintenance because cache updates on CDN nodes are performed based on requests from the client to the origin server. Sites with heavy traffic work well with pull CDNs, as traffic is spread out more evenly with only recently-requested content remaining on the CDN.
+В отличие от Push CDN, этот способ требует меньше обслуживания, поскольку обновление кэша на узлах CDN происходит на основе запросов клиента к исходному серверу. Сайты с большим трафиком хорошо работают с pull CDN, так как трафик распределяется более равномерно, а на CDN остается только недавно запрошенный контент.
 
-## Disadvantages
+## Недостатки
 
-As we all know good things come with extra costs, so let's discuss some disadvantages of CDNs:
+Как мы все знаем, за все хорошее приходится платить, поэтому давайте обсудим некоторые недостатки CDN:
 
-- **Extra charges**: It can be expensive to use a CDN, especially for high-traffic services.
-- **Restrictions**: Some organizations and countries have blocked the domains or IP addresses of popular CDNs.
-- **Location**: If most of our audience is located in a country where the CDN has no servers, the data on our website may have to travel further than without using any CDN.
+- **Дополнительные расходы**: Использование CDN может быть дорогостоящим, особенно для сервисов с высоким трафиком.
+- **Ограничения**: Некоторые организации и страны блокируют домены или IP-адреса популярных CDN.
+- **Местоположение**: Если большая часть нашей аудитории находится в стране, где у CDN нет серверов, данные на нашем сайте, возможно, будут перемещаться дальше, чем без использования CDN.
 
-## Examples
 
-Here are some widely used CDNs:
+Translation results
+## Примеры
+
+Вот несколько широко используемых CDN:
 
 - [Amazon CloudFront](https://aws.amazon.com/cloudfront)
 - [Google Cloud CDN](https://cloud.google.com/cdn)
 - [Cloudflare CDN](https://www.cloudflare.com/cdn)
 - [Fastly](https://www.fastly.com/products/cdn)
 
-# Proxy
+# Прокси
 
-A proxy server is an intermediary piece of hardware/software sitting between the client and the backend server. It receives requests from clients and relays them to the origin servers. Typically, proxies are used to filter requests, log requests, or sometimes transform requests (by adding/removing headers, encrypting/decrypting, or compression).
+Прокси-сервер - это промежуточное оборудование/программное обеспечение, которое находится между клиентом и внутренним сервером. Он получает запросы от клиентов и передает их на исходные серверы. Обычно прокси-серверы используются для фильтрации запросов, регистрации запросов, а иногда и для преобразования запросов (добавление/удаление заголовков, шифрование/дешифрование или сжатие).
 
-## Types
+## Типы
 
-There are two types of proxies:
+Существует два типа прокси-серверов:
 
 ### Forward Proxy
 
-A forward proxy, often called a proxy, proxy server, or web proxy is a server that sits in front of a group of client machines. When those computers make requests to sites and services on the internet, the proxy server intercepts those requests and then communicates with web servers on behalf of those clients, like a middleman.
+Прокси-сервер, часто называемый прокси, прокси-сервер или веб-прокси, - это сервер, который находится перед группой клиентских компьютеров. Когда эти компьютеры делают запросы к сайтам и службам в Интернете, прокси-сервер перехватывает эти запросы и затем общается с веб-серверами от имени этих клиентов, как посредник.
 
 ![forward-proxy](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/proxy/forward-proxy.png)
 
-**Advantages**
+**Преимущества**
 
-Here are some advantages of a forward proxy:
+Вот некоторые преимущества прямого прокси-сервера:
 
-- Block access to certain content
-- Allows access to [geo-restricted](https://en.wikipedia.org/wiki/Geo-blocking) content
-- Provides anonymity
-- Avoid other browsing restrictions
+- Блокировка доступа к определенному контенту
+- Позволяет получить доступ к [гео-ограниченному](https://en.wikipedia.org/wiki/Geo-blocking) контенту
+- Обеспечивает анонимность
+- Избежать других ограничений на просмотр
 
-Although proxies provide the benefits of anonymity, they can still track our personal information. Setup and maintenance of a proxy server can be costly and requires configurations.
+Хотя прокси-серверы обеспечивают анонимность, они все равно могут отслеживать нашу личную информацию. Установка и обслуживание прокси-сервера может быть дорогостоящей и требует настройки.
 
 ### Reverse Proxy
 
-A reverse proxy is a server that sits in front of one or more web servers, intercepting requests from clients. When clients send requests to the origin server of a website, those requests are intercepted by the reverse proxy server.
+Обратный прокси-сервер - это сервер, который находится перед одним или несколькими веб-серверами и перехватывает запросы от клиентов. Когда клиенты отправляют запросы на исходный сервер веб-сайта, эти запросы перехватываются обратным прокси-сервером.
 
-The difference between a forward and reverse proxy is subtle but important. A simplified way to sum it up would be to say that a forward proxy sits in front of a client and ensures that no origin server ever communicates directly with that specific client. On the other hand, a reverse proxy sits in front of an origin server and ensures that no client ever communicates directly with that origin server.
+Разница между прямым и обратным прокси-сервером тонкая, но важная. Упрощенно можно сказать, что прямой прокси сидит перед клиентом и следит за тем, чтобы ни один сервер-оригинал никогда не общался напрямую с этим клиентом. С другой стороны, обратный прокси сидит перед сервером происхождения и гарантирует, что ни один клиент никогда не будет общаться напрямую с этим сервером.
 
 ![reverse-proxy](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/proxy/reverse-proxy.png)
 
-Introducing reverse proxy results in increased complexity. A single reverse proxy is a single point of failure, configuring multiple reverse proxies (i.e. a failover) further increases complexity.
+Внедрение обратного прокси приводит к увеличению сложности. Один обратный прокси - это единственная точка отказа, настройка нескольких обратных прокси (т. е. обход отказа) еще больше увеличивает сложность.
 
-**Advantages**
+**Преимущества**
 
-Here are some advantages of using a reverse proxy:
+Вот некоторые преимущества использования обратного прокси:
 
-- Improved security
-- Caching
-- SSL encryption
-- Load balancing
-- Scalability and flexibility
+- Повышенная безопасность
+- Кэширование
+- SSL-шифрование
+- Балансировка нагрузки
+- Масштабируемость и гибкость
 
-## Load balancer vs Reverse Proxy
+## Балансировщик нагрузки против обратного прокси
 
-Wait, isn't reverse proxy similar to a load balancer? Well, no as a load balancer is useful when we have multiple servers. Often, load balancers route traffic to a set of servers serving the same function, while reverse proxies can be useful even with just one web server or application server. A reverse proxy can also act as a load balancer but not the other way around.
+Подождите, разве обратный прокси не похож на балансировщик нагрузки? Нет, поскольку балансировщик нагрузки полезен, когда у нас есть несколько серверов. Часто балансировщики нагрузки направляют трафик на набор серверов, выполняющих одну и ту же функцию, в то время как обратные прокси могут быть полезны даже при наличии всего одного веб-сервера или сервера приложений. Обратный прокси также может выступать в роли балансировщика нагрузки, но не наоборот.
 
-## Examples
+## Примеры
 
-Below are some commonly used proxy technologies:
+Ниже приведены некоторые часто используемые прокси серверы:
 
 - [Nginx](https://www.nginx.com)
 - [HAProxy](http://www.haproxy.org)
