@@ -1049,130 +1049,129 @@ HDFS предназначена для надежного хранения оч�
 - [MariaDB](https://mariadb.org)
 - [Amazon Aurora](https://aws.amazon.com/rds/aurora)
 
-# NoSQL databases
+# Базы данных NoSQL
 
-NoSQL is a broad category that includes any database that doesn't use SQL as its primary data access language. These types of databases are also sometimes referred to as non-relational databases. Unlike in relational databases, data in a NoSQL database doesn't have to conform to a pre-defined schema. NoSQL databases follow [BASE consistency model](https://karanpratapsingh.com/courses/system-design/acid-and-base-consistency-models#base).
+NoSQL - это широкая категория, в которую входят любые базы данных, не использующие SQL в качестве основного языка доступа к данным. Эти типы баз данных также иногда называют нереляционными базами данных. В отличие от реляционных баз данных, данные в базах NoSQL не должны соответствовать заранее определенной схеме. Базы данных NoSQL следуют [модели согласованности BASE] (https://karanpratapsingh.com/courses/system-design/acid-and-base-consistency-models#base).
 
-Below are different types of NoSQL databases:
+Ниже представлены различные типы баз данных NoSQL:
 
-### Document
+### Документоориентированные
 
-A document database (also known as a document-oriented database or a document store) is a database that stores information in documents. They are general-purpose databases that serve a variety of use cases for both transactional and analytical applications.
+База данных документов (также известная как документоориентированная база данных или хранилище документов) - это база данных, хранящая информацию в документах. Это базы данных общего назначения, которые служат для различных целей, как для транзакционных, так и для аналитических приложений.
 
-**Advantages**
+**Преимущества
 
-- Intuitive and flexible
-- Easy horizontal scaling
-- Schemaless
+- Интуитивно понятная и гибкая
+- Легкое горизонтальное масштабирование
+- Бессхемность
 
-**Disadvantages**
+**Недостатки**
 
-- Schemaless
-- Non-relational
+- Бессхемность
+- Нереляционный
 
-**Examples**
+**Примеры**
 
 - [MongoDB](https://www.mongodb.com)
 - [Amazon DocumentDB](https://aws.amazon.com/documentdb)
 - [CouchDB](https://couchdb.apache.org)
 
-### Key-value
+### Ключ-значение
 
-One of the simplest types of NoSQL databases, key-value databases save data as a group of key-value pairs made up of two data items each. They're also sometimes referred to as a key-value store.
+Один из самых простых типов баз данных NoSQL, базы данных "ключ-значение" сохраняют данные в виде группы пар "ключ-значение", состоящих из двух элементов данных каждый. Их также иногда называют хранилищем ключевых значений.
 
-**Advantages**
+**Преимущества
 
-- Simple and performant
-- Highly scalable for high volumes of traffic
-- Session management
-- Optimized lookups
+- Простота и производительность
+- Высокая масштабируемость при больших объемах трафика
+- Управление сессиями
+- Оптимизированный поиск
 
-**Disadvantages**
+**Недостатки**
 
-- Basic CRUD
-- Values can't be filtered
-- Lacks indexing and scanning capabilities
-- Not optimized for complex queries
+- Базовый CRUD
+- Значения не могут быть отфильтрованы
+- Отсутствует возможность индексирования и сканирования
+- Не оптимизирован для сложных запросов
 
-**Examples**
+**Примеры**
 
 - [Redis](https://redis.io)
 - [Memcached](https://memcached.org)
 - [Amazon DynamoDB](https://aws.amazon.com/dynamodb)
 - [Aerospike](https://aerospike.com)
 
-### Graph
+### Графовые
 
-A graph database is a NoSQL database that uses graph structures for semantic queries with nodes, edges, and properties to represent and store data instead of tables or documents.
+Графовая база данных - это база данных NoSQL, которая использует графовые структуры для семантических запросов с узлами, ребрами и свойствами для представления и хранения данных вместо таблиц или документов.
 
-The graph relates the data items in the store to a collection of nodes and edges, the edges representing the relationships between the nodes. The relationships allow data in the store to be linked together directly and, in many cases, retrieved with one operation.
+Граф связывает элементы данных в хранилище с коллекцией узлов и ребер, причем ребра представляют собой отношения между узлами. Отношения позволяют напрямую связывать данные в хранилище и, во многих случаях, извлекать их одной операцией.
 
-**Advantages**
+**Преимущества**
 
-- Query speed
-- Agile and flexible
-- Explicit data representation
+- Скорость выполнения запросов
+- Маневренность и гибкость
+- Явное представление данных
 
-**Disadvantages**
+**Недостатки**
 
-- Complex
-- No standardized query language
+- Сложность
+- Отсутствие стандартизированного языка запросов
 
-**Use cases**
+**Примеры использования**
 
-- Fraud detection
-- Recommendation engines
-- Social networks
-- Network mapping
+- Обнаружение мошенничества
+- Системы рекомендаций
+- Социальные сети
+- Картирование сетей
 
-**Examples**
-
+**Примеры**
 - [Neo4j](https://neo4j.com)
 - [ArangoDB](https://www.arangodb.com)
 - [Amazon Neptune](https://aws.amazon.com/neptune)
 - [JanusGraph](https://janusgraph.org)
 
-### Time series
+### Временные ряды
 
-A time-series database is a database optimized for time-stamped, or time series, data.
+База данных временных рядов - это база данных, оптимизированная для работы с данными с временными метками, или временными рядами.
 
-**Advantages**
+**Преимущества**
 
-- Fast insertion and retrieval
-- Efficient data storage
+- Быстрая вставка и извлечение данных
+- Эффективное хранение данных
 
-**Use cases**
+**Примеры использования**
 
-- IoT data
-- Metrics analysis
-- Application monitoring
-- Understand financial trends
+- Данные IoT
+- Анализ метрик
+- Мониторинг приложений
+- Понимание финансовых тенденций
 
-**Examples**
+**Примеры**
 
 - [InfluxDB](https://www.influxdata.com)
 - [Apache Druid](https://druid.apache.org)
 
-### Wide column
+### Wide-column
 
-Wide column databases, also known as wide column stores, are schema-agnostic. Data is stored in column families, rather than in rows and columns.
+Базы данных с широкими колонками, также известные как хранилища с широкими колонками, не зависят от схемы. Данные хранятся в семействах столбцов, а не в строках и столбцах.
 
-**Advantages**
+**Преимущества**
 
-- Highly scalable, can handle petabytes of data
-- Ideal for real-time big data applications
+- Высокая масштабируемость, может обрабатывать петабайты данных.
+- Идеальны для приложений, работающих с большими данными в режиме реального времени
 
-**Disadvantages**
+**Недостатки**
 
-- Expensive
-- Increased write time
+- Дорогостоящий
+- Увеличенное время записи
 
-**Use cases**
+**Примеры использования**
 
-- Business analytics
-- Attribute-based data storage
+- Бизнес-аналитика
+- Хранение данных на основе атрибутов
 
-**Examples**
+**Примеры**
 
 - [BigTable](https://cloud.google.com/bigtable)
 - [Apache Cassandra](https://cassandra.apache.org)
@@ -1180,419 +1179,419 @@ Wide column databases, also known as wide column stores, are schema-agnostic. Da
 
 ### Multi-model
 
-Multi-model databases combine different database models (i.e. relational, graph, key-value, document, etc.) into a single, integrated backend. This means they can accommodate various data types, indexes, queries, and store data in more than one model.
+Многомодельные базы данных объединяют различные модели баз данных (например, реляционную, графовую, ключевую, документную и т. д.) в единый интегрированный бэкэнд. Это означает, что они могут работать с различными типами данных, индексами, запросами и хранить данные более чем в одной модели.
 
-**Advantages**
+**Преимущества**
 
-- Flexibility
-- Suitable for complex projects
-- Data consistent
+- Гибкость
+- Подходит для сложных проектов
+- Согласованность данных
 
-**Disadvantages**
+**Недостатки**
 
-- Complex
-- Less mature
+- Сложность
+- Менее зрелый
 
-**Examples**
+**Примеры**
 
 - [ArangoDB](https://www.arangodb.com)
 - [Azure Cosmos DB](https://azure.microsoft.com/en-in/services/cosmos-db)
 - [Couchbase](https://www.couchbase.com)
 
-# SQL vs NoSQL databases
+# SQL vs NoSQL базы данных
 
-In the world of databases, there are two main types of solutions, SQL (relational) and NoSQL (non-relational) databases. Both of them differ in the way they were built, the kind of information they store, and how they store it. Relational databases are structured and have predefined schemas while non-relational databases are unstructured, distributed, and have a dynamic schema.
+В мире баз данных существует два основных типа решений: SQL (реляционные) и NoSQL (нереляционные) базы данных. Оба типа отличаются друг от друга тем, как они были созданы, какой тип информации они хранят и как они ее хранят. Реляционные базы данных структурированы и имеют предопределенные схемы, в то время как нереляционные базы данных неструктурированы, распределены и имеют динамическую схему.
 
-## High-level differences
+## Высокоуровневые различия
 
-Here are some high-level differences between SQL and NoSQL:
+Вот некоторые высокоуровневые различия между SQL и NoSQL:
 
-### Storage
+### Хранение
 
-SQL stores data in tables, where each row represents an entity and each column represents a data point about that entity.
+В SQL данные хранятся в таблицах, где каждая строка представляет собой объект, а каждый столбец - данные об этом объекте.
 
-NoSQL databases have different data storage models such as key-value, graph, document, etc.
+Базы данных NoSQL используют различные модели хранения данных, такие как ключ-значение, граф, документ и т. д.
 
-### Schema
+### Схема
 
-In SQL, each record conforms to a fixed schema, meaning the columns must be decided and chosen before data entry and each row must have data for each column. The schema can be altered later, but it involves modifying the database using migrations.
+В SQL каждая запись соответствует фиксированной схеме, то есть столбцы должны быть определены и выбраны до ввода данных, а каждая строка должна содержать данные для каждого столбца. Схему можно изменить позже, но для этого необходимо модифицировать базу данных с помощью миграций.
 
-Whereas in NoSQL, schemas are dynamic. Fields can be added on the fly, and each _record_ (or equivalent) doesn't have to contain data for each _field_.
+В то время как в NoSQL схемы являются динамическими. Поля можно добавлять на лету, и каждая _запись_ (или ее эквивалент) не обязательно должна содержать данные для каждого _поля_.
 
-### Querying
+### Запрос
 
-SQL databases use SQL (structured query language) for defining and manipulating the data, which is very powerful.
+Базы данных SQL используют язык SQL (структурированный язык запросов) для определения и манипулирования данными, который является очень мощным.
 
-In a NoSQL database, queries are focused on a collection of documents. Different databases have different syntax for querying.
+В базах данных NoSQL запросы сосредоточены на коллекции документов. Различные базы данных имеют разный синтаксис для запросов.
 
-### Scalability
+### Масштабируемость
 
-In most common situations, SQL databases are vertically scalable, which can get very expensive. It is possible to scale a relational database across multiple servers, but this is a challenging and time-consuming process.
+В большинстве ситуаций базы данных SQL масштабируются вертикально, что может оказаться очень дорого. Реляционную базу данных можно масштабировать на несколько серверов, но это сложный и трудоемкий процесс.
 
-On the other hand, NoSQL databases are horizontally scalable, meaning we can add more servers easily to our NoSQL database infrastructure to handle large traffic. Any cheap commodity hardware or cloud instances can host NoSQL databases, thus making it a lot more cost-effective than vertical scaling. A lot of NoSQL technologies also distribute data across servers automatically.
+С другой стороны, базы данных NoSQL масштабируются горизонтально, то есть мы можем легко добавить дополнительные серверы в нашу инфраструктуру баз данных NoSQL для обработки большого трафика. Любое дешевое товарное оборудование или облачные инстансы могут служить хостингом для баз данных NoSQL, что делает их гораздо более экономичными, чем вертикальное масштабирование. Многие технологии NoSQL также автоматически распределяют данные между серверами.
 
-### Reliability
+### Надежность
 
-The vast majority of relational databases are ACID compliant. So, when it comes to data reliability and a safe guarantee of performing transactions, SQL databases are still the better bet.
+Подавляющее большинство реляционных баз данных соответствуют стандарту ACID. Поэтому, когда речь идет о надежности данных и гарантии выполнения транзакций, SQL-базы по-прежнему остаются лучшим выбором.
 
-Most of the NoSQL solutions sacrifice ACID compliance for performance and scalability.
+Большинство решений NoSQL жертвуют соответствием ACID ради производительности и масштабируемости.
 
-## Reasons
+## Причины
 
-As always we should always pick the technology that fits the requirements better. So, let's look at some reasons for picking SQL or NoSQL based database:
+Как всегда, мы всегда должны выбирать ту технологию, которая лучше соответствует требованиям. Итак, давайте рассмотрим некоторые причины выбора базы данных на основе SQL или NoSQL:
 
-**For SQL**
+**Для SQL**
 
-- Structured data with strict schema
-- Relational data
-- Need for complex joins
-- Transactions
-- Lookups by index are very fast
+- Структурированные данные со строгой схемой
+- Реляционные данные
+- Необходимость в сложных объединениях
+- Транзакции
+- Поиск по индексу очень быстрый
 
-**For NoSQL**
+**Для NoSQL**
 
-- Dynamic or flexible schema
-- Non-relational data
-- No need for complex joins
-- Very data-intensive workload
-- Very high throughput for IOPS
+- Динамическая или гибкая схема
+- Нереляционные данные
+- Нет необходимости в сложных объединениях
+- Очень интенсивная работа с данными
+- Очень высокая пропускная способность по IOPS
 
-# Database Replication
+# Репликация баз данных
 
-Replication is a process that involves sharing information to ensure consistency between redundant resources such as multiple databases, to improve reliability, fault-tolerance, or accessibility.
+Репликация - это процесс, который включает в себя обмен информацией для обеспечения согласованности между избыточными ресурсами, такими как несколько баз данных, для повышения надежности, отказоустойчивости или доступности.
 
-## Master-Slave Replication
+## Репликация "ведущий-ведомый
 
-The master serves reads and writes, replicating writes to one or more slaves, which serve only reads. Slaves can also replicate additional slaves in a tree-like fashion. If the master goes offline, the system can continue to operate in read-only mode until a slave is promoted to a master or a new master is provisioned.
+Ведущее устройство обслуживает чтение и запись, реплицируя записи на одно или несколько ведомых устройств, которые обслуживают только чтение. Ведомые также могут реплицировать дополнительные ведомые в виде дерева. Если ведущий выходит из строя, система может продолжать работать в режиме "только чтение" до тех пор, пока ведомый не будет переведен в разряд ведущих или не будет создан новый ведущий.
 
 ![master-slave-replication](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/database-replication/master-slave-replication.png)
 
-### Advantages
+### Преимущества
 
-- Backups of the entire database of relatively no impact on the master.
-- Applications can read from the slave(s) without impacting the master.
-- Slaves can be taken offline and synced back to the master without any downtime.
+- Резервное копирование всей базы данных относительно не влияет на работу ведущего.
+- Приложения могут считывать данные с ведомых устройств без воздействия на ведущее.
+- Ведомые устройства могут быть переведены в автономный режим и синхронизированы с ведущим устройством без каких-либо простоев.
 
-### Disadvantages
+### Недостатки
 
-- Replication adds more hardware and additional complexity.
-- Downtime and possibly loss of data when a master fails.
-- All writes also have to be made to the master in a master-slave architecture.
-- The more read slaves, the more we have to replicate, which will increase replication lag.
+- Репликация добавляет больше оборудования и дополнительную сложность.
+- Время простоя и возможная потеря данных при отказе ведущего устройства.
+- В архитектуре "ведущий-ведомый" все записи также должны производиться на ведущий.
+- Чем больше ведомых, тем больше нужно реплицировать, что увеличивает задержку репликации.
 
-## Master-Master Replication
+## Репликация мастер-мастер
 
-Both masters serve reads/writes and coordinate with each other. If either master goes down, the system can continue to operate with both reads and writes.
+Оба мастера обслуживают чтение/запись и координируют работу друг с другом. Если один из мастеров выходит из строя, система может продолжать работать как на чтение, так и на запись.
 
 ![master-master-replication](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/database-replication/master-master-replication.png)
 
-### Advantages
+### Преимущества
 
-- Applications can read from both masters.
-- Distributes write load across both master nodes.
-- Simple, automatic, and quick failover.
+- Приложения могут читать с обоих мастеров.
+- Распределение нагрузки на запись между обоими ведущими узлами.
+- Простое, автоматическое и быстрое восстановление работоспособности.
 
-### Disadvantages
+### Недостатки
 
-- Not as simple as master-slave to configure and deploy.
-- Either loosely consistent or have increased write latency due to synchronization.
-- Conflict resolution comes into play as more write nodes are added and as latency increases.
+- Не так просты в настройке и развертывании, как master-slave.
+- Либо слабо согласованы, либо имеют повышенную задержку записи из-за синхронизации.
+- Разрешение конфликтов становится актуальным при добавлении большего числа узлов записи и увеличении задержки.
 
-## Synchronous vs Asynchronous replication
+## Синхронная и асинхронная репликация
 
-The primary difference between synchronous and asynchronous replication is how the data is written to the replica. In synchronous replication, data is written to primary storage and the replica simultaneously. As such, the primary copy and the replica should always remain synchronized.
+Основное различие между синхронной и асинхронной репликацией заключается в способе записи данных в реплику. При синхронной репликации данные записываются в первичное хранилище и в реплику одновременно. Таким образом, первичная копия и реплика всегда должны оставаться синхронизированными.
 
-In contrast, asynchronous replication copies the data to the replica after the data is already written to the primary storage. Although the replication process may occur in near-real-time, it is more common for replication to occur on a scheduled basis and it is more cost-effective.
+В отличие от этого, при асинхронной репликации данные копируются в реплику после того, как они уже записаны в первичное хранилище. Хотя процесс репликации может происходить практически в режиме реального времени, чаще всего репликация выполняется по расписанию, и это более экономично.
 
-# Indexes
+# Индексы
 
-Indexes are well known when it comes to databases, they are used to improve the speed of data retrieval operations on the data store. An index makes the trade-offs of increased storage overhead, and slower writes (since we not only have to write the data but also have to update the index) for the benefit of faster reads. Indexes are used to quickly locate data without having to examine every row in a database table. Indexes can be created using one or more columns of a database table, providing the basis for both rapid random lookups and efficient access to ordered records.
+Индексы хорошо известны в базах данных, они используются для повышения скорости операций поиска данных в хранилище. Индекс - это компромисс между увеличением накладных расходов на хранение и замедлением записи (поскольку нам приходится не только записывать данные, но и обновлять индекс) и ускорением чтения. Индексы используются для быстрого поиска данных без необходимости изучать каждую строку в таблице базы данных. Индексы могут быть созданы на основе одного или нескольких столбцов таблицы базы данных, обеспечивая основу как для быстрого случайного поиска, так и для эффективного доступа к упорядоченным записям.
 
 ![indexes](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/indexes/indexes.png)
 
-An index is a data structure that can be perceived as a table of contents that points us to the location where actual data lives. So when we create an index on a column of a table, we store that column and a pointer to the whole row in the index. Indexes are also used to create different views of the same data. For large data sets, this is an excellent way to specify different filters or sorting schemes without resorting to creating multiple additional copies of the data.
+Индекс - это структура данных, которую можно воспринимать как оглавление, указывающее нам на место, где находятся реальные данные. Так, когда мы создаем индекс на столбец таблицы, мы храним этот столбец и указатель на всю строку в индексе. Индексы также используются для создания различных представлений одних и тех же данных. Для больших наборов данных это отличный способ задать различные фильтры или схемы сортировки, не прибегая к созданию нескольких дополнительных копий данных.
 
-One quality that database indexes can have is that they can be **dense** or **sparse**. Each of these index qualities comes with its own trade-offs. Let's look at how each index type would work:
+Одно из качеств, которым могут обладать индексы баз данных, заключается в том, что они могут быть **плотными** или **разрозненными**. Каждое из этих качеств индекса имеет свои компромиссы. Давайте рассмотрим, как работает каждый тип индекса:
 
-## Dense Index
+## Плотный индекс
 
-In a dense index, an index record is created for every row of the table. Records can be located directly as each record of the index holds the search key value and the pointer to the actual record.
+В плотном индексе для каждой строки таблицы создается запись индекса. Записи могут быть найдены напрямую, поскольку каждая запись индекса содержит значение ключа поиска и указатель на фактическую запись.
 
 ![dense-index](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/indexes/dense-index.png)
 
-Dense indexes require more maintenance than sparse indexes at write-time. Since every row must have an entry, the database must maintain the index on inserts, updates, and deletes. Having an entry for every row also means that dense indexes will require more memory. The benefit of a dense index is that values can be quickly found with just a binary search. Dense indexes also do not impose any ordering requirements on the data.
+Плотные индексы требуют большего обслуживания, чем разреженные, во время записи. Поскольку каждая строка должна иметь запись, база данных должна поддерживать индекс при вставках, обновлениях и удалениях. Наличие записи для каждого ряда также означает, что плотные индексы требуют больше памяти. Преимущество плотного индекса в том, что значения могут быть быстро найдены с помощью двоичного поиска. Плотные индексы также не накладывают никаких требований к упорядочиванию данных.
 
-## Sparse Index
+## Разреженный индекс
 
-In a sparse index, records are created only for some of the records.
+В разреженном индексе записи создаются только для некоторых записей.
 
 ![sparse-index](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/indexes/sparse-index.png)
 
-Sparse indexes require less maintenance than dense indexes at write-time since they only contain a subset of the values. This lighter maintenance burden means that inserts, updates, and deletes will be faster. Having fewer entries also means that the index will use less memory. Finding data is slower since a scan across the page typically follows the binary search. Sparse indexes are also optional when working with ordered data.
+Разреженные индексы требуют меньшего обслуживания, чем плотные индексы, во время записи, поскольку содержат только подмножество значений. Это меньшее бремя обслуживания означает, что вставки, обновления и удаления будут выполняться быстрее. Меньшее количество записей также означает, что индекс будет использовать меньше памяти. Поиск данных происходит медленнее, поскольку за двоичным поиском обычно следует сканирование всей страницы. Разреженные индексы также необязательны при работе с упорядоченными данными.
 
-# Normalization and Denormalization
+# Нормализация и денормализация
 
-## Terms
+## Термины
 
-Before we go any further, let's look at some commonly used terms in normalization and denormalization.
+Прежде чем мы продолжим, давайте рассмотрим некоторые часто используемые термины в нормализации и денормализации.
 
-### Keys
+### Ключи
 
-**Primary key**: Column or group of columns that can be used to uniquely identify every row of the table.
+**Первичный ключ**: Столбец или группа столбцов, которые могут быть использованы для уникальной идентификации каждой строки таблицы.
 
-**Composite key**: A primary key made up of multiple columns.
+**Композитный ключ**: Первичный ключ, состоящий из нескольких столбцов.
 
-**Super key**: Set of all keys that can uniquely identify all the rows present in a table.
+**Суперключ**: Набор всех ключей, которые могут однозначно идентифицировать все строки, присутствующие в таблице.
 
-**Candidate key**: Attributes that identify rows uniquely in a table.
+**Кандидатский ключ**: Атрибуты, которые однозначно идентифицируют строки в таблице.
 
-**Foreign key**: It is a reference to a primary key of another table.
+**Иностранный ключ**: Это ссылка на первичный ключ другой таблицы.
 
-**Alternate key**: Keys that are not primary keys are known as alternate keys.
+**Альтернативный ключ**: Ключи, которые не являются первичными, называются альтернативными ключами.
 
-**Surrogate key**: A system-generated value that uniquely identifies each entry in a table when no other column was able to hold properties of a primary key.
+**Замещающий ключ**: Генерируемое системой значение, которое однозначно идентифицирует каждую запись в таблице, когда ни один другой столбец не может обладать свойствами первичного ключа.
 
-### Dependencies
+### Зависимости
 
-**Partial dependency**: Occurs when the primary key determines some other attributes.
+**Частичная зависимость**: Возникает, когда первичный ключ определяет некоторые другие атрибуты.
 
-**Functional dependency**: It is a relationship that exists between two attributes, typically between the primary key and non-key attribute within a table.
+**Функциональная зависимость**: Это связь, существующая между двумя атрибутами, обычно между первичным ключом и неключевым атрибутом в таблице.
 
-**Transitive functional dependency**: Occurs when some non-key attribute determines some other attribute.
+**Транзитивная функциональная зависимость**: Возникает, когда неключевой атрибут определяет другой атрибут.
 
-### Anomalies
+### Аномалии
 
-Database anomaly happens when there is a flaw in the database due to incorrect planning or storing everything in a flat database. This is generally addressed by the process of normalization.
+Аномалия в базе данных возникает, когда в базе данных есть недостаток, связанный с неправильным планированием или хранением всего в плоской базе данных. Обычно это решается с помощью процесса нормализации.
 
-There are three types of database anomalies:
+Существует три типа аномалий баз данных:
 
-**Insertion anomaly**: Occurs when we are not able to insert certain attributes in the database without the presence of other attributes.
+**Аномалия вставки**: Возникает, когда мы не можем вставить определенные атрибуты в базу данных без наличия других атрибутов.
 
-**Update anomaly**: Occurs in case of data redundancy and partial update. In other words, a correct update of the database needs other actions such as addition, deletion, or both.
+**Аномалия обновления**: Возникает в случае избыточности данных и частичного обновления. Другими словами, для корректного обновления базы данных необходимы другие действия, такие как добавление, удаление или и то, и другое.
 
-**Deletion anomaly**: Occurs where deletion of some data requires deletion of other data.
+**Аномалия удаления**: Возникает, когда удаление одних данных требует удаления других.
 
-**Example**
+**Пример**.
 
-Let's consider the following table which is not normalized:
+Рассмотрим следующую таблицу, которая не нормализована:
 
-| ID  | Name   | Role              | Team |
+| ID | Name | Role | Team |
 | --- | ------ | ----------------- | ---- |
-| 1   | Peter  | Software Engineer | A    |
-| 2   | Brian  | DevOps Engineer   | B    |
-| 3   | Hailey | Product Manager   | C    |
-| 4   | Hailey | Product Manager   | C    |
-| 5   | Steve  | Frontend Engineer | D    |
+1 | 1 | Питер | инженер-программист | A |
+2 | 2 | Брайан | DevOps инженер | B |
+| 3 | Hailey | Product Manager | C |
+| 4 | Хейли | менеджер по продукту | C |
+5 | 5 | Стив | Frontend Engineer | D |
 
-Let's imagine, we hired a new person "John" but they might not be assigned a team immediately. This will cause an _insertion anomaly_ as the team attribute is not yet present.
+Представим, что мы наняли нового человека "Джон", но ему не сразу назначили команду. Это вызовет аномалию вставки, поскольку атрибут команды еще не присутствует.
 
-Next, let's say Hailey from Team C got promoted, to reflect that change in the database, we will need to update 2 rows to maintain consistency which can cause an _update anomaly_.
+Далее, допустим, Хейли из команды C получила повышение, чтобы отразить это изменение в базе данных, нам нужно будет обновить 2 строки для поддержания согласованности, что может вызвать аномалию _обновления_.
 
-Finally, we would like to remove Team B but to do that we will also need to remove additional information such as name and role, this is an example of a _deletion anomaly_.
+Наконец, мы хотим удалить команду B, но для этого нам также потребуется удалить дополнительную информацию, такую как имя и роль, это пример аномалии _удаления_.
 
-## Normalization
+## Нормализация
 
-Normalization is the process of organizing data in a database. This includes creating tables and establishing relationships between those tables according to rules designed both to protect the data and to make the database more flexible by eliminating redundancy and inconsistent dependency.
+Нормализация - это процесс организации данных в базе данных. Он включает в себя создание таблиц и установление отношений между ними в соответствии с правилами, призванными как защитить данные, так и сделать базу данных более гибкой за счет устранения избыточности и противоречивых зависимостей.
 
-### Why do we need normalization?
+### Зачем нужна нормализация?
 
-The goal of normalization is to eliminate redundant data and ensure data is consistent. A fully normalized database allows its structure to be extended to accommodate new types of data without changing the existing structure too much. As a result, applications interacting with the database are minimally affected.
+Цель нормализации - устранить избыточные данные и обеспечить их согласованность. Полностью нормализованная база данных позволяет расширять ее структуру для размещения новых типов данных без сильного изменения существующей структуры. В результате приложения, взаимодействующие с базой данных, подвергаются минимальному воздействию.
 
-### Normal forms
+### Нормальные формы
 
-Normal forms are a series of guidelines to ensure that the database is normalized. Let's discuss some essential normal forms:
+Нормальные формы - это ряд рекомендаций, обеспечивающих нормализацию базы данных. Давайте обсудим некоторые основные нормальные формы:
 
 **1NF**
 
-For a table to be in the first normal form (1NF), it should follow the following rules:
+Чтобы таблица находилась в первой нормальной форме (1НФ), она должна соответствовать следующим правилам:
 
-- Repeating groups are not permitted.
-- Identify each set of related data with a primary key.
-- Set of related data should have a separate table.
-- Mixing data types in the same column is not permitted.
+- Повторяющиеся группы не допускаются.
+- Каждый набор связанных данных должен быть идентифицирован первичным ключом.
+- Набор связанных данных должен иметь отдельную таблицу.
+- Смешение типов данных в одном столбце не допускается.
 
-**2NF**
+**2NF**.
 
-For a table to be in the second normal form (2NF), it should follow the following rules:
+Чтобы таблица была во второй нормальной форме (2НФ), она должна соответствовать следующим правилам:
 
-- Satisfies the first normal form (1NF).
-- Should not have any partial dependency.
+- Удовлетворяет первой нормальной форме (1НФ).
+- Не должна иметь частичных зависимостей.
 
 **3NF**
 
-For a table to be in the third normal form (3NF), it should follow the following rules:
+Чтобы таблица находилась в третьей нормальной форме (3NF), она должна соответствовать следующим правилам:
 
-- Satisfies the second normal form (2NF).
-- Transitive functional dependencies are not permitted.
+- Удовлетворяет второй нормальной форме (2НФ).
+- Переходные функциональные зависимости не допускаются.
 
 **BCNF**
 
-Boyce-Codd normal form (or BCNF) is a slightly stronger version of the third normal form (3NF) used to address certain types of anomalies not dealt with by 3NF as originally defined. Sometimes it is also known as the 3.5 normal form (3.5NF).
+Нормальная форма Бойса-Кодда (или BCNF) - это несколько более сильная версия третьей нормальной формы (3NF), используемая для решения некоторых типов аномалий, с которыми не справляется 3NF в своем первоначальном виде. Иногда ее также называют нормальной формой 3,5 (3,5НФ).
 
-For a table to be in the Boyce-Codd normal form (BCNF), it should follow the following rules:
+Чтобы таблица была в нормальной форме Бойса-Кодда (BCNF), она должна соответствовать следующим правилам:
 
-- Satisfied the third normal form (3NF).
-- For every functional dependency X → Y, X should be the super key.
+- Удовлетворяет третьей нормальной форме (3НФ).
+- Для каждой функциональной зависимости X → Y, X должен быть суперключом.
 
-_There are more normal forms such as 4NF, 5NF, and 6NF but we won't discuss them here. Check out this [amazing video](https://www.youtube.com/watch?v=GFQaEYEc8_8) that goes into detail._
+Существуют и другие нормальные формы, такие как 4НФ, 5НФ и 6НФ, но мы не будем обсуждать их здесь. Посмотрите это [удивительное видео](https://www.youtube.com/watch?v=GFQaEYEc8_8), где все подробно описано.
 
-In a relational database, a relation is often described as _"normalized"_ if it meets the third normal form. Most 3NF relations are free of insertion, update, and deletion anomalies.
+В реляционных базах данных отношение часто называют _"нормализованным"_, если оно соответствует третьей нормальной форме. Большинство 3НФ-отношений не содержат аномалий при вставке, обновлении и удалении.
 
-As with many formal rules and specifications, real-world scenarios do not always allow for perfect compliance. If you decide to violate one of the first three rules of normalization, make sure that your application anticipates any problems that could occur, such as redundant data and inconsistent dependencies.
+Как и в случае со многими формальными правилами и спецификациями, реальные сценарии не всегда позволяют добиться идеального соответствия. Если вы решите нарушить одно из первых трех правил нормализации, убедитесь, что ваше приложение предвидит возможные проблемы, такие как избыточные данные и противоречивые зависимости.
 
-### Advantages
+### Преимущества
 
-Here are some advantages of normalization:
+Вот некоторые преимущества нормализации:
 
-- Reduces data redundancy.
-- Better data design.
-- Increases data consistency.
-- Enforces referential integrity.
+- Уменьшение избыточности данных.
+- Улучшение дизайна данных.
+- Повышает согласованность данных.
+- Обеспечивает ссылочную целостность.
 
-### Disadvantages
+### Недостатки
 
-Let's look at some disadvantages of normalization:
+Давайте рассмотрим некоторые недостатки нормализации:
 
-- Data design is complex.
-- Slower performance.
-- Maintenance overhead.
-- Require more joins.
+- Сложный дизайн данных.
+- Замедление производительности.
+- Накладные расходы на обслуживание.
+- Требуется больше соединений.
 
-## Denormalization
+## Денормализация
 
-Denormalization is a database optimization technique in which we add redundant data to one or more tables. This can help us avoid costly joins in a relational database. It attempts to improve read performance at the expense of some write performance. Redundant copies of the data are written in multiple tables to avoid expensive joins.
+Денормализация - это техника оптимизации базы данных, при которой мы добавляем избыточные данные в одну или несколько таблиц. Это может помочь нам избежать дорогостоящих объединений в реляционной базе данных. Она пытается улучшить производительность чтения за счет некоторого снижения производительности записи. Избыточные копии данных записываются в несколько таблиц, чтобы избежать дорогостоящих объединений.
 
-Once data becomes distributed with techniques such as federation and sharding, managing joins across the network further increases complexity. Denormalization might circumvent the need for such complex joins.
+Когда данные становятся распределенными с помощью таких техник, как федерация и шардинг, управление соединениями по сети еще больше усложняется. Денормализация позволяет обойти необходимость в таких сложных соединениях.
 
-_Note: Denormalization does not mean reversing normalization._
+_Примечание: Денормализация не означает отмену нормализации._
 
-### Advantages
+### Преимущества
 
-Let's look at some advantages of denormalization:
+Давайте рассмотрим некоторые преимущества денормализации:
 
-- Retrieving data is faster.
-- Writing queries is easier.
-- Reduction in number of tables.
-- Convenient to manage.
+- Получение данных происходит быстрее.
+- Написание запросов стало проще.
+- Сокращение числа таблиц.
+- Удобство управления.
 
-### Disadvantages
+### Недостатки
 
-Below are some disadvantages of denormalization:
+Ниже перечислены некоторые недостатки денормализации:
 
-- Expensive inserts and updates.
-- Increases complexity of database design.
-- Increases data redundancy.
-- More chances of data inconsistency.
+- Дорогие вставки и обновления.
+- Повышает сложность проектирования базы данных.
+- Увеличение избыточности данных.
+- Больше шансов на несогласованность данных.
 
-# ACID and BASE consistency models
+# Модели согласованности ACID и BASE
 
-Let's discuss the ACID and BASE consistency models.
+Давайте обсудим модели согласованности ACID и BASE.
 
 ## ACID
 
-The term ACID stands for Atomicity, Consistency, Isolation, and Durability. ACID properties are used for maintaining data integrity during transaction processing.
+Термин ACID расшифровывается как Atomicity, Consistency, Isolation, and Durability. Свойства ACID используются для поддержания целостности данных во время обработки транзакций.
 
-In order to maintain consistency before and after a transaction relational databases follow ACID properties. Let us understand these terms:
+Для того чтобы поддерживать целостность данных до и после транзакции, реляционные базы данных следуют свойствам ACID. Давайте разберемся в этих терминах:
 
-### Atomic
+### Атомарный
 
-All operations in a transaction succeed or every operation is rolled back.
+Все операции в транзакции завершаются успешно или все операции откатываются.
 
 ### Consistent
 
-On the completion of a transaction, the database is structurally sound.
+По завершении транзакции база данных становится структурно целостной.
 
-### Isolated
+### Изолированная
 
-Transactions do not contend with one another. Contentious access to data is moderated by the database so that transactions appear to run sequentially.
+Транзакции не конфликтуют друг с другом. Спорный доступ к данным сдерживается базой данных, так что транзакции выглядят как последовательно выполняющиеся.
 
-### Durable
+### Долговечность
 
-Once the transaction has been completed and the writes and updates have been written to the disk, it will remain in the system even if a system failure occurs.
+После того как транзакция завершена и записи и обновления записаны на диск, она останется в системе, даже если произойдет сбой в системе.
 
 ## BASE
 
-With the increasing amount of data and high availability requirements, the approach to database design has also changed dramatically. To increase the ability to scale and at the same time be highly available, we move the logic from the database to separate servers. In this way, the database becomes more independent and focused on the actual process of storing data.
+С увеличением объема данных и требований к высокой доступности подход к проектированию баз данных также значительно изменился. Чтобы увеличить способность к масштабированию и одновременно обеспечить высокую доступность, мы переносим логику из базы данных на отдельные серверы. Таким образом, база данных становится более независимой и ориентированной на реальный процесс хранения данных.
 
-In the NoSQL database world, ACID transactions are less common as some databases have loosened the requirements for immediate consistency, data freshness, and accuracy in order to gain other benefits, like scale and resilience.
+В мире баз данных NoSQL транзакции ACID встречаются реже, поскольку некоторые базы данных ослабили требования к немедленной согласованности, свежести и точности данных, чтобы получить другие преимущества, такие как масштаб и отказоустойчивость.
 
-BASE properties are much looser than ACID guarantees, but there isn't a direct one-for-one mapping between the two consistency models. Let us understand these terms:
+Свойства BASE намного слабее, чем гарантии ACID, но прямого соответствия один к одному между этими двумя моделями согласованности не существует. Давайте разберемся в этих терминах:
 
-### Basic Availability
+### Базовая доступность
 
-The database appears to work most of the time.
+База данных работает большую часть времени.
 
-### Soft-state
+### Мягкое состояние
 
-Stores don't have to be write-consistent, nor do different replicas have to be mutually consistent all the time.
+Хранилища не обязательно должны быть согласованными на запись, как и разные реплики не должны быть все время взаимно согласованными.
 
-### Eventual consistency
+### Последовательность в конечном итоге
 
-The data might not be consistent immediately but eventually, it becomes consistent. Reads in the system are still possible even though they may not give the correct response due to inconsistency.
+Данные могут не быть согласованными сразу, но со временем они становятся согласованными. Чтение в системе все еще возможно, даже если оно может не дать правильного ответа из-за несогласованности.
 
-## ACID vs BASE Trade-offs
+## Компромиссы между ACID и BASE
 
-There's no right answer to whether our application needs an ACID or a BASE consistency model. Both the models have been designed to satisfy different requirements. While choosing a database we need to keep the properties of both the models and the requirements of our application in mind.
+Не существует правильного ответа на вопрос о том, какая модель согласованности нужна нашему приложению - ACID или BASE. Обе модели были разработаны для удовлетворения различных требований. Выбирая базу данных, мы должны учитывать свойства обеих моделей и требования нашего приложения.
 
-Given BASE's loose consistency, developers need to be more knowledgeable and rigorous about consistent data if they choose a BASE store for their application. It's essential to be familiar with the BASE behavior of the chosen database and work within those constraints.
+Учитывая слабую согласованность BASE, разработчикам необходимо быть более осведомленными и строгими в отношении согласованности данных, если они выбирают BASE-хранилище для своего приложения. Очень важно знать поведение BASE в выбранной базе данных и работать в рамках этих ограничений.
 
-On the other hand, planning around BASE limitations can sometimes be a major disadvantage when compared to the simplicity of ACID transactions. A fully ACID database is the perfect fit for use cases where data reliability and consistency are essential.
+С другой стороны, планирование с учетом BASE-ограничений иногда может стать серьезным недостатком по сравнению с простотой ACID-транзакций. Полностью ACID-база данных идеально подходит для тех случаев, когда важна надежность и согласованность данных.
 
-# CAP Theorem
+# CAP Теорема
 
-CAP theorem states that a distributed system can deliver only two of the three desired characteristics Consistency, Availability, and Partition tolerance (CAP).
+Теорема CAP утверждает, что распределенная система может обеспечить только две из трех желаемых характеристик - согласованность, доступность и устойчивость к разбиению (CAP).
 
 ![cap-theorem](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/cap-theorem/cap-theorem.png)
 
-Let's take a detailed look at the three distributed system characteristics to which the CAP theorem refers.
+Давайте подробно рассмотрим три характеристики распределенной системы, на которые ссылается теорема CAP.
 
-### Consistency
+### Согласованность
 
-Consistency means that all clients see the same data at the same time, no matter which node they connect to. For this to happen, whenever data is written to one node, it must be instantly forwarded or replicated across all the nodes in the system before the write is deemed "successful".
+Согласованность означает, что все клиенты видят одни и те же данные в одно и то же время, независимо от того, к какому узлу они подключаются. Чтобы этого не произошло, при записи данных на один узел они должны быть мгновенно переданы или реплицированы на все узлы системы, прежде чем запись будет признана "успешной".
 
-### Availability
+### Доступность
 
-Availability means that any client making a request for data gets a response, even if one or more nodes are down.
+Доступность означает, что любой клиент, сделавший запрос на получение данных, получит ответ, даже если один или несколько узлов не работают.
 
-### Partition tolerance
+### Толерантность к разделению
 
-Partition tolerance means the system continues to work despite message loss or partial failure. A system that is partition-tolerant can sustain any amount of network failure that doesn't result in a failure of the entire network. Data is sufficiently replicated across combinations of nodes and networks to keep the system up through intermittent outages.
+Устойчивость к разделам означает, что система продолжает работать, несмотря на потерю сообщений или частичный отказ. Система, устойчивая к разделам, может выдержать любое количество отказов сети, не приводящее к отказу всей сети. Данные в достаточной степени реплицируются между комбинациями узлов и сетей, чтобы система продолжала работать при периодических сбоях.
 
-## Consistency-Availability Tradeoff
+## Компромисс между согласованностью и доступностью
 
-We live in a physical world and can't guarantee the stability of a network, so distributed databases must choose Partition Tolerance (P). This implies a tradeoff between Consistency (C) and Availability (A).
+Мы живем в физическом мире и не можем гарантировать стабильность сети, поэтому распределенные базы данных должны выбирать терпимость к разделам (P). Это подразумевает компромисс между согласованностью (C) и доступностью (A).
 
-### CA database
+### База данных CA
 
-A CA database delivers consistency and availability across all nodes. It can't do this if there is a partition between any two nodes in the system, and therefore can't deliver fault tolerance.
+База данных CA обеспечивает согласованность и доступность на всех узлах. Она не может этого сделать, если между любыми двумя узлами в системе есть разделение, и поэтому не может обеспечить отказоустойчивость.
 
-**Example**: [PostgreSQL](https://www.postgresql.org), [MariaDB](https://mariadb.org).
+**Пример**: [PostgreSQL](https://www.postgresql.org), [MariaDB](https://mariadb.org).
 
-### CP database
+### База данных CP
 
-A CP database delivers consistency and partition tolerance at the expense of availability. When a partition occurs between any two nodes, the system has to shut down the non-consistent node until the partition is resolved.
+База данных CP обеспечивает согласованность и устойчивость к разделам за счет доступности. Когда между двумя узлами возникает разделение, система должна выключить несовместимый узел, пока разделение не будет устранено.
 
-**Example**: [MongoDB](https://www.mongodb.com), [Apache HBase](https://hbase.apache.org).
+**Пример**: [MongoDB](https://www.mongodb.com), [Apache HBase](https://hbase.apache.org).
 
-### AP database
+### База данных AP
 
-An AP database delivers availability and partition tolerance at the expense of consistency. When a partition occurs, all nodes remain available but those at the wrong end of a partition might return an older version of data than others. When the partition is resolved, the AP databases typically re-syncs the nodes to repair all inconsistencies in the system.
+База данных AP обеспечивает доступность и устойчивость к разделам за счет согласованности. Когда происходит разделение, все узлы остаются доступными, но узлы, находящиеся не на том конце раздела, могут возвращать более старую версию данных, чем другие. Когда раздел разрешается, базы данных AP обычно повторно синхронизируют узлы, чтобы устранить все несоответствия в системе.
 
-**Example**: [Apache Cassandra](https://cassandra.apache.org), [CouchDB](https://couchdb.apache.org).
+**Пример**: [Apache Cassandra](https://cassandra.apache.org), [CouchDB](https://couchdb.apache.org).
 
-# PACELC Theorem
+# Теорема PACELC
 
-The PACELC theorem is an extension of the CAP theorem. The CAP theorem states that in the case of network partitioning (P) in a distributed system, one has to choose between Availability (A) and Consistency (C).
+Теорема PACELC является расширением теоремы CAP. Теорема CAP утверждает, что в случае разделения сети (P) в распределенной системе необходимо выбирать между доступностью (A) и согласованностью (C).
 
-PACELC extends the CAP theorem by introducing latency (L) as an additional attribute of a distributed system. The theorem states that else (E), even when the system is running normally in the absence of partitions, one has to choose between latency (L) and consistency (C).
+PACELC расширяет теорему CAP, вводя задержку (L) в качестве дополнительного атрибута распределенной системы. Теорема утверждает, что в противном случае (E), даже когда система работает нормально при отсутствии разделов, приходится выбирать между задержкой (L) и согласованностью (C).
 
-_The PACELC theorem was first described by [Daniel J. Abadi](https://scholar.google.com/citations?user=zxeEF2gAAAAJ)._
+_Теорема PACELC была впервые описана [Daniel J. Abadi](https://scholar.google.com/citations?user=zxeEF2gAAAAJ)._
 
 ![pacelc-theorem](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/pacelc-theorem/pacelc-theorem.png)
 
-PACELC theorem was developed to address a key limitation of the CAP theorem as it makes no provision for performance or latency.
+Теорема PACELC была разработана для устранения ключевого ограничения теоремы CAP, поскольку она не учитывает производительность и задержку.
 
-For example, according to the CAP theorem, a database can be considered available if a query returns a response after 30 days. Obviously, such latency would be unacceptable for any real-world application.
+Например, согласно теореме CAP, база данных может считаться доступной, если запрос возвращает ответ через 30 дней. Очевидно, что такая задержка неприемлема для любого реального приложения.
 
 # Transactions
 
