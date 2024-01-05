@@ -356,110 +356,107 @@ _Примечание: обратный поиск DNS не является о�
 
 # Load Balancing
 
-Load balancing lets us distribute incoming network traffic across multiple resources ensuring high availability and reliability by sending requests only to resources that are online. This provides the flexibility to add or subtract resources as demand dictates.
+Балансировка нагрузки позволяет распределять входящий сетевой трафик между несколькими ресурсами, обеспечивая высокую доступность и надежность за счет отправки запросов только на те ресурсы, которые находятся в режиме онлайн. Это позволяет добавлять или убирать ресурсы в зависимости от потребностей.
 
-![load-balancing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/load-balancing/load-balancer.png)
+![Балансировка нагрузки](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/load-balancing/load-balancer.png)
 
-For additional scalability and redundancy, we can try to load balance at each layer of our system:
+Для дополнительной масштабируемости и избыточности мы можем попытаться сбалансировать нагрузку на каждом уровне нашей системы:
 
 ![load-balancing-layers](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/load-balancing/load-balancer-layers.png)
 
 ## But why?
 
-Modern high-traffic websites must serve hundreds of thousands, if not millions, of concurrent requests from users or clients. To cost-effectively scale to meet these high volumes, modern computing best practice generally requires adding more servers.
+Современные веб-сайты с высокой посещаемостью должны обслуживать сотни тысяч, а то и миллионы одновременных запросов от пользователей или клиентов. Чтобы экономически эффективно масштабироваться для удовлетворения таких больших объемов, современные вычислительные технологии обычно требуют добавления дополнительных серверов.
 
-A load balancer can sit in front of the servers and route client requests across all servers capable of fulfilling those requests in a manner that maximizes speed and capacity utilization. This ensures that no single server is overworked, which could degrade performance. If a single server goes down, the load balancer redirects traffic to the remaining online servers. When a new server is added to the server group, the load balancer automatically starts sending requests to it.
+Балансировщик нагрузки может находиться перед серверами и направлять запросы клиентов между всеми серверами, способными выполнить эти запросы, таким образом, чтобы максимально увеличить скорость и загрузку мощностей. Это гарантирует, что ни один сервер не будет перегружен, что может привести к снижению производительности. Если один сервер выходит из строя, балансировщик нагрузки перенаправляет трафик на оставшиеся серверы. Когда в группу серверов добавляется новый сервер, балансировщик нагрузки автоматически начинает отправлять на него запросы.
 
 ## Workload distribution
 
-This is the core functionality provided by a load balancer and has several common variations:
+Это основной функционал, предоставляемый балансировщиком нагрузки, который имеет несколько общих вариаций:
 
-- **Host-based**: Distributes requests based on the requested hostname.
-- **Path-based**: Using the entire URL to distribute requests as opposed to just the hostname.
-- **Content-based**: Inspects the message content of a request. This allows distribution based on content such as the value of a parameter.
+- **На основе хоста**: Распределяет запросы на основе запрашиваемого имени хоста.
+- **На основе пути**: Использование всего URL для распределения запросов, а не только имени хоста.
+- **На основе содержимого**: Проверяет содержимое сообщения в запросе. Это позволяет распределять запросы на основе содержимого, например значения параметра.
 
 ## Layers
 
-Generally speaking, load balancers operate at one of the two levels:
+Как правило, балансировщики нагрузки работают на одном из двух уровней:
 
-### Network layer
+### Сетевой уровень
 
-This is the load balancer that works at the network's transport layer, also known as layer 4. This performs routing based on networking information such as IP addresses and is not able to perform content-based routing. These are often dedicated hardware devices that can operate at high speed.
+Это балансировщик нагрузки, работающий на транспортном уровне сети, также известном как уровень 4. Он выполняет маршрутизацию на основе сетевой информации, такой как IP-адреса, и не может выполнять маршрутизацию на основе контента. Часто это специализированные аппаратные устройства, способные работать на высокой скорости.
 
-### Application layer
+### Прикладной уровень
 
-This is the load balancer that operates at the application layer, also known as layer 7. Load balancers can read requests in their entirety and perform content-based routing. This allows the management of load based on a full understanding of traffic.
+Это балансировщик нагрузки, работающий на прикладном уровне, также известном как уровень 7. Балансировщики нагрузки могут читать запросы целиком и выполнять маршрутизацию на основе содержимого. Это позволяет управлять нагрузкой на основе полного понимания трафика.
 
-## Types
+## Типы
 
-Let's look at different types of load balancers:
+Давайте рассмотрим различные типы балансировщиков нагрузки:
 
-### Software
+### Программные
 
-Software load balancers usually are easier to deploy than hardware versions. They also tend to be more cost-effective and flexible, and they are used in conjunction with software development environments. The software approach gives us the flexibility of configuring the load balancer to our environment's specific needs. The boost in flexibility may come at the cost of having to do more work to set up the load balancer. Compared to hardware versions, which offer more of a closed-box approach, software balancers give us more freedom to make changes and upgrades.
+Программные балансировщики нагрузки обычно проще развернуть, чем аппаратные. Они также более экономичны и гибки, и их используют вместе со средами разработки программного обеспечения. Программный подход дает нам возможность гибко настраивать балансировщик нагрузки в соответствии с конкретными потребностями нашей среды. Повышение гибкости может быть связано с необходимостью выполнять больше работы по настройке балансировщика нагрузки. По сравнению с аппаратными версиями, которые предлагают более закрытый подход, программные балансировщики дают нам больше свободы для внесения изменений и обновлений.
 
-Software load balancers are widely used and are available either as installable solutions that require configuration and management or as a managed cloud service.
+Программные балансировщики нагрузки широко распространены и предлагаются либо в виде устанавливаемых решений, требующих настройки и управления, либо в виде управляемых облачных сервисов.
 
-### Hardware
+### Аппаратные
 
-As the name implies, a hardware load balancer relies on physical, on-premises hardware to distribute application and network traffic. These devices can handle a large volume of traffic but often carry a hefty price tag and are fairly limited in terms of flexibility.
+Как следует из названия, аппаратный балансировщик нагрузки опирается на физическое, локальное оборудование для распределения приложений и сетевого трафика. Эти устройства могут обрабатывать большой объем трафика, но часто имеют высокую цену и довольно ограничены в гибкости.
 
-Hardware load balancers include proprietary firmware that requires maintenance and updates as new versions, and security patches are released.
+Аппаратные балансировщики нагрузки имеют собственное встроенное программное обеспечение, которое требует обслуживания и обновления по мере выхода новых версий и исправлений безопасности.
 
-### DNS
+Балансировка нагрузки DNS - это практика настройки домена в системе доменных имен (DNS) таким образом, чтобы клиентские запросы к домену распределялись между группой серверных машин.
 
-DNS load balancing is the practice of configuring a domain in the Domain Name System (DNS) such that client requests to the domain are distributed across a group of server machines.
+К сожалению, балансировка нагрузки DNS имеет присущие ей проблемы, ограничивающие ее надежность и эффективность. Прежде всего, DNS не проверяет серверы и сети на наличие сбоев или ошибок. Он всегда возвращает один и тот же набор IP-адресов для домена, даже если серверы не работают или недоступны.
 
-Unfortunately, DNS load balancing has inherent problems limiting its reliability and efficiency. Most significantly, DNS does not check for server and network outages, or errors. It always returns the same set of IP addresses for a domain even if servers are down or inaccessible.
+## Алгоритмы распределения запросов
 
-## Routing Algorithms
+Теперь давайте обсудим часто используемые алгоритмы маршрутизации:
 
-Now, let's discuss commonly used routing algorithms:
+- **Round-robin**: Запросы распределяются между серверами приложений по очереди.
+- **Weighted Round-robin**: Развивает простую технику Round-robin для учета различий в характеристиках серверов, таких как производительность вычислений и обработка трафика, с помощью весов, которые могут быть назначены администратором через DNS-записи.
+- **Наименьшие соединения**: Новый запрос отправляется на сервер с наименьшим количеством текущих соединений с клиентами. Относительная вычислительная мощность каждого сервера учитывается при определении сервера с наименьшим количеством соединений.
+- **Наименьшее время отклика**: Отправляет запросы на сервер, выбранный по формуле, сочетающей самое быстрое время отклика и наименьшее количество активных соединений.
+- **Наименьшая пропускная способность**: Этот метод измеряет трафик в мегабитах в секунду (Мбит/с), отправляя запросы клиентов на сервер с наименьшим трафиком в Мбит/с.
+- **Хеширование**: Распределяет запросы на основе определенного нами ключа, например IP-адреса клиента или URL-адреса запроса.
 
-- **Round-robin**: Requests are distributed to application servers in rotation.
-- **Weighted Round-robin**: Builds on the simple Round-robin technique to account for differing server characteristics such as compute and traffic handling capacity using weights that can be assigned via DNS records by the administrator.
-- **Least Connections**: A new request is sent to the server with the fewest current connections to clients. The relative computing capacity of each server is factored into determining which one has the least connections.
-- **Least Response Time**: Sends requests to the server selected by a formula that combines the fastest response time and fewest active connections.
-- **Least Bandwidth**: This method measures traffic in megabits per second (Mbps), sending client requests to the server with the least Mbps of traffic.
-- **Hashing**: Distributes requests based on a key we define, such as the client IP address or the request URL.
+## Преимущества
 
-## Advantages
+Балансировка нагрузки также играет ключевую роль в предотвращении простоев. Среди других преимуществ балансировки нагрузки можно выделить следующие:
 
-Load balancing also plays a key role in preventing downtime, other advantages of load balancing include the following:
+- Масштабируемость
+- Избыточность
+- Гибкость
+- Эффективность
 
-- Scalability
-- Redundancy
-- Flexibility
-- Efficiency
+## Избыточные балансировщики нагрузки
 
-## Redundant load balancers
+Как вы уже, наверное, догадались, сам балансировщик нагрузки может быть единственной точкой отказа. Чтобы преодолеть это, можно использовать второй или `N` количество балансировщиков нагрузки в режиме кластера.
 
-As you must've already guessed, the load balancer itself can be a single point of failure. To overcome this, a second or `N` number of load balancers can be used in a cluster mode.
-
-And, if there's a failure detection and the _active_ load balancer fails, another _passive_ load balancer can take over which will make our system more fault-tolerant.
+И если произойдет сбой и _активный_ балансировщик нагрузки выйдет из строя, другой _резервный_ балансировщик нагрузки сможет взять на себя его функции, что сделает нашу систему более отказоустойчивой.
 
 ![redundant-load-balancing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/load-balancing/redundant-load-balancer.png)
 
-## Features
+## Особенности
 
-Here are some commonly desired features of load balancers:
+Вот некоторые часто востребованные функции балансировщиков нагрузки:
 
-- **Autoscaling**: Starting up and shutting down resources in response to demand conditions.
-- **Sticky sessions**: The ability to assign the same user or device to the same resource in order to maintain the session state on the resource.
-- **Healthchecks**: The ability to determine if a resource is down or performing poorly in order to remove the resource from the load balancing pool.
-- **Persistence connections**: Allowing a server to open a persistent connection with a client such as a WebSocket.
-- **Encryption**: Handling encrypted connections such as TLS and SSL.
-- **Certificates**: Presenting certificates to a client and authentication of client certificates.
-- **Compression**: Compression of responses.
-- **Caching**: An application-layer load balancer may offer the ability to cache responses.
-- **Logging**: Logging of request and response metadata can serve as an important audit trail or source for analytics data.
-- **Request tracing**: Assigning each request a unique id for the purposes of logging, monitoring, and troubleshooting.
-- **Redirects**: The ability to redirect an incoming request based on factors such as the requested path.
-- **Fixed response**: Returning a static response for a request such as an error message.
-
+- **Автомасштабирование**: Запуск и отключение ресурсов в зависимости от спроса.
+- **Липкие сессии**: Возможность назначить одного и того же пользователя или устройство на один и тот же ресурс, чтобы сохранить состояние сессии на ресурсе.
+- **Проверка здоровья**: Возможность определить, что ресурс не работает или работает плохо, чтобы удалить его из пула балансировки нагрузки.
+- **Персистентные соединения**: Позволяет серверу открывать постоянное соединение с клиентом, например WebSocket.
+- **Шифрование**: Работа с зашифрованными соединениями, такими как TLS и SSL.
+- **Сертификаты**: Представление сертификатов клиенту и проверка подлинности клиентских сертификатов.
+- **Сжатие**: Сжатие ответов.
+- **Кэширование**: Балансировщик нагрузки прикладного уровня может предлагать возможность кэширования ответов.
+- **Запись в журнал**: Ведение журнала метаданных запросов и ответов может служить важным аудиторским следом или источником аналитических данных.
+- **Отслеживание запросов**: Присвоение каждому запросу уникального идентификатора для целей ведения журнала, мониторинга и устранения неполадок.
+- **Переадресация**: Возможность перенаправления входящего запроса на основе таких факторов, как запрашиваемый путь.
+- **Фиксированный ответ**: Возвращение статического ответа на запрос, например сообщения об ошибке.
 ## Examples
 
-Following are some of the load balancing solutions commonly used in the industry:
+Ниже перечислены некоторые решения по балансировке нагрузки, широко используемые в отрасли:
 
 - [Amazon Elastic Load Balancing](https://aws.amazon.com/elasticloadbalancing)
 - [Azure Load Balancing](https://azure.microsoft.com/en-in/services/load-balancer)
@@ -468,50 +465,51 @@ Following are some of the load balancing solutions commonly used in the industry
 - [Nginx](https://www.nginx.com)
 - [HAProxy](http://www.haproxy.org)
 
-# Clustering
+# Кластеризация
 
-At a high level, a computer cluster is a group of two or more computers, or nodes, that run in parallel to achieve a common goal. This allows workloads consisting of a high number of individual, parallelizable tasks to be distributed among the nodes in the cluster. As a result, these tasks can leverage the combined memory and processing power of each computer to increase overall performance.
+В общем случае компьютерный кластер - это группа из двух или более компьютеров, или узлов, которые работают параллельно для достижения общей цели. Это позволяет распределять между узлами кластера рабочие нагрузки, состоящие из большого количества отдельных, распараллеливаемых задач. В результате эти задачи могут использовать совокупную память и вычислительную мощность каждого компьютера для повышения общей производительности.
 
-To build a computer cluster, the individual nodes should be connected to a network to enable internode communication. The software can then be used to join the nodes together and form a cluster. It may have a shared storage device and/or local storage on each node.
+Для создания компьютерного кластера отдельные узлы должны быть подключены к сети, чтобы обеспечить межузловое взаимодействие. Затем с помощью программного обеспечения можно объединить узлы вместе и сформировать кластер. Он может иметь общее устройство хранения данных и/или локальное хранилище на каждом узле.
 
 ![cluster](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/clustering/cluster.png)
 
-Typically, at least one node is designated as the leader node and acts as the entry point to the cluster. The leader node may be responsible for delegating incoming work to the other nodes and, if necessary, aggregating the results and returning a response to the user.
+Как правило, хотя бы один узел назначается лидером и выступает в качестве точки входа в кластер. Ведущий узел может отвечать за делегирование входящей работы другим узлам и, при необходимости, агрегировать результаты и возвращать ответ пользователю.
 
-Ideally, a cluster functions as if it were a single system. A user accessing the cluster should not need to know whether the system is a cluster or an individual machine. Furthermore, a cluster should be designed to minimize latency and prevent bottlenecks in node-to-node communication.
+В идеале кластер функционирует как единая система. Пользователь, обращающийся к кластеру, не должен знать, является ли система кластером или отдельной машиной. Кроме того, кластер должен быть спроектирован таким образом, чтобы минимизировать задержки и предотвратить узкие места в коммуникации между узлами.
 
-## Types
 
-Computer clusters can generally be categorized into three types:
+## Типы
 
-- Highly available or fail-over
-- Load balancing
-- High-performance computing
+Компьютерные кластеры можно разделить на три типа:
 
-## Configurations
+- Высокая доступность или отказоустойчивость
+- Балансировка нагрузки
+- Высокопроизводительные вычисления
 
-The two most commonly used high availability (HA) clustering configurations are active-active and active-passive.
+## Конфигурации
+
+Две наиболее часто используемые конфигурации кластеризации высокой доступности (HA) - активно-активная и активно-пассивная.
 
 ### Active-Active
 
 ![active-active](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/clustering/active-active.png)
 
-An active-active cluster is typically made up of at least two nodes, both actively running the same kind of service simultaneously. The main purpose of an active-active cluster is to achieve load balancing. A load balancer distributes workloads across all nodes to prevent any single node from getting overloaded. Because there are more nodes available to serve, there will also be an improvement in throughput and response times.
+Активно-активный кластер обычно состоит как минимум из двух узлов, на которых одновременно активно работает один и тот же вид сервиса. Основная цель активно-активного кластера - добиться балансировки нагрузки. Балансировщик нагрузки распределяет рабочие нагрузки между всеми узлами, чтобы предотвратить перегрузку какого-либо одного узла. Поскольку для обслуживания доступно больше узлов, повышается пропускная способность и время отклика.
 
 ### Active-Passive
 
 ![active-passive](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-I/clustering/active-passive.png)
 
-Like the active-active cluster configuration, an active-passive cluster also consists of at least two nodes. However, as the name _active-passive_ implies, not all nodes are going to be active. For example, in the case of two nodes, if the first node is already active, then the second node must be passive or on standby.
+Как и конфигурация активно-пассивного кластера, активно-пассивный кластер также состоит как минимум из двух узлов. Однако, как следует из названия _активно-пассивный_, не все узлы будут активными. Например, в случае двух узлов, если первый узел уже активен, то второй узел должен быть пассивным или находиться в режиме ожидания.
 
-## Advantages
+## Преимущества
 
-Four key advantages of cluster computing are as follows:
+Ниже перечислены четыре ключевых преимущества кластерных вычислений:
 
-- High availability
-- Scalability
-- Performance
-- Cost-effective
+- Высокая доступность
+- Масштабируемость
+- Производительность
+- Экономичность
 
 ## Load balancing vs Clustering
 
