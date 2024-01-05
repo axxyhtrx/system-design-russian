@@ -912,137 +912,137 @@ RAID (Redundant Array of Independent Disks) - это способ хранени
 | Использование емкости | 100% | 50% | 67%-94% | 50%-80% | 50% |
 
 
-## Volumes
+## Тома (Volumes)
 
-Volume is a fixed amount of storage on a disk or tape. The term volume is often used as a synonym for the storage itself, but it is possible for a single disk to contain more than one volume or a volume to span more than one disk.
+Том - это фиксированный объем памяти на диске или ленте. Термин "том" часто используется как синоним самого хранилища, однако один диск может содержать более одного тома или том может охватывать более одного диска.
 
-## File storage
+## Файловое хранилище
 
-File storage is a solution to store data as files and present it to its final users as a hierarchical directories structure. The main advantage is to provide a user-friendly solution to store and retrieve files. To locate a file in file storage, the complete path of the file is required. It is economical and easily structured and is usually found on hard drives, which means that they appear exactly the same for the user and on the hard drive.
+Файловое хранилище - это решение, позволяющее хранить данные в виде файлов и представлять их конечным пользователям в виде иерархической структуры каталогов. Основное преимущество заключается в предоставлении удобного решения для хранения и извлечения файлов. Чтобы найти файл в файловом хранилище, требуется полный путь к нему. Он экономичен и легко структурируется и обычно находится на жестких дисках, то есть для пользователя и на жестком диске они выглядят одинаково.
 
-Example: [Amazon EFS](https://aws.amazon.com/efs), [Azure files](https://azure.microsoft.com/en-in/services/storage/files), [Google Cloud Filestore](https://cloud.google.com/filestore), etc.
+Пример: [Amazon EFS](https://aws.amazon.com/efs), [Azure files](https://azure.microsoft.com/en-in/services/storage/files), [Google Cloud Filestore](https://cloud.google.com/filestore) и т. д.
 
-## Block storage
+## Блочное хранение
 
-Block storage divides data into blocks (chunks) and stores them as separate pieces. Each block of data is given a unique identifier, which allows a storage system to place the smaller pieces of data wherever it is most convenient.
+При блочном хранении данные делятся на блоки (чанки) и хранятся как отдельные фрагменты. Каждому блоку данных присваивается уникальный идентификатор, что позволяет системе хранения размещать небольшие фрагменты данных там, где это удобнее всего.
 
-Block storage also decouples data from user environments, allowing that data to be spread across multiple environments. This creates multiple paths to the data and allows the user to retrieve it quickly. When a user or application requests data from a block storage system, the underlying storage system reassembles the data blocks and presents the data to the user or application
+Блочное хранение также отделяет данные от пользовательской среды, позволяя распределять их по нескольким средам. Это создает несколько путей к данным и позволяет пользователю быстро получить их. Когда пользователь или приложение запрашивает данные из блочной системы хранения, базовая система хранения повторно собирает блоки данных и представляет их пользователю или приложению.
 
-Example: [Amazon EBS](https://aws.amazon.com/ebs).
+Пример: [Amazon EBS](https://aws.amazon.com/ebs).
 
-## Object Storage
+## Объектное хранилище
 
-Object storage, which is also known as object-based storage, breaks data files up into pieces called objects. It then stores those objects in a single repository, which can be spread out across multiple networked systems.
+Объектное хранилище, которое также известно как объектно-ориентированное хранилище, разбивает файлы данных на части, называемые объектами. Затем эти объекты хранятся в едином хранилище, которое может быть распределено по нескольким сетевым системам.
 
-Example: [Amazon S3](https://aws.amazon.com/s3), [Azure Blob Storage](https://azure.microsoft.com/en-in/services/storage/blobs), [Google Cloud Storage](https://cloud.google.com/storage), etc.
+Пример: [Amazon S3](https://aws.amazon.com/s3), [Azure Blob Storage](https://azure.microsoft.com/en-in/services/storage/blobs), [Google Cloud Storage](https://cloud.google.com/storage) и т. д.
 
 ## NAS
 
-A NAS (Network Attached Storage) is a storage device connected to a network that allows storage and retrieval of data from a central location for authorized network users. NAS devices are flexible, meaning that as we need additional storage, we can add to what we have. It's faster, less expensive, and provides all the benefits of a public cloud on-site, giving us complete control.
+NAS (Network Attached Storage) - это устройство хранения данных, подключенное к сети, которое позволяет хранить и извлекать данные из центрального хранилища для авторизованных пользователей сети. Устройства NAS являются гибкими, то есть по мере необходимости мы можем добавлять к ним дополнительные хранилища. Это быстрее, дешевле и обеспечивает все преимущества публичного облака на месте, предоставляя нам полный контроль.
 
 ## HDFS
 
-The Hadoop Distributed File System (HDFS) is a distributed file system designed to run on commodity hardware. HDFS is highly fault-tolerant and is designed to be deployed on low-cost hardware. HDFS provides high throughput access to application data and is suitable for applications that have large data sets. It has many similarities with existing distributed file systems.
+Распределенная файловая система Hadoop (HDFS) - это распределенная файловая система, разработанная для работы на аппаратном обеспечении. HDFS обладает высокой отказоустойчивостью и предназначена для развертывания на недорогом оборудовании. HDFS обеспечивает высокую пропускную способность доступа к данным приложений и подходит для приложений с большими массивами данных. Она имеет много общего с существующими распределенными файловыми системами.
 
-HDFS is designed to reliably store very large files across machines in a large cluster. It stores each file as a sequence of blocks, all blocks in a file except the last block are the same size. The blocks of a file are replicated for fault tolerance.
+HDFS предназначена для надежного хранения очень больших файлов на машинах в большом кластере. Каждый файл хранится в виде последовательности блоков, причем все блоки в файле, кроме последнего, имеют одинаковый размер. Блоки файла реплицируются для обеспечения отказоустойчивости.
 
-# Databases and DBMS
+# Базы данных и СУБД
 
-## What is a Database?
+## Что такое база данных?
 
-A database is an organized collection of structured information, or data, typically stored electronically in a computer system. A database is usually controlled by a Database Management System (DBMS). Together, the data and the DBMS, along with the applications that are associated with them, are referred to as a database system, often shortened to just database.
+База данных - это организованная коллекция структурированной информации, или данных, обычно хранящихся в электронном виде в компьютерной системе. База данных обычно управляется системой управления базами данных (СУБД). Вместе данные и СУБД, а также связанные с ними приложения называются системой баз данных, часто сокращаемой до просто базы данных.
 
-## What is DBMS?
+## Что такое СУБД?
 
-A database typically requires a comprehensive database software program known as a Database Management System (DBMS). A DBMS serves as an interface between the database and its end-users or programs, allowing users to retrieve, update, and manage how the information is organized and optimized. A DBMS also facilitates oversight and control of databases, enabling a variety of administrative operations such as performance monitoring, tuning, and backup and recovery.
+Для работы с базой данных обычно требуется комплексное программное обеспечение, известное как система управления базами данных (СУБД). СУБД служит интерфейсом между базой данных и ее конечными пользователями или программами, позволяя пользователям получать, обновлять и управлять организацией и оптимизацией информации. СУБД также облегчает надзор и контроль над базами данных, позволяя выполнять различные административные операции, такие как мониторинг производительности, настройка, резервное копирование и восстановление.
 
-## Components
+## Компоненты
 
-Here are some common components found across different databases:
+Вот некоторые общие компоненты, встречающиеся в различных базах данных:
 
-### Schema
+### Схема
 
-The role of a schema is to define the shape of a data structure, and specify what kinds of data can go where. Schemas can be strictly enforced across the entire database, loosely enforced on part of the database, or they might not exist at all.
+Роль схемы заключается в определении формы структуры данных и указании того, какие типы данных могут находиться в ней. Схемы могут строго соблюдаться во всей базе данных, слабо соблюдаться в части базы данных, или их может не быть вовсе.
 
-### Table
+### Таблица
 
-Each table contains various columns just like in a spreadsheet. A table can have as meager as two columns and upwards of a hundred or more columns, depending upon the kind of information being put in the table.
+Каждая таблица содержит различные столбцы, как в электронных таблицах. В таблице может быть как всего два столбца, так и до сотни и более столбцов, в зависимости от типа информации, помещаемой в таблицу.
 
-### Column
+### Столбец
 
-A column contains a set of data values of a particular type, one value for each row of the database. A column may contain text values, numbers, enums, timestamps, etc.
+Столбец содержит набор значений данных определенного типа, по одному значению для каждой строки базы данных. Столбец может содержать текстовые значения, числа, перечисления, временные метки и т. д.
 
-### Row
+### Строка
 
-Data in a table is recorded in rows. There can be thousands or millions of rows in a table having any particular information.
+Данные в таблице записываются в строках. В таблице могут быть тысячи или миллионы строк, содержащих определенную информацию.
 
-## Types
+## Типы
 
 ![database-types](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/databases-and-dbms/database-types.png)
 
-Below are different types of databases:
+Ниже приведены различные типы баз данных:
 
 - **[SQL](https://karanpratapsingh.com/courses/system-design/sql-databases)**
 - **[NoSQL](https://karanpratapsingh.com/courses/system-design/nosql-databases)**
-  - Document
-  - Key-value
-  - Graph
-  - Timeseries
-  - Wide column
-  - Multi-model
+  - Документоориентированные
+  - Ключ-значение
+  - Графовые
+  - Временная серия
+  - Wide-column
+  - Multy-model
 
-SQL and NoSQL databases are broad topics and will be discussed separately in [SQL databases](https://karanpratapsingh.com/courses/system-design/sql-databases) and [NoSQL databases](https://karanpratapsingh.com/courses/system-design/nosql-databases). Learn how they compare to each other in [SQL vs NoSQL databases](https://karanpratapsingh.com/courses/system-design/sql-vs-nosql-databases).
+Базы данных SQL и NoSQL - это обширные темы, и они будут рассмотрены отдельно в разделах [Базы данных SQL](https://karanpratapsingh.com/courses/system-design/sql-databases) и [Базы данных NoSQL](https://karanpratapsingh.com/courses/system-design/nosql-databases). Узнайте, как они сравниваются друг с другом в [SQL vs NoSQL databases](https://karanpratapsingh.com/courses/system-design/sql-vs-nosql-databases).
 
-## Challenges
+## Проблемы
 
-Some common challenges faced while running databases at scale:
+Некоторые общие проблемы, возникающие при работе с базами данных в масштабе:
 
-- **Absorbing significant increases in data volume**: The explosion of data coming in from sensors, connected machines, and dozens of other sources.
-- **Ensuring data security**: Data breaches are happening everywhere these days, it's more important than ever to ensure that data is secure but also easily accessible to users.
-- **Keeping up with demand**: Companies need real-time access to their data to support timely decision-making and to take advantage of new opportunities.
-- **Managing and maintaining the database and infrastructure**: As databases become more complex and data volumes grow, companies are faced with the expense of hiring additional talent to manage their databases.
-- **Removing limits on scalability**: A business needs to grow if it's going to survive, and its data management must grow along with it. But it's very difficult to predict how much capacity the company will need, particularly with on-premises databases.
-- **Ensuring data residency, data sovereignty, or latency requirements**: Some organizations have use cases that are better suited to run on-premises. In those cases, engineered systems that are pre-configured and pre-optimized for running the database are ideal.
+- **Принятие значительного увеличения объема данных**: Взрыв данных, поступающих от датчиков, подключенных машин и десятков других источников.
+- **Обеспечение безопасности данных**: В наши дни утечки данных происходят повсеместно, и сейчас как никогда важно обеспечить безопасность данных, но в то же время их легкий доступ для пользователей.
+- **Соответствие требованиям**: Компаниям необходим доступ к данным в режиме реального времени, чтобы своевременно принимать решения и использовать новые возможности.
+- **Управление и поддержка базы данных и инфраструктуры**: По мере усложнения баз данных и роста объемов данных компании сталкиваются с необходимостью нанимать дополнительных специалистов для управления базами данных.
+- **Устранение ограничений на масштабируемость**: Чтобы выжить, бизнес должен расти, а вместе с ним должно расти и управление данными. Но очень сложно предсказать, сколько мощностей потребуется компании, особенно в случае с локальными базами данных.
+- **Обеспечение резидентности данных, суверенитета данных или требований к латентности**: В некоторых организациях есть сценарии использования, для которых лучше использовать локальные базы данных. В таких случаях идеальным вариантом являются инженерные системы, предварительно настроенные и оптимизированные для работы базы данных.
 
-# SQL databases
+# Базы данных SQL
 
-A SQL (or relational) database is a collection of data items with pre-defined relationships between them. These items are organized as a set of tables with columns and rows. Tables are used to hold information about the objects to be represented in the database. Each column in a table holds a certain kind of data and a field stores the actual value of an attribute. The rows in the table represent a collection of related values of one object or entity.
+База данных SQL (или реляционная) - это набор элементов данных с заранее определенными связями между ними. Эти элементы организованы в виде набора таблиц со столбцами и строками. Таблицы используются для хранения информации об объектах, которые должны быть представлены в базе данных. Каждый столбец таблицы содержит определенный тип данных, а поле хранит фактическое значение атрибута. Строки таблицы представляют собой набор связанных значений одного объекта или сущности.
 
-Each row in a table could be marked with a unique identifier called a primary key, and rows among multiple tables can be made related using foreign keys. This data can be accessed in many different ways without re-organizing the database tables themselves. SQL databases usually follow the [ACID consistency model](https://karanpratapsingh.com/courses/system-design/acid-and-base-consistency-models#acid).
+Каждая строка таблицы может быть помечена уникальным идентификатором, называемым первичным ключом, а строки нескольких таблиц могут быть связаны между собой с помощью внешних ключей. К этим данным можно получить доступ множеством различных способов, не перестраивая сами таблицы базы данных. Базы данных SQL обычно следуют [модели согласованности ACID](https://karanpratapsingh.com/courses/system-design/acid-and-base-consistency-models#acid).
 
-## Materialized views
+## Материализованные представления
 
-A materialized view is a pre-computed data set derived from a query specification and stored for later use. Because the data is pre-computed, querying a materialized view is faster than executing a query against the base table of the view. This performance difference can be significant when a query is run frequently or is sufficiently complex.
+Материализованное представление - это предварительно вычисленный набор данных, полученный из спецификации запроса и сохраненный для последующего использования. Поскольку данные предварительно вычислены, запрос к материализованному представлению выполняется быстрее, чем запрос к базовой таблице представления. Эта разница в производительности может быть значительной, если запрос выполняется часто или является достаточно сложным.
 
-It also enables data subsetting and improves the performance of complex queries that run on large data sets which reduces network loads. There are other uses of materialized views, but they are mostly used for performance and replication.
+Кроме того, это позволяет выполнять подмножество данных и повышает производительность сложных запросов, выполняемых на больших наборах данных, что снижает нагрузку на сеть. Существуют и другие варианты использования материализованных представлений, но в основном они применяются для повышения производительности и репликации.
 
-## N+1 query problem
+## Проблема N+1 запроса
 
-The N+1 query problem happens when the data access layer executes N additional SQL statements to fetch the same data that could have been retrieved when executing the primary SQL query. The larger the value of N, the more queries will be executed, the larger the performance impact.
+Проблема N+1 запроса возникает, когда уровень доступа к данным выполняет N дополнительных SQL-запросов для получения тех же данных, которые могли быть получены при выполнении основного SQL-запроса. Чем больше значение N, тем больше запросов будет выполнено, тем больше влияние на производительность.
 
-This is commonly seen in GraphQL and ORM (Object-Relational Mapping) tools and can be addressed by optimizing the SQL query or using a dataloader that batches consecutive requests and makes a single data request under the hood.
+Это часто встречается в GraphQL и ORM (Object-Relational Mapping) инструментах и может быть решено путем оптимизации SQL-запроса или использования dataloader, который группирует последовательные запросы и делает один запрос данных под капотом.
 
-## Advantages
+## Преимущества
 
-Let's look at some advantages of using relational databases:
+Давайте рассмотрим некоторые преимущества использования реляционных баз данных:
 
-- Simple and accurate
-- Accessibility
-- Data consistency
-- Flexibility
+- Простота и точность
+- Доступность
+- согласованность данных
+- Гибкость
 
-## Disadvantages
+## Недостатки
 
-Below are the disadvantages of relational databases:
+Ниже перечислены недостатки реляционных баз данных:
 
-- Expensive to maintain
-- Difficult schema evolution
-- Performance hits (join, denormalization, etc.)
-- Difficult to scale due to poor horizontal scalability
+- Дорогое обслуживание
+- Сложная эволюция схемы
+- Проблемы с производительностью (объединение, денормализация и т.д.)
+- Сложность масштабирования из-за плохой горизонтальной масштабируемости
 
-## Examples
+## Примеры
 
-Here are some commonly used relational databases:
+Вот некоторые широко используемые реляционные базы данных:
 
 - [PostgreSQL](https://www.postgresql.org)
 - [MySQL](https://www.mysql.com)
