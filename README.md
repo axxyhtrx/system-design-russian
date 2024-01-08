@@ -2696,73 +2696,73 @@ HTTP определяет набор методов запроса для ука
 
 REST API используются практически повсеместно и являются стандартом по умолчанию для разработки API. В целом REST API довольно гибкие и подходят практически для всех сценариев.
 
-### Example
+### Пример
 
-Here's an example usage of a REST API that operates on a **users** resource.
+Вот пример использования REST API, который работает с ресурсом **users**.
 
-| URI           | HTTP verb | Description         |
+| URI | HTTP-глагол | Описание |
 | ------------- | --------- | ------------------- |
-| /users        | GET       | Get all users       |
-| /users/\{id\} | GET       | Get a user by id    |
-| /users        | POST      | Add a new user      |
-| /users/\{id\} | PATCH     | Update a user by id |
-| /users/\{id\} | DELETE    | Delete a user by id |
+| /users | GET | Получить всех пользователей |
+| /users/\{id\} | GET | Получить пользователя по id |
+| /users | POST | Добавить нового пользователя |
+| /users/\{id\} | PATCH | Обновить пользователя по id |
+| /users/\{id\} | DELETE | Удалить пользователя по id |
 
-_There is so much more to learn when it comes to REST APIs, I will highly recommend looking into [Hypermedia as the Engine of Application State (HATEOAS)](https://en.wikipedia.org/wiki/HATEOAS)._
+Я настоятельно рекомендую изучить [Hypermedia as the Engine of Application State (HATEOAS)](https://en.wikipedia.org/wiki/HATEOAS)._Так много еще предстоит узнать, когда речь идет о REST API.
 
 ## GraphQL
 
-[GraphQL](https://graphql.org) is a query language and server-side runtime for APIs that prioritizes giving clients exactly the data they request and no more. It was developed by [Facebook](https://engineering.fb.com) and later open-sourced in 2015.
+[GraphQL](https://graphql.org) - это язык запросов и серверная среда выполнения для API, приоритетом которой является предоставление клиентам именно тех данных, которые они запрашивают, и не более. Он был разработан [Facebook](https://engineering.fb.com) и позже, в 2015 году, стал открытым.
 
-GraphQL is designed to make APIs fast, flexible, and developer-friendly. Additionally, GraphQL gives API maintainers the flexibility to add or deprecate fields without impacting existing queries. Developers can build APIs with whatever methods they prefer, and the GraphQL specification will ensure they function in predictable ways to clients.
+GraphQL призван сделать API быстрыми, гибкими и удобными для разработчиков. Кроме того, GraphQL дает разработчикам API возможность добавлять или упразднять поля, не влияя на существующие запросы. Разработчики могут создавать API с любыми методами, которые они предпочитают, а спецификация GraphQL обеспечит их предсказуемое функционирование для клиентов.
 
-_In GraphQL, the fundamental unit is a query._
+_В GraphQL основной единицей является запрос._
 
-### Concepts
+### Концепции
 
-Let's briefly discuss some key concepts in GraphQL:
+Давайте кратко обсудим некоторые ключевые понятия в GraphQL:
 
-**Schema**
+**Схема**.
 
-A GraphQL schema describes the functionality clients can utilize once they connect to the GraphQL server.
+Схема GraphQL описывает функциональность, которую клиенты могут использовать после подключения к серверу GraphQL.
 
-**Queries**
+**Запросы**.
 
-A query is a request made by the client. It can consist of fields and arguments for the query. The operation type of a query can also be a [mutation](https://graphql.org/learn/queries/#mutations) which provides a way to modify server-side data.
+Запрос - это запрос, сделанный клиентом. Он может состоять из полей и аргументов для запроса. Тип операции запроса также может быть [мутацией](https://graphql.org/learn/queries/#mutations), которая предоставляет возможность модифицировать данные на стороне сервера.
 
-**Resolvers**
+**Резольверы**.
 
-Resolver is a collection of functions that generate responses for a GraphQL query. In simple terms, a resolver acts as a GraphQL query handler.
+Резольвер - это набор функций, которые генерируют ответы на GraphQL-запрос. Проще говоря, резолвер выступает в роли обработчика запросов GraphQL.
 
-### Advantages
+### Преимущества
 
-Let's discuss some advantages of GraphQL:
+Давайте обсудим некоторые преимущества GraphQL:
 
-- Eliminates over-fetching of data.
-- Strongly defined schema.
-- Code generation support.
-- Payload optimization.
+- Устранение избыточной выборки данных.
+- Сильно определенная схема.
+- Поддержка генерации кода.
+- Оптимизация полезной нагрузки.
 
-### Disadvantages
+### Недостатки
 
-Let's discuss some disadvantages of GraphQL:
+Давайте обсудим некоторые недостатки GraphQL:
 
-- Shifts complexity to server-side.
-- Caching becomes hard.
-- Versioning is ambiguous.
-- N+1 problem.
+- Перенос сложности на сторону сервера.
+- Кэширование становится затруднительным.
+- Версионность неоднозначна.
+- Проблема N+1.
 
-### Use cases
+### Примеры использования
 
-GraphQL proves to be essential in the following scenarios:
+GraphQL оказывается незаменимым в следующих сценариях:
 
-- Reducing app bandwidth usage as we can query multiple resources in a single query.
-- Rapid prototyping for complex systems.
-- When we are working with a graph-like data model.
+- Сокращение пропускной способности приложения, так как мы можем запрашивать несколько ресурсов одним запросом.
+- Быстрое создание прототипов для сложных систем.
+- Когда мы работаем с графоподобной моделью данных.
 
-### Example
+### Пример
 
-Here's a GraphQL schema that defines a `User` type and a `Query` type.
+Вот схема GraphQL, определяющая тип `User` и тип `Query`.
 
 ```graphql
 type Query {
@@ -2777,7 +2777,7 @@ type User {
 }
 ```
 
-Using the above schema, the client can request the required fields easily without having to fetch the entire resource or guess what the API might return.
+Используя приведенную выше схему, клиент может легко запросить необходимые поля без необходимости получать весь ресурс или гадать, что может вернуть API.
 
 ```graphql
 {
@@ -2789,7 +2789,7 @@ Using the above schema, the client can request the required fields easily withou
 }
 ```
 
-This will give the following response to the client.
+В результате клиент получит следующий ответ:
 
 ```json
 {
@@ -2801,54 +2801,54 @@ This will give the following response to the client.
 }
 ```
 
-_Learn more about GraphQL at [graphql.org](https://graphql.org)._
+_Узнайте больше о GraphQL на [graphql.org](https://graphql.org)._
 
 ## gRPC
 
-[gRPC](https://grpc.io) is a modern open-source high-performance [Remote Procedure Call (RPC)](https://en.wikipedia.org/wiki/Remote_procedure_call) framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking, authentication and much more.
+[gRPC](https://grpc.io) - это современный высокопроизводительный фреймворк с открытым исходным кодом [Remote Procedure Call (RPC)](https://en.wikipedia.org/wiki/Remote_procedure_call), который может работать в любой среде. Он может эффективно соединять сервисы в центрах обработки данных и между ними благодаря подключаемой поддержке балансировки нагрузки, трассировки, проверки работоспособности, аутентификации и многого другого.
 
-### Concepts
+### Концепции
 
-Let's discuss some key concepts of gRPC.
+Давайте обсудим некоторые ключевые понятия gRPC.
 
-**Protocol buffers**
+**Буферы протоколов**.
 
-Protocol buffers provide a language and platform-neutral extensible mechanism for serializing structured data in a forward and backward-compatible way. It's like JSON, except it's smaller and faster, and it generates native language bindings.
+Буферы протоколов представляют собой нейтральный для языка и платформы расширяемый механизм для сериализации структурированных данных, совместимый как с прямыми, так и с обратными данными. Это похоже на JSON, только меньше и быстрее, и генерирует привязки к родным языкам.
 
-**Service definition**
+**Определение сервиса**.
 
-Like many RPC systems, gRPC is based on the idea of defining a service and specifying the methods that can be called remotely with their parameters and return types. gRPC uses protocol buffers as the [Interface Definition Language (IDL)](https://en.wikipedia.org/wiki/Interface_description_language) for describing both the service interface and the structure of the payload messages.
+Как и многие другие системы RPC, gRPC основан на идее определения сервиса и указания методов, которые могут быть вызваны удаленно, с их параметрами и возвращаемыми типами. gRPC использует буферы протоколов в качестве [Interface Definition Language (IDL)](https://en.wikipedia.org/wiki/Interface_description_language) для описания как интерфейса сервиса, так и структуры сообщений полезной нагрузки.
 
-### Advantages
+### Преимущества
 
-Let's discuss some advantages of gRPC:
+Давайте обсудим некоторые преимущества gRPC:
 
-- Lightweight and efficient.
-- High performance.
-- Built-in code generation support.
-- Bi-directional streaming.
+- Легкость и эффективность.
+- Высокая производительность.
+- Встроенная поддержка генерации кода.
+- Двунаправленная потоковая передача.
 
-### Disadvantages
+### Недостатки
 
-Let's discuss some disadvantages of gRPC:
+Давайте обсудим некоторые недостатки gRPC:
 
-- Relatively new compared to REST and GraphQL.
-- Limited browser support.
-- Steeper learning curve.
-- Not human readable.
+- Относительно новый по сравнению с REST и GraphQL.
+- Ограниченная поддержка браузеров.
+- Более сложная кривая обучения.
+- Не читается человеком.
 
-### Use cases
+### Примеры использования
 
-Below are some good use cases for gRPC:
+Ниже перечислены примеры использования gRPC:
 
-- Real-time communication via bi-directional streaming.
-- Efficient inter-service communication in microservices.
-- Low latency and high throughput communication.
-- Polyglot environments.
+- Общение в реальном времени с помощью двунаправленной потоковой передачи.
+- Эффективное межсервисное взаимодействие в микросервисах.
+- Коммуникация с низкой задержкой и высокой пропускной способностью.
+- Полиглотские среды.
 
-### Example
+### Пример
 
-Here's a basic example of a gRPC service defined in a `*.proto` file. Using this definition, we can easily code generate the `HelloService` service in the programming language of our choice.
+Вот базовый пример сервиса gRPC, определенного в файле `*.proto`. Используя это определение, мы можем легко сгенерировать код сервиса `HelloService` на выбранном нами языке программирования.
 
 ```protobuf
 service HelloService {
@@ -2866,291 +2866,291 @@ message HelloResponse {
 
 ## REST vs GraphQL vs gRPC
 
-Now that we know how these API designing techniques work, let's compare them based on the following parameters:
+Теперь, когда мы знаем, как работают эти техники проектирования API, давайте сравним их по следующим параметрам:
 
-- Will it cause tight coupling?
-- How _chatty_ (distinct API calls to get needed information) are the APIs?
-- What's the performance like?
-- How complex is it to integrate?
-- How well does the caching work?
-- Built-in tooling and code generation?
-- What's API discoverability like?
-- How easy is it to version APIs?
+- Приведет ли это к тесному взаимодействию?
+- Насколько _разговорчивы_ (отдельные вызовы API для получения необходимой информации) API?
+- Какова производительность?
+- Насколько сложна интеграция?
+- Насколько хорошо работает кэширование?
+- Встроенный инструментарий и генерация кода?
+- Какова открываемость API?
+- Насколько легко версифицировать API?
 
-| Type    | Coupling | Chattiness | Performance | Complexity | Caching | Codegen | Discoverability | Versioning |
+| Type | Coupling | Chattiness | Performance | Complexity | Caching | Codegen | Discoverability | Versioning |
 | ------- | -------- | ---------- | ----------- | ---------- | ------- | ------- | --------------- | ---------- |
-| REST    | Low      | High       | Good        | Medium     | Great   | Bad     | Good            | Easy       |
-| GraphQL | Medium   | Low        | Good        | High       | Custom  | Good    | Good            | Custom     |
-| gRPC    | High     | Medium     | Great       | Low        | Custom  | Great   | Bad             | Hard       |
+| REST | Низкий | Высокий | Хороший | Средний | Отличный | Плохой | Хороший | Легкий |
+| GraphQL | Средний | Низкий | Хороший | Высокий | Пользовательский | Хороший | Хороший | Пользовательский |
+| gRPC | Высокий | Средний | Большой | Низкий | Пользовательский | Большой | Плохой | Тяжелый |
 
-### Which API technology is better?
+### Какая технология API лучше?
 
-Well, the answer is none of them. There is no silver bullet as each of these technologies has its own advantages and disadvantages. Users only care about using our APIs in a consistent way, so make sure to focus on your domain and requirements when designing your API.
+Ответ - ни одна из них. Серебряной пули не существует, поскольку у каждой из этих технологий есть свои преимущества и недостатки. Пользователей волнует только последовательное использование наших API, поэтому при разработке API ориентируйтесь на свой домен и требования.
 
-# Long polling, WebSockets, Server-Sent Events (SSE)
+# Длинные опросы, WebSockets, события, отправляемые сервером (SSE)
 
-Web applications were initially developed around a client-server model, where the web client is always the initiator of transactions like requesting data from the server. Thus, there was no mechanism for the server to independently send, or push, data to the client without the client first making a request. Let's discuss some approaches to overcome this problem.
+Изначально веб-приложения разрабатывались по модели клиент-сервер, где веб-клиент всегда является инициатором транзакций, таких как запрос данных с сервера. Таким образом, не существовало механизма, позволяющего серверу самостоятельно отправлять данные клиенту без предварительного запроса со стороны клиента. Давайте обсудим некоторые подходы к решению этой проблемы.
 
-## Long polling
+## Длинный опрос
 
-HTTP Long polling is a technique used to push information to a client as soon as possible from the server. As a result, the server does not have to wait for the client to send a request.
+Длинный опрос HTTP - это техника, используемая для передачи клиенту информации с сервера как можно быстрее. В результате серверу не нужно ждать, пока клиент отправит запрос.
 
-In Long polling, the server does not close the connection once it receives a request from the client. Instead, the server responds only if any new message is available or a timeout threshold is reached.
+При длинном опросе сервер не закрывает соединение после получения запроса от клиента. Вместо этого сервер отвечает только в том случае, если доступно новое сообщение или достигнут порог таймаута.
 
 ![long-polling](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/long-polling-websockets-server-sent-events/long-polling.png)
 
-Once the client receives a response, it immediately sends a new request to the server to have a new pending connection to send data to the client, and the operation is repeated. With this approach, the server emulates a real-time server push feature.
+Как только клиент получает ответ, он тут же отправляет новый запрос на сервер, чтобы получить новое ожидающее соединение для отправки данных клиенту, и операция повторяется. При таком подходе сервер эмулирует функцию push в реальном времени.
 
-### Working
+### Устройство
 
-Let's understand how long polling works:
+Давайте разберемся, как работает длинный опрос:
 
-1. The client makes an initial request and waits for a response.
-2. The server receives the request and delays sending anything until an update is available.
-3. Once an update is available, the response is sent to the client.
-4. The client receives the response and makes a new request immediately or after some defined interval to establish a connection again.
+1. Клиент делает первоначальный запрос и ждет ответа.
+2. Сервер получает запрос и откладывает отправку до тех пор, пока не появится обновление.
+3. Как только обновление доступно, ответ отправляется клиенту.
+4. Клиент получает ответ и сразу же или через определенный промежуток времени делает новый запрос, чтобы снова установить соединение.
 
-### Advantages
+### Преимущества
 
-Here are some advantages of long polling:
+Вот некоторые преимущества длинного опроса:
 
-- Easy to implement, good for small-scale projects.
-- Nearly universally supported.
+- Простота реализации, подходит для небольших проектов.
+- Почти повсеместная поддержка.
 
-### Disadvantages
+### Недостатки
 
-A major downside of long polling is that it is usually not scalable. Below are some of the other reasons:
+Основной недостаток длинного опроса в том, что он обычно не масштабируется. Ниже перечислены некоторые другие причины:
 
-- Creates a new connection each time, which can be intensive on the server.
-- Reliable message ordering can be an issue for multiple requests.
-- Increased latency as the server needs to wait for a new request.
+- Каждый раз создается новое соединение, что может быть интенсивным для сервера.
+- Надежность упорядочивания сообщений может стать проблемой при многократных запросах.
+- Увеличение задержки, поскольку серверу приходится ждать нового запроса.
 
 ## WebSockets
 
-WebSocket provides full-duplex communication channels over a single TCP connection. It is a persistent connection between a client and a server that both parties can use to start sending data at any time.
+WebSocket обеспечивает полнодуплексные каналы связи через одно TCP-соединение. Это постоянное соединение между клиентом и сервером, которое обе стороны могут использовать для отправки данных в любое время.
 
-The client establishes a WebSocket connection through a process known as the WebSocket handshake. If the process succeeds, then the server and client can exchange data in both directions at any time. The WebSocket protocol enables the communication between a client and a server with lower overheads, facilitating real-time data transfer from and to the server.
+Клиент устанавливает соединение WebSocket с помощью процесса, известного как WebSocket handshake. Если процесс проходит успешно, то сервер и клиент могут обмениваться данными в обоих направлениях в любое время. Протокол WebSocket обеспечивает связь между клиентом и сервером с меньшими накладными расходами, облегчая передачу данных с сервера и на сервер в режиме реального времени.
 
 ![websockets](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/long-polling-websockets-server-sent-events/websockets.png)
 
-This is made possible by providing a standardized way for the server to send content to the client without being asked and allowing for messages to be passed back and forth while keeping the connection open.
+Это стало возможным благодаря стандартизированному способу отправки сервером содержимого клиенту без запроса и возможности передачи сообщений туда и обратно при сохранении соединения открытым.
 
-### Working
+### Устройство
 
-Let's understand how WebSockets work:
+Давайте разберемся, как работают WebSockets:
 
-1. The client initiates a WebSocket handshake process by sending a request.
-2. The request also contains an [HTTP Upgrade](https://en.wikipedia.org/wiki/HTTP/1.1_Upgrade_header) header that allows the request to switch to the WebSocket protocol (`ws://`).
-3. The server sends a response to the client, acknowledging the WebSocket handshake request.
-4. A WebSocket connection will be opened once the client receives a successful handshake response.
-5. Now the client and server can start sending data in both directions allowing real-time communication.
-6. The connection is closed once the server or the client decides to close the connection.
+1. Клиент инициирует процесс рукопожатия WebSocket, отправляя запрос.
+2. Запрос также содержит заголовок [HTTP Upgrade](https://en.wikipedia.org/wiki/HTTP/1.1_Upgrade_header), который позволяет переключиться на протокол WebSocket (`ws://`).
+3. Сервер отправляет ответ клиенту, подтверждая запрос WebSocket handshake.
+4. Соединение WebSocket будет открыто, как только клиент получит успешный ответ на рукопожатие.
+5. Теперь клиент и сервер могут начать отправлять данные в обоих направлениях, обеспечивая связь в реальном времени.
+6. Соединение будет закрыто, как только сервер или клиент решит закрыть соединение.
 
-### Advantages
+### Преимущества
 
-Below are some advantages of WebSockets:
+Ниже перечислены некоторые преимущества WebSockets:
 
-- Full-duplex asynchronous messaging.
-- Better origin-based security model.
-- Lightweight for both client and server.
+- Полнодуплексный асинхронный обмен сообщениями.
+- Лучшая модель безопасности на основе происхождения.
+- Легкий вес как для клиента, так и для сервера.
 
-### Disadvantages
+### Недостатки
 
-Let's discuss some disadvantages of WebSockets:
+Давайте обсудим некоторые недостатки WebSockets:
 
-- Terminated connections aren't automatically recovered.
-- Older browsers don't support WebSockets (becoming less relevant).
+- Прерванные соединения не восстанавливаются автоматически.
+- Старые браузеры не поддерживают WebSockets (становится менее актуальным).
 
-## Server-Sent Events (SSE)
+## События, отправляемые сервером (SSE)
 
-Server-Sent Events (SSE) is a way of establishing long-term communication between client and server that enables the server to proactively push data to the client.
+Server-Sent Events (SSE) - это способ установления долгосрочной связи между клиентом и сервером, который позволяет серверу проактивно передавать данные клиенту.
 
 ![server-sent-events](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/long-polling-websockets-server-sent-events/server-sent-events.png)
 
-It is unidirectional, meaning once the client sends the request it can only receive the responses without the ability to send new requests over the same connection.
+Он является однонаправленным, то есть после отправки запроса клиент может только получать ответы, не имея возможности отправлять новые запросы по тому же соединению.
 
-### Working
+### Устройство
 
-Let's understand how server-sent events work:
+Давайте разберемся, как работают события, отправляемые сервером:
 
-1. The client makes a request to the server.
-2. The connection between client and server is established and it remains open.
-3. The server sends responses or events to the client when new data is available.
+1. Клиент делает запрос к серверу.
+2. Устанавливается соединение между клиентом и сервером, которое остается открытым.
+3. Сервер отправляет ответы или события клиенту, когда появляются новые данные.
 
-### Advantages
+### Преимущества
 
-- Simple to implement and use for both client and server.
-- Supported by most browsers.
-- No trouble with firewalls.
+- Простота реализации и использования как для клиента, так и для сервера.
+- Поддерживается большинством браузеров.
+- Нет проблем с брандмауэрами.
 
-### Disadvantages
+### Недостатки
 
-- Unidirectional nature can be limiting.
-- Limitation for the maximum number of open connections.
-- Does not support binary data.
+- Однонаправленная природа может быть ограничивающей.
+- Ограничение на максимальное количество открытых соединений.
+- Не поддерживает двоичные данные.
 
 # Geohashing and Quadtrees
 
-## Geohashing
+# # Geohashing
 
-Geohashing is a [geocoding](https://en.wikipedia.org/wiki/Address_geocoding) method used to encode geographic coordinates such as latitude and longitude into short alphanumeric strings. It was created by [Gustavo Niemeyer](https://twitter.com/gniemeyer) in 2008.
+Geohashing - это метод [геокодирования](https://en.wikipedia.org/wiki/Address_geocoding), используемый для кодирования географических координат, таких как широта и долгота, в короткие буквенно-цифровые строки. Он был создан [Gustavo Niemeyer](https://twitter.com/gniemeyer) в 2008 году.
 
-For example, San Francisco with coordinates `37.7564, -122.4016` can be represented in geohash as `9q8yy9mf`.
+Например, Сан-Франциско с координатами `37.7564, -122.4016` может быть представлен в геохеше как `9q8yy9mf`.
 
-### How does Geohashing work?
+### Как работает геохеширование?
 
-Geohash is a hierarchical spatial index that uses Base-32 alphabet encoding, the first character in a geohash identifies the initial location as one of the 32 cells. This cell will also contain 32 cells. This means that to represent a point, the world is recursively divided into smaller and smaller cells with each additional bit until the desired precision is attained. The precision factor also determines the size of the cell.
+Geohash - это иерархический пространственный индекс, использующий кодировку алфавита Base-32. Первый символ в geohash идентифицирует начальное местоположение как одну из 32 ячеек. Эта ячейка также будет содержать 32 ячейки. Это означает, что для представления точки мир рекурсивно делится на все меньшие и меньшие ячейки с каждым дополнительным битом, пока не будет достигнута требуемая точность. Коэффициент точности также определяет размер ячейки.
 
 ![geohashing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/geohashing-and-quadtrees/geohashing.png)
 
-Geohashing guarantees that points are spatially closer if their Geohashes share a longer prefix which means the more characters in the string, the more precise the location. For example, geohashes `9q8yy9mf` and `9q8yy9vx` are spatially closer as they share the prefix `9q8yy9`.
+Геохэширование гарантирует, что точки будут пространственно ближе, если их геохэши имеют более длинный префикс, то есть чем больше символов в строке, тем точнее местоположение. Например, геохэши `9q8yy9mf` и `9q8yy9vx` пространственно ближе, так как имеют общий префикс `9q8yy9`.
 
-Geohashing can also be used to provide a degree of anonymity as we don't need to expose the exact location of the user because depending on the length of the geohash we just know they are somewhere within an area.
+Геохеширование также может использоваться для обеспечения некоторой степени анонимности, поскольку нам не нужно раскрывать точное местоположение пользователя, так как в зависимости от длины геохеша мы просто знаем, что он находится в определенном районе.
 
-The cell sizes of the geohashes of different lengths are as follows:
+Размеры ячеек геохэшей разной длины следующие:
 
-| Geohash length | Cell width | Cell height |
+| Длина Geohash | Ширина ячейки | Высота ячейки |
 | -------------- | ---------- | ----------- |
-| 1              | 5000 km    | 5000 km     |
-| 2              | 1250 km    | 1250 km     |
-| 3              | 156 km     | 156 km      |
-| 4              | 39.1 km    | 19.5 km     |
-| 5              | 4.89 km    | 4.89 km     |
-| 6              | 1.22 km    | 0.61 km     |
-| 7              | 153 m      | 153 m       |
-| 8              | 38.2 m     | 19.1 m      |
-| 9              | 4.77 m     | 4.77 m      |
-| 10             | 1.19 m     | 0.596 m     |
-| 11             | 149 mm     | 149 mm      |
-| 12             | 37.2 mm    | 18.6 mm     |
+| 1 | 5000 км | 5000 км |
+| 2 | 1250 км | 1250 км |
+| 3 | 156 км | 156 км |
+| 4 | 39,1 км | 19,5 км |
+| 5 | 4,89 км | 4,89 км |
+6 | | 1,22 км | 0,61 км |
+| 7 | 153 м | 153 м |
+| 8 | 38,2 м | 19,1 м |
+| 9 | 4,77 м | 4,77 м |
+| 10 | 1,19 м | 0,596 м |
+| 11 | 149 мм | 149 мм |
+| 12 | 37,2 мм | 18,6 мм |
 
-### Use cases
+### Примеры использования
 
-Here are some common use cases for Geohashing:
+Вот несколько распространенных вариантов использования Geohashing:
 
-- It is a simple way to represent and store a location in a database.
-- It can also be shared on social media as URLs since it is easier to share, and remember than latitudes and longitudes.
-- We can efficiently find the nearest neighbors of a point through very simple string comparisons and efficient searching of indexes.
+- Это простой способ представления и хранения местоположения в базе данных.
+- Им также можно делиться в социальных сетях в виде URL, поскольку им легче поделиться и запомнить, чем широту и долготу.
+- Мы можем эффективно находить ближайших соседей точки с помощью очень простых сравнений строк и эффективного поиска по индексам.
 
-### Examples
+### Примеры
 
-Geohashing is widely used and it is supported by popular databases.
+Геохашинг широко используется и поддерживается популярными базами данных.
 
 - [MySQL](https://www.mysql.com)
 - [Redis](http://redis.io)
 - [Amazon DynamoDB](https://aws.amazon.com/dynamodb)
 - [Google Cloud Firestore](https://cloud.google.com/firestore)
 
-## Quadtrees
+## Quadtrees.
 
-A quadtree is a tree data structure in which each internal node has exactly four children. They are often used to partition a two-dimensional space by recursively subdividing it into four quadrants or regions. Each child or leaf node stores spatial information. Quadtrees are the two-dimensional analog of [Octrees](https://en.wikipedia.org/wiki/Octree) which are used to partition three-dimensional space.
+Квадтри - это древовидная структура данных, в которой каждый внутренний узел имеет ровно четыре дочерних. Они часто используются для разбиения двумерного пространства путем рекурсивного деления его на четыре квадранта или области. Каждый дочерний или листовой узел хранит пространственную информацию. Квадтри - это двумерный аналог [Octrees](https://en.wikipedia.org/wiki/Octree), который используется для разбиения трехмерного пространства.
 
 ![quadtree](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/geohashing-and-quadtrees/quadtree.png)
 
-### Types of Quadtrees
+### Типы Quadtrees.
 
-Quadtrees may be classified according to the type of data they represent, including areas, points, lines, and curves. The following are common types of quadtrees:
+Квадродеревья можно классифицировать по типу данных, которые они представляют, включая области, точки, линии и кривые. Ниже перечислены распространенные типы квадтреков:
 
-- Point quadtrees
-- Point-region (PR) quadtrees
-- Polygonal map (PM) quadtrees
-- Compressed quadtrees
-- Edge quadtrees
+- Точечные квадтрики
+- Квадтрики "точка-область" (PR)
+- Квадтрики полигональной карты (PM)
+- Сжатые квадтрики
+- Краевые квадтрики
 
-### Why do we need Quadtrees?
+### Зачем нам нужны квадтрики?
 
-Aren't latitudes and longitudes enough? Why do we need quadtrees? While in theory using latitude and longitude we can determine things such as how close points are to each other using [euclidean distance](https://en.wikipedia.org/wiki/Euclidean_distance), for practical use cases it is simply not scalable because of its CPU-intensive nature with large data sets.
+Разве широты и долготы не достаточно? Зачем нам нужны квадтрики? Хотя теоретически, используя широту и долготу, мы можем определить, насколько близки точки друг к другу, используя [евклидово расстояние](https://en.wikipedia.org/wiki/Euclidean_distance), для практического использования этот метод просто не подходит, поскольку он требует больших затрат процессора при работе с большими наборами данных.
 
 ![quadtree-subdivision](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/geohashing-and-quadtrees/quadtree-subdivision.png)
 
-Quadtrees enable us to search points within a two-dimensional range efficiently, where those points are defined as latitude/longitude coordinates or as cartesian (x, y) coordinates. Additionally, we can save further computation by only subdividing a node after a certain threshold. And with the application of mapping algorithms such as the [Hilbert curve](https://en.wikipedia.org/wiki/Hilbert_curve), we can easily improve range query performance.
+Квадродеревья позволяют эффективно искать точки в двумерном диапазоне, где эти точки определены как координаты широты/долготы или как декартовы координаты (x, y). Кроме того, мы можем сэкономить на вычислениях, разбивая узел только после определенного порога. А применение алгоритмов отображения, таких как [кривая Гильберта] (https://en.wikipedia.org/wiki/Hilbert_curve), позволяет легко повысить производительность запросов к диапазонам.
 
-### Use cases
+### Примеры использования
 
-Below are some common uses of quadtrees:
+Ниже перечислены некоторые распространенные случаи использования квадтри:
 
-- Image representation, processing, and compression.
-- Spacial indexing and range queries.
-- Location-based services like Google Maps, Uber, etc.
-- Mesh generation and computer graphics.
-- Sparse data storage.
+- Представление, обработка и сжатие изображений.
+- Пространственное индексирование и запросы к диапазонам.
+- Сервисы, основанные на местоположении, такие как Google Maps, Uber и т. д.
+- Генерация сетки и компьютерная графика.
+- Хранение разреженных данных.
 
-# Circuit breaker
+# Автоматический выключатель (Circuit breaker)
 
-The circuit breaker is a design pattern used to detect failures and encapsulates the logic of preventing a failure from constantly recurring during maintenance, temporary external system failure, or unexpected system difficulties.
+Автоматический выключатель - это шаблон проектирования, используемый для обнаружения сбоев и заключающий в себе логику предотвращения постоянного повторения сбоя во время технического обслуживания, временного внешнего сбоя системы или неожиданных трудностей в работе системы.
 
 ![circuit-breaker](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/circuit-breaker/circuit-breaker.png)
 
-The basic idea behind the circuit breaker is very simple. We wrap a protected function call in a circuit breaker object, which monitors for failures. Once the failures reach a certain threshold, the circuit breaker trips, and all further calls to the circuit breaker return with an error, without the protected call being made at all. Usually, we'll also want some kind of monitor alert if the circuit breaker trips.
+Основная идея, лежащая в основе автоматического выключателя, очень проста. Мы оборачиваем вызов защищенной функции в объект автоматического выключателя, который отслеживает сбои. Как только количество отказов достигает определенного порога, выключатель срабатывает, и все дальнейшие обращения к нему возвращаются с ошибкой, при этом защищенный вызов вообще не выполняется. Как правило, при срабатывании автоматического выключателя нам также требуется какое-то оповещение монитора.
 
-## Why do we need circuit breaking?
+## Зачем нам нужен разрыв цепи?
 
-It's common for software systems to make remote calls to software running in different processes, probably on different machines across a network. One of the big differences between in-memory calls and remote calls is that remote calls can fail, or hang without a response until some timeout limit is reached. What's worse is if we have many callers on an unresponsive supplier, then we can run out of critical resources leading to cascading failures across multiple systems.
+Обычно программные системы выполняют удаленные вызовы программ, запущенных в разных процессах, возможно, на разных машинах в сети. Одно из главных различий между вызовами в памяти и удаленными вызовами заключается в том, что удаленные вызовы могут не работать или висеть без ответа до тех пор, пока не будет достигнут некоторый предел таймаута. Что еще хуже, так это то, что если у нас много абонентов на не отвечающем поставщике, то мы можем исчерпать критические ресурсы, что приведет к каскадным сбоям в нескольких системах.
 
-## States
+## Состояния
 
-Let's discuss circuit breaker states:
+Давайте обсудим состояния автоматического выключателя:
 
-### Closed
+### Замкнуто
 
-When everything is normal, the circuit breakers remain closed, and all the request passes through to the services as normal. If the number of failures increases beyond the threshold, the circuit breaker trips and goes into an open state.
+Когда все нормально, автоматические выключатели остаются закрытыми, и все запросы проходят через службы в обычном режиме. Если количество отказов превышает пороговое значение, автоматический выключатель срабатывает и переходит в открытое состояние.
 
 ### Open
 
-In this state circuit breaker returns an error immediately without even invoking the services. The Circuit breakers move into the half-open state after a certain timeout period elapses. Usually, it will have a monitoring system where the timeout will be specified.
+В этом состоянии автоматический выключатель сразу же возвращает ошибку, даже не обращаясь к службам. Автоматические выключатели переходят в полуоткрытое состояние по истечении определенного времени ожидания. Как правило, в системе мониторинга указывается время ожидания.
 
-### Half-open
+### Полуоткрытое состояние
 
-In this state, the circuit breaker allows a limited number of requests from the service to pass through and invoke the operation. If the requests are successful, then the circuit breaker will go to the closed state. However, if the requests continue to fail, then it goes back to the open state.
+В этом состоянии автоматический выключатель пропускает через себя ограниченное количество запросов от службы и вызывает операцию. Если запросы будут успешными, то выключатель перейдет в закрытое состояние. Однако если запросы продолжают терпеть неудачу, то он возвращается в открытое состояние.
 
-# Rate Limiting
+# Ограничение скорости
 
-Rate limiting refers to preventing the frequency of an operation from exceeding a defined limit. In large-scale systems, rate limiting is commonly used to protect underlying services and resources. Rate limiting is generally used as a defensive mechanism in distributed systems, so that shared resources can maintain availability. It also protects our APIs from unintended or malicious overuse by limiting the number of requests that can reach our API in a given period of time.
+Ограничение скорости - это предотвращение превышения частоты операций над заданным пределом. В крупномасштабных системах ограничение скорости обычно используется для защиты базовых служб и ресурсов. Ограничение скорости обычно используется в качестве защитного механизма в распределенных системах, чтобы общие ресурсы могли поддерживать доступность. Оно также защищает наши API от непреднамеренного или злонамеренного чрезмерного использования, ограничивая количество запросов, которые могут поступить к нашему API за определенный период времени.
 
 ![rate-limiting](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/rate-limiting/rate-limiting.png)
 
-## Why do we need Rate Limiting?
+## Зачем нам нужно ограничение скорости?
 
-Rate limiting is a very important part of any large-scale system and it can be used to accomplish the following:
+Ограничение скорости - очень важная часть любой крупномасштабной системы, и оно может быть использовано для достижения следующих целей:
 
-- Avoid resource starvation as a result of Denial of Service (DoS) attacks.
-- Rate Limiting helps in controlling operational costs by putting a virtual cap on the auto-scaling of resources which if not monitored might lead to exponential bills.
-- Rate limiting can be used as defense or mitigation against some common attacks.
-- For APIs that process massive amounts of data, rate limiting can be used to control the flow of that data.
+- Избежать голодания ресурсов в результате атак типа "отказ в обслуживании" (DoS).
+- Ограничение скорости помогает контролировать эксплуатационные расходы, устанавливая виртуальный лимит на автоматическое масштабирование ресурсов, которое, если за ним не следить, может привести к экспоненциальным счетам.
+- Ограничение скорости может использоваться в качестве защиты или смягчения последствий некоторых распространенных атак.
+- Для API, обрабатывающих огромные объемы данных, ограничение скорости может быть использовано для контроля потока этих данных.
 
-## Algorithms
+## Алгоритмы
 
-There are various algorithms for API rate limiting, each with its advantages and disadvantages. Let's briefly discuss some of these algorithms:
+Существуют различные алгоритмы ограничения скорости API, каждый из которых имеет свои преимущества и недостатки. Давайте вкратце обсудим некоторые из этих алгоритмов:
 
 ### Leaky Bucket
 
-Leaky Bucket is an algorithm that provides a simple, intuitive approach to rate limiting via a queue. When registering a request, the system appends it to the end of the queue. Processing for the first item on the queue occurs at a regular interval or first-in, first-out (FIFO). If the queue is full, then additional requests are discarded (or leaked).
+Leaky Bucket - это алгоритм, который обеспечивает простой и интуитивно понятный подход к ограничению скорости с помощью очереди. При регистрации запроса система добавляет его в конец очереди. Обработка первого элемента в очереди происходит с регулярным интервалом или по принципу "первый пришел - первый ушел" (FIFO). Если очередь переполнена, то дополнительные запросы отбрасываются (или просачиваются).
 
 ### Token Bucket
 
-Here we use a concept of a _bucket_. When a request comes in, a token from the bucket must be taken and processed. The request will be refused if no token is available in the bucket, and the requester will have to try again later. As a result, the token bucket gets refreshed after a certain time period.
+Здесь мы используем концепцию _ведра_. Когда поступает запрос, токен из ведра должен быть взят и обработан. Если в ведре нет токена, запрос будет отклонен, и запросчику придется повторить попытку позже. В результате ведро токенов обновляется через определенный промежуток времени.
 
-### Fixed Window
+### Фиксированное окно
 
-The system uses a window size of `n` seconds to track the fixed window algorithm rate. Each incoming request increments the counter for the window. It discards the request if the counter exceeds a threshold.
+Система использует окно размером в `n` секунд для отслеживания скорости работы алгоритма с фиксированным окном. Каждый входящий запрос увеличивает счетчик для этого окна. Система отбрасывает запрос, если счетчик превышает пороговое значение.
 
-### Sliding Log
+### Скользящий журнал
 
-Sliding Log rate-limiting involves tracking a time-stamped log for each request. The system stores these logs in a time-sorted hash set or table. It also discards logs with timestamps beyond a threshold. When a new request comes in, we calculate the sum of logs to determine the request rate. If the request would exceed the threshold rate, then it is held.
+Ограничение скорости по скользящему журналу включает в себя отслеживание журнала с временной меткой для каждого запроса. Система хранит эти журналы в хэш-наборе или таблице с временной сортировкой. Она также отбрасывает журналы с временными метками, превышающими пороговое значение. Когда поступает новый запрос, мы подсчитываем сумму журналов, чтобы определить частоту запросов. Если запрос превышает пороговое значение, то он задерживается.
 
-### Sliding Window
+### Скользящее окно
 
-Sliding Window is a hybrid approach that combines the fixed window algorithm's low processing cost and the sliding log's improved boundary conditions. Like the fixed window algorithm, we track a counter for each fixed window. Next, we account for a weighted value of the previous window's request rate based on the current timestamp to smooth out bursts of traffic.
+Sliding Window - это гибридный подход, который сочетает в себе низкую стоимость обработки алгоритма фиксированного окна и улучшенные граничные условия скользящего журнала. Как и в алгоритме фиксированного окна, мы отслеживаем счетчик для каждого фиксированного окна. Затем мы учитываем взвешенное значение частоты запросов предыдущего окна, основанное на текущей временной метке, чтобы сгладить всплески трафика.
 
-## Rate Limiting in Distributed Systems
+## Ограничение скорости в распределенных системах
 
-Rate Limiting becomes complicated when distributed systems are involved. The two broad problems that come with rate limiting in distributed systems are:
+Ограничение скорости усложняется, когда речь идет о распределенных системах. Две основные проблемы, возникающие при ограничении скорости в распределенных системах, таковы:
 
-### Inconsistencies
+### Несоответствия
 
-When using a cluster of multiple nodes, we might need to enforce a global rate limit policy. Because if each node were to track its rate limit, a consumer could exceed a global rate limit when sending requests to different nodes. The greater the number of nodes, the more likely the user will exceed the global limit.
+При использовании кластера из нескольких узлов нам может потребоваться глобальная политика ограничения скорости. Поскольку если каждый узел будет отслеживать свой лимит скорости, потребитель может превысить глобальный лимит скорости при отправке запросов на разные узлы. Чем больше узлов, тем больше вероятность того, что пользователь превысит глобальный лимит.
 
-The simplest way to solve this problem is to use sticky sessions in our load balancers so that each consumer gets sent to exactly one node but this causes a lack of fault tolerance and scaling problems. Another approach might be to use a centralized data store like [Redis](https://redis.io) but this will increase latency and cause race conditions.
+Самый простой способ решить эту проблему - использовать липкие сессии в наших балансировщиках нагрузки, чтобы каждый потребитель отправлялся ровно на один узел, но это приводит к недостаточной отказоустойчивости и проблемам масштабирования. Другим подходом может быть использование централизованного хранилища данных, например [Redis](https://redis.io), но это приведет к увеличению задержек и возникновению условий гонки.
 
 ### Race Conditions
 
@@ -3161,6 +3161,7 @@ One way to avoid this problem is to use some sort of distributed locking mechani
 # Service Discovery
 
 Service discovery is the detection of services within a computer network. Service Discovery Protocol (SDP) is a networking standard that accomplishes the detection of networks by identifying resources.
+
 
 ## Why do we need Service Discovery?
 
