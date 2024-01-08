@@ -2222,243 +2222,243 @@ _Мы подробно рассмотрим эти шаблоны обмена �
 
 # Enterprise Service Bus (ESB)
 
-An Enterprise Service Bus (ESB) is an architectural pattern whereby a centralized software component performs integrations between applications. It performs transformations of data models, handles connectivity, performs message routing, converts communication protocols, and potentially manages the composition of multiple requests. The ESB can make these integrations and transformations available as a service interface for reuse by new applications.
+Сервисная шина предприятия (ESB) - это архитектурный паттерн, в котором централизованный программный компонент выполняет интеграцию между приложениями. Он выполняет преобразования моделей данных, управляет связью, выполняет маршрутизацию сообщений, преобразует протоколы связи и потенциально управляет композицией нескольких запросов. ESB может сделать эти интеграции и преобразования доступными в виде сервисного интерфейса для повторного использования новыми приложениями.
 
 ![enterprise-service-bus](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/enterprise-service-bus/enterprise-service-bus.png)
 
-## Advantages
+## Преимущества
 
-In theory, a centralized ESB offers the potential to standardize and dramatically simplify communication, messaging, and integration between services across the enterprise. Here are some advantages of using an ESB:
+Теоретически централизованная ESB позволяет стандартизировать и значительно упростить связь, обмен сообщениями и интеграцию между службами в масштабах предприятия. Вот некоторые преимущества использования ESB:
 
-- **Improved developer productivity**: Enables developers to incorporate new technologies into one part of an application without touching the rest of the application.
-- **Simpler, more cost-effective scalability**: Components can be scaled independently of others.
-- **Greater resilience**: Failure of one component does not impact the others, and each microservice can adhere to its own availability requirements without risking the availability of other components in the system.
+- **Повышение производительности разработчиков**: Позволяет разработчикам внедрять новые технологии в одну часть приложения, не затрагивая остальные части приложения.
+- **Упрощенная и экономически эффективная масштабируемость**: Компоненты можно масштабировать независимо от других.
+- **Большая отказоустойчивость**: Отказ одного компонента не влияет на остальные, и каждый микросервис может придерживаться собственных требований к доступности, не рискуя доступностью других компонентов системы.
 
-## Disadvantages
+## Недостатки
 
-While ESBs were deployed successfully in many organizations, in many other organizations the ESB came to be seen as a bottleneck. Here are some disadvantages of using an ESB:
+Хотя ESB были успешно внедрены во многих организациях, во многих других организациях ESB стали рассматривать как узкое место. Вот некоторые недостатки использования ESB:
 
-- Making changes or enhancements to one integration could destabilize others who use that same integration.
-- A single point of failure can bring down all communications.
-- Updates to the ESB often impact existing integrations, so there is significant testing required to perform any update.
-- ESB is centrally managed which makes cross-team collaboration challenging.
-- High configuration and maintenance complexity.
+- Внесение изменений или усовершенствований в одну интеграцию может дестабилизировать работу других, использующих эту же интеграцию.
+- Единая точка отказа может вывести из строя все коммуникации.
+- Обновления ESB часто влияют на существующие интеграции, поэтому для выполнения любого обновления требуется значительное тестирование.
+- ESB управляется централизованно, что затрудняет взаимодействие между командами.
+- Высокая сложность конфигурации и обслуживания.
 
-## Examples
+## Примеры
 
-Below are some widely used Enterprise Service Bus (ESB) technologies:
+Ниже приведены некоторые широко используемые технологии Enterprise Service Bus (ESB):
 
 - [Azure Service Bus](https://azure.microsoft.com/en-in/services/service-bus)
 - [IBM App Connect](https://www.ibm.com/in-en/cloud/app-connect)
 - [Apache Camel](https://camel.apache.org)
 - [Fuse ESB](https://www.redhat.com/en/technologies/jboss-middleware/fuse)
 
-# Monoliths and Microservices
+# Монолиты и микросервисы
 
-## Monoliths
+## Монолиты
 
-A monolith is a self-contained and independent application. It is built as a single unit and is responsible for not just a particular task, but can perform every step needed to satisfy a business need.
+Монолит - это самодостаточное и независимое приложение. Оно создается как единое целое и отвечает не только за конкретную задачу, но и может выполнять все шаги, необходимые для удовлетворения бизнес-потребностей.
 
 ![monolith](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/monoliths-microservices/monolith.png)
 
-### Advantages
+### Преимущества
 
-Following are some advantages of monoliths:
+Ниже перечислены некоторые преимущества монолитов:
 
-- Simple to develop or debug.
-- Fast and reliable communication.
-- Easy monitoring and testing.
-- Supports ACID transactions.
+- Простота разработки и отладки.
+- Быстрая и надежная связь.
+- Легкий мониторинг и тестирование.
+- Поддержка ACID-транзакций.
 
-### Disadvantages
+### Недостатки
 
-Some common disadvantages of monoliths are:
+К общим недостаткам монолитов относятся:
 
-- Maintenance becomes hard as the codebase grows.
-- Tightly coupled application, hard to extend.
-- Requires commitment to a particular technology stack.
-- On each update, the entire application is redeployed.
-- Reduced reliability as a single bug can bring down the entire system.
-- Difficult to scale or adopt new technologies.
+- Сложность сопровождения по мере роста кодовой базы.
+- Жестко связанное приложение, трудно расширяемое.
+- Требуется приверженность определенному технологическому стеку.
+- При каждом обновлении все приложение развертывается заново.
+- Снижение надежности, поскольку одна ошибка может вывести из строя всю систему.
+- Сложно масштабировать или внедрять новые технологии.
 
-## Modular Monoliths
+## Модульные монолиты
 
-A Modular Monolith is an approach where we build and deploy a single application (that's the _Monolith_ part), but we build it in a way that breaks up the code into independent modules for each of the features needed in our application.
+Модульный монолит - это подход, при котором мы создаем и развертываем одно приложение (это часть _монолита_), но строим его таким образом, что разбиваем код на независимые модули для каждой из функций, необходимых в нашем приложении.
 
-This approach reduces the dependencies of a module in such as way that we can enhance or change a module without affecting other modules. When done right, this can be really beneficial in the long term as it reduces the complexity that comes with maintaining a monolith as the system grows.
+Такой подход уменьшает зависимости модуля таким образом, что мы можем улучшать или изменять модуль, не затрагивая другие модули. При правильном подходе это может быть очень полезно в долгосрочной перспективе, так как снижает сложность, возникающую при поддержке монолита по мере роста системы.
 
-## Microservices
+## Микросервисы
 
-A microservices architecture consists of a collection of small, autonomous services where each service is self-contained and should implement a single business capability within a bounded context. A bounded context is a natural division of business logic that provides an explicit boundary within which a domain model exists.
+Архитектура микросервисов состоит из набора небольших автономных сервисов, каждый из которых является самодостаточным и должен реализовывать одну бизнес-возможность в ограниченном контексте. Ограниченный контекст - это естественное разделение бизнес-логики, которое обеспечивает явную границу, в пределах которой существует модель домена.
 
-![microservices](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/monoliths-microservices/microservices.png)
+![Микросервисы](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/monoliths-microservices/microservices.png)
 
-Each service has a separate codebase, which can be managed by a small development team. Services can be deployed independently and a team can update an existing service without rebuilding and redeploying the entire application.
+Каждый сервис имеет отдельную кодовую базу, которая может управляться небольшой командой разработчиков. Сервисы могут быть развернуты независимо друг от друга, и команда может обновлять существующий сервис без перестройки и развертывания всего приложения.
 
-Services are responsible for persisting their own data or external state (database per service). This differs from the traditional model, where a separate data layer handles data persistence.
+Сервисы отвечают за сохранение своих собственных данных или внешнего состояния (база данных для каждого сервиса). Это отличается от традиционной модели, в которой за сохранение данных отвечает отдельный слой данных.
 
-### Characteristics
+### Характеристики
 
-The microservices architecture style has the following characteristics:
+Стиль архитектуры микросервисов имеет следующие характеристики:
 
-- **Loosely coupled**: Services should be loosely coupled so that they can be independently deployed and scaled. This will lead to the decentralization of development teams and thus, enabling them to develop and deploy faster with minimal constraints and operational dependencies.
-- **Small but focused**: It's about scope and responsibilities and not size, a service should be focused on a specific problem. Basically, _"It does one thing and does it well"_. Ideally, they can be independent of the underlying architecture.
-- **Built for businesses**: The microservices architecture is usually organized around business capabilities and priorities.
-- **Resilience & Fault tolerance**: Services should be designed in such a way that they still function in case of failure or errors. In environments with independently deployable services, failure tolerance is of the highest importance.
-- **Highly maintainable**: Service should be easy to maintain and test because services that cannot be maintained will be rewritten.
+- **Свободно соединенные**: Сервисы должны быть слабо связаны друг с другом, чтобы их можно было независимо развертывать и масштабировать. Это приведет к децентрализации команд разработчиков и, таким образом, позволит им быстрее разрабатывать и внедрять сервисы с минимальными ограничениями и операционными зависимостями.
+- **Мало, но целенаправленно**: Речь идет о масштабе и ответственности, а не о размере. Сервис должен быть ориентирован на решение конкретной проблемы. По сути, _"он делает одно дело и делает его хорошо"_. В идеале они могут быть независимы от базовой архитектуры.
+- **Созданы для бизнеса**: Архитектура микросервисов обычно строится вокруг возможностей и приоритетов бизнеса.
+- **Устойчивость и отказоустойчивость**: Сервисы должны быть спроектированы таким образом, чтобы они продолжали функционировать в случае сбоев или ошибок. В средах с независимо развертываемыми сервисами отказоустойчивость имеет первостепенное значение.
+- **Высокая ремонтопригодность**: Сервисы должны быть просты в обслуживании и тестировании, поскольку сервисы, которые невозможно обслуживать, будут переписаны.
 
-### Advantages
+### Преимущества
 
-Here are some advantages of microservices architecture:
+Вот некоторые преимущества архитектуры микросервисов:
 
-- Loosely coupled services.
-- Services can be deployed independently.
-- Highly agile for multiple development teams.
-- Improves fault tolerance and data isolation.
-- Better scalability as each service can be scaled independently.
-- Eliminates any long-term commitment to a particular technology stack.
+- Свободно связанные сервисы.
+- Сервисы могут быть развернуты независимо друг от друга.
+- Высокая гибкость для нескольких команд разработчиков.
+- Повышение отказоустойчивости и изоляции данных.
+- Лучшая масштабируемость, поскольку каждый сервис может быть масштабирован независимо.
+- Исключается долгосрочная привязка к определенному технологическому стеку.
 
-### Disadvantages
+### Недостатки
 
-Microservices architecture brings its own set of challenges:
+Архитектура микросервисов имеет свой собственный набор проблем:
 
-- Complexity of a distributed system.
-- Testing is more difficult.
-- Expensive to maintain (individual servers, databases, etc.).
-- Inter-service communication has its own challenges.
-- Data integrity and consistency.
-- Network congestion and latency.
+- Сложность распределенной системы.
+- Тестирование сложнее.
+- Дорогое обслуживание (отдельные серверы, базы данных и т. д.).
+- Межсервисное взаимодействие имеет свои сложности.
+- Целостность и непротиворечивость данных.
+- Перегруженность сети и задержки.
 
-### Best practices
+### Лучшие практики
 
-Let's discuss some microservices best practices:
+Давайте обсудим некоторые лучшие практики работы с микросервисами:
 
-- Model services around the business domain.
-- Services should have loose coupling and high functional cohesion.
-- Isolate failures and use resiliency strategies to prevent failures within a service from cascading.
-- Services should only communicate through well-designed APIs. Avoid leaking implementation details.
-- Data storage should be private to the service that owns the data
-- Avoid coupling between services. Causes of coupling include shared database schemas and rigid communication protocols.
-- Decentralize everything. Individual teams are responsible for designing and building services. Avoid sharing code or data schemas.
-- Fail fast by using a [circuit breaker](https://karanpratapsingh.com/courses/system-design/circuit-breaker) to achieve fault tolerance.
-- Ensure that the API changes are backward compatible.
+- Моделируйте сервисы вокруг бизнес-области.
+- Сервисы должны иметь свободное соединение и высокую функциональную связность.
+- Изолируйте сбои и используйте стратегии отказоустойчивости, чтобы предотвратить каскадное распространение сбоев внутри сервиса.
+- Сервисы должны взаимодействовать только через хорошо спроектированные API. Избегайте утечки деталей реализации.
+- Хранение данных должно быть приватным для сервиса, которому они принадлежат.
+- Избегайте сцепления между сервисами. Причинами сцепления являются общие схемы баз данных и жесткие протоколы взаимодействия.
+- Децентрализуйте все. За проектирование и создание сервисов отвечают отдельные команды. Избегайте совместного использования кода или схем данных.
+- Отказывайте быстро, используя [автоматический выключатель](https://karanpratapsingh.com/courses/system-design/circuit-breaker) для достижения отказоустойчивости.
+- Обеспечьте обратную совместимость изменений API.
 
-### Pitfalls
+### Подводные камни
 
-Below are some common pitfalls of microservices architecture:
+Ниже перечислены некоторые распространенные подводные камни архитектуры микросервисов:
 
-- Service boundaries are not based on the business domain.
-- Underestimating how hard is to build a distributed system.
-- Shared database or common dependencies between services.
-- Lack of Business Alignment.
-- Lack of clear ownership.
-- Lack of idempotency.
-- Trying to do everything [ACID instead of BASE](https://karanpratapsingh.com/courses/system-design/acid-and-base-consistency-models).
-- Lack of design for fault tolerance may result in cascading failures.
+- Границы сервисов не основаны на бизнес-сфере.
+- Недооценка того, насколько сложно построить распределенную систему.
+- Общая база данных или общие зависимости между сервисами.
+- Отсутствие согласованности с бизнесом.
+- Отсутствие четкого владения.
+- Отсутствие идемпотентности.
+- Попытка сделать все [ACID вместо BASE](https://karanpratapsingh.com/courses/system-design/acid-and-base-consistency-models).
+- Отсутствие проектирования для обеспечения отказоустойчивости может привести к каскадным отказам.
 
-## Beware of the distributed monolith
+## Остерегайтесь распределенного монолита
 
-Distributed Monolith is a system that resembles the microservices architecture but is tightly coupled within itself like a monolithic application. Adopting microservices architecture comes with a lot of advantages. But while making one, there are good chances that we might end up with a distributed monolith.
+Распределенный монолит - это система, напоминающая архитектуру микросервисов, но тесно связанная внутри себя, как монолитное приложение. Принятие архитектуры микросервисов имеет массу преимуществ. Но при создании такой архитектуры велика вероятность того, что в итоге мы получим распределенный монолит.
 
-Our microservices are just a distributed monolith if any of these apply to it:
+Наши микросервисы - это просто распределенный монолит, если к ним применимо хотя бы одно из этих условий:
 
-- Requires low latency communication.
-- Services don't scale easily.
-- Dependency between services.
-- Sharing the same resources such as databases.
-- Tightly coupled systems.
+- Требуются коммуникации с низкой задержкой.
+- Сервисы нелегко масштабируются.
+- Зависимость между сервисами.
+- Совместное использование одних и тех же ресурсов, например баз данных.
+- Жестко связанные системы.
 
-One of the primary reasons to build an application using microservices architecture is to have scalability. Therefore, microservices should have loosely coupled services which enable every service to be independent. The distributed monolith architecture takes this away and causes most components to depend on one another, increasing design complexity.
+Одна из основных причин создания приложения с использованием архитектуры микросервисов - это масштабируемость. Поэтому микросервисы должны иметь слабосвязанные сервисы, которые позволяют каждому сервису быть независимым. Распределенная монолитная архитектура лишает нас этой возможности и заставляет большинство компонентов зависеть друг от друга, увеличивая сложность проектирования.
 
-## Microservices vs Service-oriented architecture (SOA)
+## Микросервисы против сервис-ориентированной архитектуры (SOA)
 
-You might have seen _Service-oriented architecture (SOA)_ mentioned around the internet, sometimes even interchangeably with microservices, but they are different from each other and the main distinction between the two approaches comes down to _scope_.
+Вы могли видеть, как _сервис-ориентированная архитектура (SOA)_ упоминается в интернете, иногда даже взаимозаменяемо с микросервисами, но они отличаются друг от друга, и главное различие между этими двумя подходами сводится к _скопу_.
 
-Service-oriented architecture (SOA) defines a way to make software components reusable via service interfaces. These interfaces utilize common communication standards and focus on maximizing application service reusability whereas microservices are built as a collection of various smallest independent service units focused on team autonomy and decoupling.
+Сервисно-ориентированная архитектура (SOA) определяет способ сделать программные компоненты многократно используемыми с помощью сервисных интерфейсов. Эти интерфейсы используют общие стандарты взаимодействия и нацелены на максимальное повторное использование сервисов приложения, в то время как микросервисы строятся как набор различных мелких независимых сервисных единиц, ориентированных на автономность и разделение команд.
 
-## Why you don't need microservices
+## Почему вам не нужны микросервисы
 
 ![architecture-range](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/monoliths-microservices/architecture-range.png)
 
-So, you might be wondering, monoliths seem like a bad idea to begin with, why would anyone use that?
+Итак, вы, возможно, задаетесь вопросом: монолиты кажутся плохой идеей с самого начала, почему кто-то должен их использовать?
 
-Well, it depends. While each approach has its own advantages and disadvantages, it is advised to start with a monolith when building a new system. It is important to understand, that microservices are not a silver bullet, instead, they solve an organizational problem. Microservices architecture is about your organizational priorities and team as much as it's about technology.
+Ну, это зависит от ситуации. Хотя у каждого подхода есть свои преимущества и недостатки, при построении новой системы рекомендуется начинать с монолита. Важно понимать, что микросервисы - это не серебряная пуля, вместо этого они решают организационную проблему. Архитектура микросервисов зависит от приоритетов вашей организации и команды в той же степени, что и технология.
 
-Before making the decision to move to microservices architecture, you need to ask yourself questions like:
+Прежде чем принять решение о переходе на архитектуру микросервисов, необходимо задать себе такие вопросы, как:
 
-- _"Is the team too large to work effectively on a shared codebase?"_
-- _"Are teams blocked on other teams?"_
-- _"Does microservices deliver clear business value for us?"_
-- _"Is my business mature enough to use microservices?"_
-- _"Is our current architecture limiting us with communication overhead?"_
+- "Не слишком ли велика команда для эффективной работы над общей кодовой базой?
+- Не блокируются ли команды другими командами?
+- "Обеспечивают ли микросервисы явную ценность для бизнеса?"
+- Достаточно ли развит мой бизнес для использования микросервисов?
+- Не ограничивает ли нас текущая архитектура накладными расходами на коммуникации?
 
-If your application does not require to be broken down into microservices, you don't need this. There is no absolute necessity that all applications should be broken down into microservices.
+Если ваше приложение не требует разбиения на микросервисы, вам это не нужно. Не существует абсолютной необходимости в том, чтобы все приложения разбивались на микросервисы.
 
-We frequently draw inspiration from companies such as Netflix and their use of microservices, but we overlook the fact that we are not Netflix. They went through a lot of iterations and models before they had a market-ready solution, and this architecture became acceptable for them when they identified and solved the problem they were trying to tackle.
+Мы часто черпаем вдохновение в таких компаниях, как Netflix, и их использовании микросервисов, но упускаем из виду, что мы - не Netflix. Они прошли через множество итераций и моделей, прежде чем у них появилось готовое решение для рынка, и эта архитектура стала для них приемлемой, когда они определили и решили проблему, которую пытались решить.
 
-That's why it's essential to understand in-depth if your business _actually_ needs microservices. What I'm trying to say is microservices are solutions to complex concerns and if your business doesn't have complex issues, you don't need them.
+Вот почему важно глубоко понять, действительно ли вашему бизнесу нужны микросервисы. Я пытаюсь сказать, что микросервисы - это решения сложных проблем, и если у вашего бизнеса нет сложных проблем, то они вам не нужны.
 
 # Event-Driven Architecture (EDA)
 
-Event-Driven Architecture (EDA) is about using events as a way to communicate within a system. Generally, leveraging a message broker to publish and consume events asynchronously. The publisher is unaware of who is consuming an event and the consumers are unaware of each other. Event-Driven Architecture is simply a way of achieving loose coupling between services within a system.
+Архитектура, управляемая событиями (Event-Driven Architecture, EDA), - это использование событий в качестве способа взаимодействия внутри системы. Как правило, используется брокер сообщений для асинхронной публикации и потребления событий. Издатель не знает, кто потребляет событие, а потребители не знают друг о друге. Архитектура, управляемая событиями, - это просто способ достижения свободной связи между сервисами в системе.
 
-## What is an event?
+## Что такое событие?
 
-An event is a data point that represents state changes in a system. It doesn't specify what should happen and how the change should modify the system, it only notifies the system of a particular state change. When a user makes an action, they trigger an event.
+Событие - это точка данных, которая представляет собой изменение состояния системы. Оно не определяет, что должно произойти и как это изменение должно изменить систему, оно лишь уведомляет систему о конкретном изменении состояния. Когда пользователь совершает действие, он запускает событие.
 
-## Components
+## Компоненты
 
-Event-driven architectures have three key components:
+Архитектуры, управляемые событиями, состоят из трех ключевых компонентов:
 
-- **Event producers**: Publishes an event to the router.
-- **Event routers**: Filters and pushes the events to consumers.
-- **Event consumers**: Uses events to reflect changes in the system.
+- **Производители событий**: Публикуют событие в маршрутизатор.
+- **Маршрутизаторы событий**: Фильтруют и передают события потребителям.
+- **Потребители событий**: Используют события для отражения изменений в системе.
 
 ![event-driven-architecture](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/event-driven-architecture/event-driven-architecture.png)
 
-_Note: Dots in the diagram represents different events in the system._
+Примечание: Точки на диаграмме обозначают различные события в системе.
 
-## Patterns
+## Паттерны
 
-There are several ways to implement the event-driven architecture, and which method we use depends on the use case but here are some common examples:
+Существует несколько способов реализации событийно-управляемой архитектуры, и то, какой метод мы используем, зависит от конкретного случая, но вот несколько общих примеров:
 
 - [Sagas](https://karanpratapsingh.com/courses/system-design/distributed-transactions#sagas)
 - [Publish-Subscribe](https://karanpratapsingh.com/courses/system-design/publish-subscribe)
 - [Event Sourcing](https://karanpratapsingh.com/courses/system-design/event-sourcing)
 - [Command and Query Responsibility Segregation (CQRS)](https://karanpratapsingh.com/courses/system-design/command-and-query-responsibility-segregation)
 
-_Note: Each of these methods is discussed separately._
+Примечание: каждый из этих методов рассматривается отдельно.
 
-## Advantages
+## Преимущества
 
-Let's discuss some advantages:
+Давайте обсудим некоторые преимущества:
 
-- Decoupled producers and consumers.
-- Highly scalable and distributed.
-- Easy to add new consumers.
-- Improves agility.
+- Разделенные производители и потребители.
+- Высокая масштабируемость и распределенность.
+- Легко добавлять новых потребителей.
+- Повышает гибкость.
 
-## Challenges
+## Проблемы
 
-Here are some challenges of event-drive architecture:
+Вот некоторые проблемы архитектуры event-drive:
 
-- Guaranteed delivery.
-- Error handling is difficult.
-- Event-driven systems are complex in general.
-- Exactly once, in-order processing of events.
+- Гарантированная доставка.
+- Сложность обработки ошибок.
+- Системы, управляемые событиями, в целом сложны.
+- Обработка событий в порядке очереди.
 
-## Use cases
+## Примеры использования
 
-Below are some common use cases where event-driven architectures are beneficial:
+Ниже приведены некоторые распространенные случаи использования, когда архитектуры, управляемые событиями, оказываются полезными:
 
-- Metadata and metrics.
-- Server and security logs.
-- Integrating heterogeneous systems.
-- Fanout and parallel processing.
+- Метаданные и метрики.
+- Журналы серверов и систем безопасности.
+- Интеграция разнородных систем.
+- Веерная и параллельная обработка.
 
-## Examples
+## Примеры
 
-Here are some widely used technologies for implementing event-driven architectures:
+Вот несколько широко используемых технологий для реализации событийно-управляемых архитектур:
 
 - [NATS](https://nats.io)
 - [Apache Kafka](https://kafka.apache.org)
@@ -2468,148 +2468,148 @@ Here are some widely used technologies for implementing event-driven architectur
 
 # Event Sourcing
 
-Instead of storing just the current state of the data in a domain, use an append-only store to record the full series of actions taken on that data. The store acts as the system of record and can be used to materialize the domain objects.
+Вместо того чтобы хранить только текущее состояние данных в домене, используйте хранилище, работающее только с приложениями, для записи всей серии действий, выполняемых над этими данными. Хранилище действует как система записей и может быть использовано для материализации объектов домена.
 
 ![event-sourcing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/event-sourcing/event-sourcing.png)
 
-This can simplify tasks in complex domains, by avoiding the need to synchronize the data model and the business domain, while improving performance, scalability, and responsiveness. It can also provide consistency for transactional data, and maintain full audit trails and history that can enable compensating actions.
+Это может упростить задачи в сложных доменах, избавив от необходимости синхронизировать модель данных и бизнес-домен, а также повысить производительность, масштабируемость и скорость реагирования. Кроме того, это может обеспечить согласованность транзакционных данных, а также поддерживать полные журналы аудита и историю, что может позволить принять компенсирующие меры.
 
 ## Event sourcing vs Event-Driven Architecture (EDA)
 
-Event sourcing is seemingly constantly being confused with [Event-driven Architecture (EDA)](https://karanpratapsingh.com/courses/system-design/event-driven-architecture). Event-driven architecture is about using events to communicate between service boundaries. Generally, leveraging a message broker to publish and consume events asynchronously within other boundaries.
+Кажется, что ивент-сорсинг постоянно путают с [Event-driven Architecture (EDA)](https://karanpratapsingh.com/courses/system-design/event-driven-architecture). Событийно-управляемая архитектура - это использование событий для связи между границами сервисов. Как правило, используется брокер сообщений для асинхронной публикации и потребления событий в пределах других границ.
 
-Whereas, event sourcing is about using events as a state, which is a different approach to storing data. Rather than storing the current state, we're instead going to be storing events. Also, event sourcing is one of the several patterns to implement an event-driven architecture.
+В то время как событийная архитектура предполагает использование событий в качестве состояния, что представляет собой другой подход к хранению данных. Вместо того чтобы хранить текущее состояние, мы будем хранить события. Кроме того, сорсинг событий - это один из нескольких паттернов для реализации событийно-ориентированной архитектуры.
 
-## Advantages
+## Преимущества
 
-Let's discuss some advantages of using event sourcing:
+Давайте обсудим некоторые преимущества использования событийного сорсинга:
 
-- Excellent for real-time data reporting.
-- Great for fail-safety, data can be reconstituted from the event store.
-- Extremely flexible, any type of message can be stored.
-- Preferred way of achieving audit logs functionality for high compliance systems.
+- Отлично подходит для создания отчетов в реальном времени.
+- Отлично подходит для обеспечения отказоустойчивости, данные могут быть восстановлены из хранилища событий.
+- Чрезвычайная гибкость, можно хранить сообщения любого типа.
+- Предпочтительный способ обеспечения функциональности журналов аудита для систем с высоким уровнем соответствия.
 
-## Disadvantages
+## Недостатки
 
-Following are the disadvantages of event sourcing:
+Ниже перечислены недостатки событийного сорсинга:
 
-- Requires an extremely efficient network infrastructure.
-- Requires a reliable way to control message formats, such as a schema registry.
-- Different events will contain different payloads.
+- Требуется чрезвычайно эффективная сетевая инфраструктура.
+- Требуется надежный способ контроля форматов сообщений, например реестр схем.
+- Различные события будут содержать различную полезную нагрузку.
 
 # Command and Query Responsibility Segregation (CQRS)
 
-Command Query Responsibility Segregation (CQRS) is an architectural pattern that divides a system's actions into commands and queries. It was first described by [Greg Young](https://twitter.com/gregyoung).
+Разделение ответственности команд и запросов (Command Query Responsibility Segregation, CQRS) - это архитектурный паттерн, который разделяет действия системы на команды и запросы. Впервые он был описан [Greg Young](https://twitter.com/gregyoung).
 
-In CQRS, a _command_ is an instruction, a directive to perform a specific task. It is an intention to change something and doesn't return a value, only an indication of success or failure. And, a _query_ is a request for information that doesn't change the system's state or cause any side effects.
+В CQRS _команда_ - это инструкция, директива для выполнения определенной задачи. Она представляет собой намерение изменить что-то и не возвращает значения, а лишь указывает на успех или неудачу. А _запрос_ - это запрос информации, который не изменяет состояние системы и не вызывает никаких побочных эффектов.
 
 ![command-and-query-responsibility-segregation](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/command-and-query-responsibility-segregation/command-and-query-responsibility-segregation.png)
 
-The core principle of CQRS is the separation of commands and queries. They perform fundamentally different roles within a system, and separating them means that each can be optimized as needed, which distributed systems can really benefit from.
+Основной принцип CQRS - разделение команд и запросов. Они выполняют принципиально разные роли в системе, и их разделение означает, что каждая из них может быть оптимизирована по мере необходимости, что очень полезно для распределенных систем.
 
-## CQRS with Event Sourcing
+## CQRS с Event Sourcing
 
-The CQRS pattern is often used along with the Event Sourcing pattern. CQRS-based systems use separate read and write data models, each tailored to relevant tasks and often located in physically separate stores.
+Паттерн CQRS часто используется вместе с паттерном Event Sourcing. Системы на основе CQRS используют отдельные модели данных для чтения и записи, каждая из которых предназначена для выполнения соответствующих задач и часто располагается в физически отдельных хранилищах.
 
-When used with the Event Sourcing pattern, the store of events is the write model and is the official source of information. The read model of a CQRS-based system provides materialized views of the data, typically as highly denormalized views.
+При использовании паттерна Event Sourcing хранилище событий представляет собой модель записи и является официальным источником информации. Модель чтения в системе на основе CQRS обеспечивает материализованные представления данных, обычно в виде сильно денормализованных представлений.
 
-## Advantages
+## Преимущества
 
-Let's discuss some advantages of CQRS:
+Давайте обсудим некоторые преимущества CQRS:
 
-- Allows independent scaling of read and write workloads.
-- Easier scaling, optimizations, and architectural changes.
-- Closer to business logic with loose coupling.
-- The application can avoid complex joins when querying.
-- Clear boundaries between the system behavior.
+- Позволяет независимо масштабировать рабочие нагрузки чтения и записи.
+- Более легкое масштабирование, оптимизация и изменение архитектуры.
+- Близость к бизнес-логике благодаря свободному соединению.
+- Приложение может избежать сложных соединений при запросах.
+- Четкие границы между поведением системы.
 
-## Disadvantages
+## Недостатки
 
-Below are some disadvantages of CQRS:
+Ниже перечислены некоторые недостатки CQRS:
 
-- More complex application design.
-- Message failures or duplicate messages can occur.
-- Dealing with eventual consistency is a challenge.
-- Increased system maintenance efforts.
+- Более сложный дизайн приложения.
+- Возможны сбои в передаче сообщений или дублирование сообщений.
+- Решение проблемы конечной согласованности является сложной задачей.
+- Увеличение объема работ по обслуживанию системы.
 
-## Use cases
+## Сценарии использования
 
-Here are some scenarios where CQRS will be helpful:
+Вот несколько сценариев, в которых CQRS будет полезен:
 
-- The performance of data reads must be fine-tuned separately from the performance of data writes.
-- The system is expected to evolve over time and might contain multiple versions of the model, or where business rules change regularly.
-- Integration with other systems, especially in combination with event sourcing, where the temporal failure of one subsystem shouldn't affect the availability of the others.
-- Better security to ensure that only the right domain entities are performing writes on the data.
+- Производительность чтения данных должна настраиваться отдельно от производительности записи данных.
+- Предполагается, что система будет развиваться с течением времени и может содержать несколько версий модели, или в ней регулярно меняются бизнес-правила.
+- Интеграция с другими системами, особенно в сочетании с событийными источниками, когда временный отказ одной подсистемы не должен влиять на доступность других.
+- Повышение безопасности, чтобы гарантировать, что только правильные доменные сущности выполняют запись в данные.
 
 # API Gateway
 
-The API Gateway is an API management tool that sits between a client and a collection of backend services. It is a single entry point into a system that encapsulates the internal system architecture and provides an API that is tailored to each client. It also has other responsibilities such as authentication, monitoring, load balancing, caching, throttling, logging, etc.
+Шлюз API - это инструмент управления API, который находится между клиентом и набором внутренних сервисов. Это единая точка входа в систему, которая инкапсулирует внутреннюю архитектуру системы и предоставляет API, адаптированный для каждого клиента. На него также возлагаются другие обязанности, такие как аутентификация, мониторинг, балансировка нагрузки, кэширование, дросселирование, ведение логов и т. д.
 
 ![api-gateway](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/api-gateway/api-gateway.png)
 
-## Why do we need an API Gateway?
+## Зачем нам нужен API-шлюз?
 
-The granularity of APIs provided by microservices is often different than what a client needs. Microservices typically provide fine-grained APIs, which means that clients need to interact with multiple services. Hence, an API gateway can provide a single entry point for all clients with some additional features and better management.
+Гранулярность API, предоставляемых микросервисами, часто отличается от того, что нужно клиенту. Микросервисы обычно предоставляют мелкозернистые API, что означает, что клиентам необходимо взаимодействовать с несколькими сервисами. Поэтому API-шлюз может обеспечить единую точку входа для всех клиентов с некоторыми дополнительными возможностями и лучшим управлением.
 
-## Features
+## Особенности
 
-Below are some desired features of an API Gateway:
+Ниже перечислены некоторые необходимые функции API-шлюза:
 
-- Authentication and Authorization
-- [Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery)
-- [Reverse Proxy](https://karanpratapsingh.com/courses/system-design/proxy#reverse-proxy)
-- [Caching](https://karanpratapsingh.com/courses/system-design/caching)
-- Security
-- Retry and [Circuit breaking](https://karanpratapsingh.com/courses/system-design/circuit-breaker)
-- [Load balancing](https://karanpratapsingh.com/courses/system-design/load-balancing)
-- Logging, Tracing
-- API composition
-- [Rate limiting](https://karanpratapsingh.com/courses/system-design/rate-limiting) and throttling
-- Versioning
-- Routing
-- IP whitelisting or blacklisting
+- Аутентификация и авторизация
+- [Обнаружение услуг](https://karanpratapsingh.com/courses/system-design/service-discovery)
+- [Обратный прокси](https://karanpratapsingh.com/courses/system-design/proxy#reverse-proxy)
+- [Кэширование](https://karanpratapsingh.com/courses/system-design/caching)
+- Безопасность
+- Повторные попытки и [Разрыв цепи](https://karanpratapsingh.com/courses/system-design/circuit-breaker)
+- [Балансировка нагрузки](https://karanpratapsingh.com/courses/system-design/load-balancing)
+- Протоколирование, трассировка
+- Состав API
+- [Ограничение скорости](https://karanpratapsingh.com/courses/system-design/rate-limiting) и дросселирование
+- Версионирование
+- Маршрутизация
+- Белые или черные списки IP-адресов
 
-## Advantages
+## Преимущества
 
-Let's look at some advantages of using an API Gateway:
+Давайте рассмотрим некоторые преимущества использования API-шлюза:
 
-- Encapsulates the internal structure of an API.
-- Provides a centralized view of the API.
-- Simplifies the client code.
-- Monitoring, analytics, tracing, and other such features.
+- Инкапсулирует внутреннюю структуру API.
+- Обеспечивает централизованное представление API.
+- Упрощает клиентский код.
+- Мониторинг, аналитика, трассировка и другие подобные функции.
 
-## Disadvantages
+## Недостатки
 
-Here are some possible disadvantages of an API Gateway:
+Вот некоторые возможные недостатки API-шлюза:
 
-- Possible single point of failure.
-- Might impact performance.
-- Can become a bottleneck if not scaled properly.
-- Configuration can be challenging.
+- Возможность возникновения единой точки отказа.
+- Может повлиять на производительность.
+- Может стать узким местом при неправильном масштабировании.
+- Конфигурация может быть сложной.
 
-## Backend For Frontend (BFF) pattern
+## Паттерн Backend For Frontend (BFF)
 
-In the Backend For Frontend (BFF) pattern, we create separate backend services to be consumed by specific frontend applications or interfaces. This pattern is useful when we want to avoid customizing a single backend for multiple interfaces. This pattern was first described by [Sam Newman](https://samnewman.io).
+В паттерне Backend For Frontend (BFF) мы создаем отдельные сервисы бэкенда, которые будут потребляться определенными приложениями или интерфейсами фронтенда. Этот паттерн полезен, когда мы хотим избежать настройки одного бэкенда для нескольких интерфейсов. Впервые этот паттерн был описан [Sam Newman](https://samnewman.io).
 
-Also, sometimes the output of data returned by the microservices to the front end is not in the exact format or filtered as needed by the front end. To solve this issue, the frontend should have some logic to reformat the data, and therefore, we can use BFF to shift some of this logic to the intermediate layer.
+Кроме того, иногда данные, возвращаемые микросервисами на фронтенд, не имеют того формата или не фильтруются так, как нужно фронтенду. Чтобы решить эту проблему, фронтенд должен иметь некоторую логику для переформатирования данных, и поэтому мы можем использовать BFF для переноса части этой логики на промежуточный слой.
 
 ![backend-for-frontend](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/api-gateway/backend-for-frontend.png)
 
-The primary function of the backend for the frontend pattern is to get the required data from the appropriate service, format the data, and sent it to the frontend.
+Основная функция бэкенда для шаблона фронтенда - получить необходимые данные из соответствующего сервиса, отформатировать их и отправить на фронтенд.
 
-_[GraphQL](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#graphql) performs really well as a backend for frontend (BFF)._
+В качестве бэкенда для фронтенда (BFF) очень хорошо работает _[GraphQL](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#graphql).
 
-### When to use this pattern?
+### Когда использовать этот паттерн?
 
-We should consider using a Backend For Frontend (BFF) pattern when:
+Мы должны рассмотреть возможность использования паттерна Backend For Frontend (BFF), когда:
 
-- A shared or general purpose backend service must be maintained with significant development overhead.
-- We want to optimize the backend for the requirements of a specific client.
-- Customizations are made to a general-purpose backend to accommodate multiple interfaces.
+- Необходимо поддерживать общий или универсальный бэкенд-службу со значительными накладными расходами на разработку.
+- Мы хотим оптимизировать бэкенд под требования конкретного клиента.
+- В бэкенд общего назначения вносятся изменения, чтобы обеспечить работу с несколькими интерфейсами.
 
-## Examples
+## Примеры
 
-Following are some widely used gateways technologies:
+Ниже приведены некоторые широко используемые технологии шлюзов:
 
 - [Amazon API Gateway](https://aws.amazon.com/api-gateway)
 - [Apigee API Gateway](https://cloud.google.com/apigee)
@@ -2618,83 +2618,83 @@ Following are some widely used gateways technologies:
 
 # REST, GraphQL, gRPC
 
-A good API design is always a crucial part of any system. But it is also important to pick the right API technology. So, in this tutorial, we will briefly discuss different API technologies such as REST, GraphQL, and gRPC.
+Хороший дизайн API всегда является важной частью любой системы. Но также важно выбрать правильную технологию API. Поэтому в этом руководстве мы кратко рассмотрим различные технологии API, такие как REST, GraphQL и gRPC.
 
-## What's an API?
+## Что такое API?
 
-Before we even get into API technologies, let's first understand what is an API.
+Прежде чем перейти к технологиям API, давайте сначала разберемся, что такое API.
 
-API stands for Application Programming Interface. It is a set of definitions and protocols for building and integrating application software. It's sometimes referred to as a contract between an information provider and an information user establishing the content required from the producer and the content required by the consumer.
+API расшифровывается как интерфейс прикладного программирования. Это набор определений и протоколов для создания и интеграции прикладного программного обеспечения. Иногда его называют контрактом между поставщиком и пользователем информации, в котором указывается содержание, требуемое производителем, и содержание, требуемое потребителем.
 
-In other words, if you want to interact with a computer or system to retrieve information or perform a function, an API helps you communicate what you want to that system so it can understand and complete the request.
+Другими словами, если вы хотите взаимодействовать с компьютером или системой для получения информации или выполнения какой-либо функции, API поможет вам передать системе то, что вы хотите, чтобы она могла понять и выполнить запрос.
 
 ## REST
 
-A [REST API](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) (also known as RESTful API) is an application programming interface that conforms to the constraints of REST architectural style and allows for interaction with RESTful web services. REST stands for Representational State Transfer and it was first introduced by [Roy Fielding](https://roy.gbiv.com) in the year 2000.
+API [REST](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm) (также известный как RESTful API) - это интерфейс прикладного программирования, который соответствует ограничениям архитектурного стиля REST и позволяет взаимодействовать с RESTful веб-сервисами. REST расшифровывается как Representational State Transfer и впервые был представлен [Roy Fielding](https://roy.gbiv.com) в 2000 году.
 
-_In REST API, the fundamental unit is a resource._
+_В REST API основной единицей является ресурс._
 
-### Concepts
+### Концепции
 
-Let's discuss some concepts of a RESTful API.
+Давайте обсудим некоторые концепции RESTful API.
 
-**Constraints**
+**Ограничения**.
 
-In order for an API to be considered _RESTful_, it has to conform to these architectural constraints:
+Для того чтобы API считался _RESTful_, он должен соответствовать следующим архитектурным ограничениям:
 
-- **Uniform Interface**: There should be a uniform way of interacting with a given server.
-- **Client-Server**: A client-server architecture managed through HTTP.
-- **Stateless**: No client context shall be stored on the server between requests.
-- **Cacheable**: Every response should include whether the response is cacheable or not and for how much duration responses can be cached at the client-side.
-- **Layered system**: An application architecture needs to be composed of multiple layers.
-- **Code on demand**: Return executable code to support a part of your application. _(optional)_
+- **Единый интерфейс**: Должен существовать единый способ взаимодействия с определенным сервером.
+- **Клиент-сервер**: Клиент-серверная архитектура, управляемая через HTTP.
+- **Stateless**: Контекст клиента не должен храниться на сервере между запросами.
+- **Cacheable**: Каждый ответ должен содержать информацию о том, является ли ответ кэшируемым или нет, и в течение какого времени ответы могут быть кэшированы на стороне клиента.
+- **Слоистая система**: Архитектура приложения должна состоять из нескольких уровней.
+- **Код по требованию**: Возвращение исполняемого кода для поддержки части вашего приложения. (необязательно)_
 
-**HTTP Verbs**
+**Глаголы HTTP**.
 
-HTTP defines a set of request methods to indicate the desired action to be performed for a given resource. Although they can also be nouns, these request methods are sometimes referred to as _HTTP verbs_. Each of them implements a different semantic, but some common features are shared by a group of them.
+HTTP определяет набор методов запроса для указания желаемого действия, которое должно быть выполнено для данного ресурса. Хотя они могут быть и существительными, эти методы запроса иногда называют _HTTP-главами_. Каждый из них реализует свою семантику, но некоторые общие черты разделяет группа этих методов.
 
-Below are some commonly used HTTP verbs:
+Ниже приведены некоторые часто используемые глаголы HTTP:
 
-- **GET**: Request a representation of the specified resource.
-- **HEAD**: Response is identical to a `GET` request, but without the response body.
-- **POST**: Submits an entity to the specified resource, often causing a change in state or side effects on the server.
-- **PUT**: Replaces all current representations of the target resource with the request payload.
-- **DELETE**: Deletes the specified resource.
-- **PATCH**: Applies partial modifications to a resource.
+- **GET**: Запрос представления указанного ресурса.
+- **HEAD**: Ответ идентичен запросу `GET`, но без тела ответа.
+- **POST**: Отправляет сущность на указанный ресурс, часто вызывая изменение состояния или побочные эффекты на сервере.
+- **PUT**: Заменяет все текущие представления целевого ресурса на полезную нагрузку запроса.
+- **DELETE**: Удаляет указанный ресурс.
+- **PATCH**: Применяет частичные модификации к ресурсу.
 
-**HTTP response codes**
+**Коды ответов HTTP**
 
-[HTTP response status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) indicate whether a specific HTTP request has been successfully completed.
+[Коды статуса ответа HTTP] (https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) указывают, был ли успешно выполнен определенный HTTP-запрос.
 
-There are five classes defined by the standard:
+В стандарте определено пять классов:
 
-- 1xx - Informational responses.
-- 2xx - Successful responses.
-- 3xx - Redirection responses.
-- 4xx - Client error responses.
-- 5xx - Server error responses.
+- 1xx - информационные ответы.
+- 2xx - успешные ответы.
+- 3xx - ответы о перенаправлении.
+- 4xx - ответы об ошибках клиента.
+- 5xx - ответы об ошибках сервера.
 
-For example, HTTP 200 means that the request was successful.
+Например, HTTP 200 означает, что запрос был выполнен успешно.
 
-### Advantages
+### Преимущества
 
-Let's discuss some advantages of REST API:
+Давайте обсудим некоторые преимущества REST API:
 
-- Simple and easy to understand.
-- Flexible and portable.
-- Good caching support.
-- Client and server are decoupled.
+- Простой и понятный.
+- Гибкость и портативность.
+- Хорошая поддержка кэширования.
+- Клиент и сервер разделены.
 
-### Disadvantages
+### Недостатки
 
-Let's discuss some disadvantages of REST API:
+Давайте обсудим некоторые недостатки REST API:
 
-- Over-fetching of data.
-- Sometimes multiple round trips to the server are required.
+- Избыточная выборка данных.
+- Иногда требуется несколько обращений к серверу.
 
-### Use cases
+### Примеры использования
 
-REST APIs are pretty much used universally and are the default standard for designing APIs. Overall REST APIs are quite flexible and can fit almost all scenarios.
+REST API используются практически повсеместно и являются стандартом по умолчанию для разработки API. В целом REST API довольно гибкие и подходят практически для всех сценариев.
 
 ### Example
 
