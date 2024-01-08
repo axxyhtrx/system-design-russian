@@ -1919,160 +1919,160 @@ $$
 
 Поскольку VNodes помогают более равномерно распределить нагрузку между физическими узлами кластера, разбивая хэш-диапазоны на более мелкие поддиапазоны, это ускоряет процесс перебалансировки после добавления или удаления узлов. Это также помогает нам уменьшить вероятность возникновения "горячих точек".
 
-## Data Replication
+## Репликация данных
 
-To ensure high availability and durability, consistent hashing replicates each data item on multiple `N` nodes in the system where the value `N` is equivalent to the _replication factor_.
+Для обеспечения высокой доступности и долговечности последовательное хеширование реплицирует каждый элемент данных на нескольких `N` узлах системы, где значение `N` эквивалентно _фактору репликации_.
 
-The replication factor is the number of nodes that will receive the copy of the same data. In eventually consistent systems, this is done asynchronously.
+Фактор репликации - это количество узлов, которые получат копию одних и тех же данных. В конечном итоге в согласованных системах это делается асинхронно.
 
-## Advantages
+## Преимущества
 
-Let's look at some advantages of consistent hashing:
+Давайте рассмотрим некоторые преимущества последовательного хеширования:
 
-- Makes rapid scaling up and down more predictable.
-- Facilitates partitioning and replication across nodes.
-- Enables scalability and availability.
-- Reduces hotspots.
+- Делает более предсказуемым быстрое масштабирование вверх и вниз.
+- Облегчает разделение и репликацию между узлами.
+- Обеспечивает масштабируемость и доступность.
+- Уменьшает количество "горячих точек".
 
-## Disadvantages
+## Недостатки
 
-Below are some disadvantages of consistent hashing:
+Ниже перечислены некоторые недостатки последовательного хеширования:
 
-- Increases complexity.
-- Cascading failures.
-- Load distribution can still be uneven.
-- Key management can be expensive when nodes transiently fail.
+- Повышение сложности.
+- Каскадные сбои.
+- Распределение нагрузки может быть неравномерным.
+- Управление ключами может быть дорогостоящим, если узлы периодически выходят из строя.
 
-## Examples
+## Примеры
 
-Let's look at some examples where consistent hashing is used:
+Давайте рассмотрим несколько примеров использования последовательного хеширования:
 
-- Data partitioning in [Apache Cassandra](https://cassandra.apache.org).
-- Load distribution across multiple storage hosts in [Amazon DynamoDB](https://aws.amazon.com/dynamodb).
+- Разбиение данных в [Apache Cassandra](https://cassandra.apache.org).
+- Распределение нагрузки между несколькими узлами хранения в [Amazon DynamoDB](https://aws.amazon.com/dynamodb).
 
-# Database Federation
+# Федерация баз данных
 
-Federation (or functional partitioning) splits up databases by function. The federation architecture makes several distinct physical databases appear as one logical database to end-users.
+Федерация (или функциональное разделение) разделяет базы данных по функциям. Благодаря архитектуре федерации несколько отдельных физических баз данных представляются конечным пользователям как одна логическая база данных.
 
-All of the components in a federation are tied together by one or more federal schemas that express the commonality of data throughout the federation. These federated schemas are used to specify the information that can be shared by the federation components and to provide a common basis for communication among them.
+Все компоненты федерации связаны между собой одной или несколькими федеративными схемами, которые выражают общность данных во всей федерации. Эти федеративные схемы используются для определения информации, которая может быть совместно использована компонентами федерации, и для обеспечения общей основы для взаимодействия между ними.
 
 ![database-federation](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/database-federation/database-federation.png)
 
-Federation also provides a cohesive, unified view of data derived from multiple sources. The data sources for federated systems can include databases and various other forms of structured and unstructured data.
+Федерация также обеспечивает целостное, единое представление данных, полученных из нескольких источников. Источниками данных для федеративных систем могут быть базы данных и различные другие формы структурированных и неструктурированных данных.
 
-## Characteristics
+## Характеристики
 
-Let's look at some key characteristics of a federated database:
+Давайте рассмотрим некоторые ключевые характеристики федеративной базы данных:
 
-- **Transparency**: Federated database masks user differences and implementations of underlying data sources. Therefore, the users do not need to be aware of where the data is stored.
-- **Heterogeneity**: Data sources can differ in many ways. A federated database system can handle different hardware, network protocols, data models, etc.
-- **Extensibility**: New sources may be needed to meet the changing needs of the business. A good federated database system needs to make it easy to add new sources.
-- **Autonomy**: A Federated database does not change existing data sources, interfaces should remain the same.
-- **Data integration**: A federated database can integrate data from different protocols, database management systems, etc.
+- **Прозрачность**: Федеративная база данных маскирует различия между пользователями и реализациями базовых источников данных. Поэтому пользователям не нужно знать, где хранятся данные.
+- **Гетерогенность**: Источники данных могут различаться по многим параметрам. Система федеративных баз данных может работать с различным оборудованием, сетевыми протоколами, моделями данных и т. д.
+- **Расширяемость**: Для удовлетворения меняющихся потребностей бизнеса могут потребоваться новые источники. Хорошая система федеративных баз данных должна обеспечивать простоту добавления новых источников.
+- **Автономность**: Федеративная база данных не изменяет существующие источники данных, интерфейсы должны оставаться прежними.
+- **Интеграция данных**: Федеративная база данных может интегрировать данные из различных протоколов, систем управления базами данных и т. д.
 
-## Advantages
+## Преимущества
 
-Here are some advantages of federated databases:
+Вот некоторые преимущества федеративных баз данных:
 
-- Flexible data sharing.
-- Autonomy among the database components.
-- Access heterogeneous data in a unified way.
-- No tight coupling of applications with legacy databases.
+- Гибкое совместное использование данных.
+- Автономность компонентов базы данных.
+- Единый доступ к разнородным данным.
+- Отсутствие жесткой связи приложений с унаследованными базами данных.
 
-## Disadvantages
+## Недостатки
 
-Below are some disadvantages of federated databases:
+Ниже перечислены некоторые недостатки федеративных баз данных:
 
-- Adds more hardware and additional complexity.
-- Joining data from two databases is complex.
-- Dependence on autonomous data sources.
-- Query performance and scalability.
+- Добавляет больше оборудования и дополнительные сложности.
+- Объединение данных из двух баз данных является сложной задачей.
+- Зависимость от автономных источников данных.
+- Производительность запросов и масштабируемость.
 
-# N-tier architecture
+# N-уровневая архитектура
 
-N-tier architecture divides an application into logical layers and physical tiers. Layers are a way to separate responsibilities and manage dependencies. Each layer has a specific responsibility. A higher layer can use services in a lower layer, but not the other way around.
+N-уровневая архитектура делит приложение на логические и физические уровни. Слои - это способ разделения ответственности и управления зависимостями. Каждый уровень несет определенную ответственность. Более высокий уровень может использовать сервисы более низкого уровня, но не наоборот.
 
 ![n-tier-architecture](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/n-tier-architecture/n-tier-architecture.png)
 
-Tiers are physically separated, running on separate machines. A tier can call to another tier directly, or use asynchronous messaging. Although each layer might be hosted in its own tier, that's not required. Several layers might be hosted on the same tier. Physically separating the tiers improves scalability and resiliency and adds latency from the additional network communication.
+Уровни физически разделены, работают на разных машинах. Уровень может обращаться к другому уровню напрямую или использовать асинхронный обмен сообщениями. Хотя каждый уровень может быть размещен на отдельном уровне, это не обязательно. Несколько уровней могут быть размещены на одном ярусе. Физическое разделение уровней улучшает масштабируемость и отказоустойчивость и увеличивает задержки из-за дополнительного сетевого взаимодействия.
 
-An N-tier architecture can be of two types:
+N-уровневая архитектура может быть двух типов:
 
-- In a closed layer architecture, a layer can only call the next layer immediately down.
-- In an open layer architecture, a layer can call any of the layers below it.
+- В архитектуре с закрытыми уровнями уровень может обращаться только к следующему уровню, расположенному сразу за ним.
+- В архитектуре с открытыми уровнями уровень может вызывать любой из нижележащих уровней.
 
-A closed-layer architecture limits the dependencies between layers. However, it might create unnecessary network traffic, if one layer simply passes requests along to the next layer.
+Архитектура закрытого уровня ограничивает зависимости между уровнями. Однако она может создавать ненужный сетевой трафик, если один уровень просто передает запросы следующему уровню.
 
-## Types of N-Tier architectures
+## Типы N-уровневых архитектур
 
-Let's look at some examples of N-Tier architecture:
+Давайте рассмотрим некоторые примеры N-уровневых архитектур:
 
-### 3-Tier architecture
+### 3-уровневая архитектура
 
-3-Tier is widely used and consists of the following different layers:
+Трехуровневая архитектура широко распространена и состоит из следующих различных уровней:
 
-- **Presentation layer**: Handles user interactions with the application.
-- **Business Logic layer**: Accepts the data from the application layer, validates it as per business logic and passes it to the data layer.
-- **Data Access layer**: Receives the data from the business layer and performs the necessary operation on the database.
+- **Презентационный уровень**: Управляет взаимодействием пользователей с приложением.
+- **Уровень бизнес-логики**: Принимает данные от прикладного уровня, проверяет их в соответствии с бизнес-логикой и передает их на уровень данных.
+- **Уровень доступа к данным**: Получает данные от бизнес-слоя и выполняет необходимые операции с базой данных.
 
-### 2-Tier architecture
+### Двухуровневая архитектура
 
-In this architecture, the presentation layer runs on the client and communicates with a data store. There is no business logic layer or immediate layer between client and server.
+В этой архитектуре презентационный слой работает на клиенте и взаимодействует с хранилищем данных. Между клиентом и сервером нет ни слоя бизнес-логики, ни непосредственного слоя.
 
-### Single Tier or 1-Tier architecture
+### Одноуровневая или 1-Tier архитектура
 
-It is the simplest one as it is equivalent to running the application on a personal computer. All of the required components for an application to run are on a single application or server.
+Это самая простая архитектура, поскольку она эквивалентна запуску приложения на персональном компьютере. Все необходимые компоненты для работы приложения находятся на одном приложении или сервере.
 
-## Advantages
+## Преимущества
 
-Here are some advantages of using N-tier architecture:
+Вот некоторые преимущества использования N-уровневой архитектуры:
 
-- Can improve availability.
-- Better security as layers can behave like a firewall.
-- Separate tiers allow us to scale them as needed.
-- Improve maintenance as different people can manage different tiers.
+- Повышение доступности.
+- Повышение безопасности, так как уровни могут вести себя как брандмауэр.
+- Отдельные уровни позволяют масштабировать их по мере необходимости.
+- Улучшение обслуживания, так как разные люди могут управлять разными уровнями.
 
-## Disadvantages
+## Недостатки
 
-Below are some disadvantages of N-tier architecture:
+Ниже перечислены некоторые недостатки N-уровневой архитектуры:
 
-- Increased complexity of the system as a whole.
-- Increased network latency as the number of tiers increases.
-- Expensive as every tier will have its own hardware cost.
-- Difficult to manage network security.
+- Повышенная сложность системы в целом.
+- Увеличение сетевых задержек при увеличении числа уровней.
+- Дороговизна, поскольку каждый уровень будет иметь свои собственные аппаратные затраты.
+- Сложность управления сетевой безопасностью.
 
-# Message Brokers
+# Брокеры сообщений
 
-A message broker is a software that enables applications, systems, and services to communicate with each other and exchange information. The message broker does this by translating messages between formal messaging protocols. This allows interdependent services to _"talk"_ with one another directly, even if they were written in different languages or implemented on different platforms.
+Брокер сообщений - это программное обеспечение, которое позволяет приложениям, системам и сервисам взаимодействовать друг с другом и обмениваться информацией. Брокер сообщений делает это путем трансляции сообщений между формальными протоколами обмена сообщениями. Это позволяет взаимозависимым сервисам "разговаривать" друг с другом напрямую, даже если они написаны на разных языках или реализованы на разных платформах.
 
 ![message-broker](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/message-brokers/message-broker.png)
 
-Message brokers can validate, store, route, and deliver messages to the appropriate destinations. They serve as intermediaries between other applications, allowing senders to issue messages without knowing where the receivers are, whether or not they are active, or how many of them there are. This facilitates the decoupling of processes and services within systems.
+Брокеры сообщений могут проверять, хранить, маршрутизировать и доставлять сообщения по назначению. Они служат посредниками между другими приложениями, позволяя отправителям отправлять сообщения, не зная, где находятся получатели, активны ли они, и сколько их всего. Это облегчает разделение процессов и сервисов в системах.
 
-## Models
+## Модели
 
-Message brokers offer two basic message distribution patterns or messaging styles:
+Брокеры сообщений предлагают две основные модели распределения сообщений или стили обмена сообщениями:
 
-- **[Point-to-Point messaging](https://karanpratapsingh.com/courses/system-design/message-queues)**: This is the distribution pattern utilized in message queues with a one-to-one relationship between the message's sender and receiver.
-- **[Publish-Subscribe messaging](https://karanpratapsingh.com/courses/system-design/publish-subscribe)**: In this message distribution pattern, often referred to as _"pub/sub"_, the producer of each message publishes it to a topic, and multiple message consumers subscribe to topics from which they want to receive messages.
+- **[Point-to-Point messaging](https://karanpratapsingh.com/courses/system-design/message-queues)**: Это схема распределения, используемая в очередях сообщений с отношениями "один к одному" между отправителем и получателем сообщения.
+- **[Publish-Subscribe messaging](https://karanpratapsingh.com/courses/system-design/publish-subscribe)**: В этом шаблоне распределения сообщений, часто называемом _"pub/sub"_, производитель каждого сообщения публикует его в теме, а множество потребителей сообщений подписываются на темы, от которых они хотят получать сообщения.
 
-_We will discuss these messaging patterns in detail in the later tutorials._
+_Мы подробно рассмотрим эти шаблоны обмена сообщениями в последующих уроках._
 
-## Message brokers vs Event streaming
+## Брокеры сообщений и потоковая передача событий
 
-Message brokers can support two or more messaging patterns, including message queues and pub/sub, while event streaming platforms only offer pub/sub-style distribution patterns. Designed for use with high volumes of messages, event streaming platforms are readily scalable. They're capable of ordering streams of records into categories called _topics_ and storing them for a predetermined amount of time. Unlike message brokers, however, event streaming platforms cannot guarantee message delivery or track which consumers have received the messages.
+Брокеры сообщений могут поддерживать два или более шаблонов обмена сообщениями, включая очереди сообщений и pub/sub, в то время как платформы потоковой передачи событий предлагают только шаблоны распределения в стиле pub/sub. Платформы потоковой передачи событий, предназначенные для работы с большими объемами сообщений, легко масштабируются. Они способны упорядочивать потоки записей по категориям, называемым _темами_, и хранить их в течение заранее определенного времени. Однако, в отличие от брокеров сообщений, платформы потоковой передачи событий не могут гарантировать доставку сообщений или отслеживать, какие потребители получили сообщения.
 
-Event streaming platforms offer more scalability than message brokers but fewer features that ensure fault tolerance like message resending, as well as more limited message routing and queueing capabilities.
+Платформы потоковой передачи событий обладают большей масштабируемостью, чем брокеры сообщений, но меньшим количеством функций, обеспечивающих отказоустойчивость, таких как повторная отправка сообщений, а также более ограниченными возможностями маршрутизации и постановки сообщений в очередь.
 
 ## Message brokers vs Enterprise Service Bus (ESB)
 
-[Enterprise Service Bus (ESB)](https://karanpratapsingh.com/courses/system-design/enterprise-service-bus) infrastructure is complex and can be challenging to integrate and expensive to maintain. It's difficult to troubleshoot them when problems occur in production environments, they're not easy to scale, and updating is tedious.
+Инфраструктура [Enterprise Service Bus (ESB)](https://karanpratapsingh.com/courses/system-design/enterprise-service-bus) сложна, ее интеграция и обслуживание могут оказаться дорогостоящими. Их сложно устранять при возникновении проблем в производственных средах, их нелегко масштабировать, а обновление является утомительным.
 
-Whereas message brokers are a _"lightweight"_ alternative to ESBs that provide similar functionality, a mechanism for inter-service communication, at a lower cost. They're well-suited for use in the [microservices architectures](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices) that have become more prevalent as ESBs have fallen out of favor.
+Брокеры сообщений - это _"облегченная"_ альтернатива ESB, которая обеспечивает аналогичную функциональность, механизм межсервисного взаимодействия, но при этом стоит дешевле. Они хорошо подходят для использования в [архитектурах микросервисов](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices), которые стали более распространенными, поскольку ESB вышли из моды
 
-## Examples
+## Примеры
 
-Here are some commonly used message brokers:
+Вот некоторые часто используемые брокеры сообщений:
 
 - [NATS](https://nats.io)
 - [Apache Kafka](https://kafka.apache.org)
