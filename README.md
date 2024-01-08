@@ -3152,60 +3152,60 @@ Sliding Window - это гибридный подход, который соче
 
 Самый простой способ решить эту проблему - использовать липкие сессии в наших балансировщиках нагрузки, чтобы каждый потребитель отправлялся ровно на один узел, но это приводит к недостаточной отказоустойчивости и проблемам масштабирования. Другим подходом может быть использование централизованного хранилища данных, например [Redis](https://redis.io), но это приведет к увеличению задержек и возникновению условий гонки.
 
-### Race Conditions
+### Условия гонки
 
-This issue happens when we use a naive _"get-then-set"_ approach, in which we retrieve the current rate limit counter, increment it, and then push it back to the datastore. This model's problem is that additional requests can come through in the time it takes to perform a full cycle of read-increment-store, each attempting to store the increment counter with an invalid (lower) counter value. This allows a consumer to send a very large number of requests to bypass the rate limiting controls.
+Эта проблема возникает, когда мы используем наивный подход _"get-then-set"_, при котором мы получаем текущий счетчик ограничения скорости, инкрементируем его, а затем отправляем обратно в хранилище данных. Проблема этой модели заключается в том, что за время, необходимое для выполнения полного цикла чтения-инкремента-магазина, могут прийти дополнительные запросы, каждый из которых попытается сохранить счетчик инкремента с недопустимым (меньшим) значением счетчика. Это позволяет потребителю отправить очень большое количество запросов, чтобы обойти контроль ограничения скорости.
 
-One way to avoid this problem is to use some sort of distributed locking mechanism around the key, preventing any other processes from accessing or writing to the counter. Though the lock will become a significant bottleneck and will not scale well. A better approach might be to use a _"set-then-get"_ approach, allowing us to quickly increment and check counter values without letting the atomic operations get in the way.
+Один из способов избежать этой проблемы - использовать некий механизм распределенной блокировки вокруг ключа, не позволяющий другим процессам обращаться к счетчику или записывать в него данные. Однако блокировка станет значительным узким местом и будет плохо масштабироваться. Лучшим подходом может быть использование подхода _"set-then-get"_, позволяющего нам быстро увеличивать и проверять значения счетчиков, не позволяя атомарным операциям мешать.
 
-# Service Discovery
+# Обнаружение сервисов
 
-Service discovery is the detection of services within a computer network. Service Discovery Protocol (SDP) is a networking standard that accomplishes the detection of networks by identifying resources.
+Обнаружение сервисов - это обнаружение сервисов в компьютерной сети. Service Discovery Protocol (SDP) - это сетевой стандарт, который обеспечивает обнаружение сетей путем идентификации ресурсов.
 
 
-## Why do we need Service Discovery?
+## Зачем нам нужно обнаружение сервисов?
 
-In a monolithic application, services invoke one another through language-level methods or procedure calls. However, modern microservices-based applications typically run in virtualized or containerized environments where the number of instances of a service and their locations change dynamically. Consequently, we need a mechanism that enables the clients of service to make requests to a dynamically changing set of ephemeral service instances.
+В монолитном приложении сервисы вызывают друг друга с помощью методов на уровне языка или вызовов процедур. Однако современные приложения, основанные на микросервисах, обычно работают в виртуализированных или контейнерных средах, где количество экземпляров сервисов и их местоположение динамически меняются. Следовательно, нам нужен механизм, позволяющий клиентам сервиса делать запросы к динамически меняющемуся набору эфемерных экземпляров сервиса.
 
-## Implementations
+## Реализации
 
-There are two main service discovery patterns:
+Существует два основных шаблона обнаружения сервисов:
 
-### Client-side discovery
+### Обнаружение на стороне клиента
 
 ![client-side-service-discovery](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/service-discovery/client-side-service-discovery.png)
 
-In this approach, the client obtains the location of another service by querying a service registry which is responsible for managing and storing the network locations of all the services.
+При таком подходе клиент получает местоположение другой службы, обращаясь к реестру служб, который отвечает за управление и хранение сетевых местоположений всех служб.
 
-### Server-side discovery
+### Обнаружение на стороне сервера
 
 ![server-side-service-discovery](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/service-discovery/server-side-service-discovery.png)
 
-In this approach, we use an intermediate component such as a load balancer. The client makes a request to the service via a load balancer which then forwards the request to an available service instance.
+В этом подходе мы используем промежуточный компонент, такой как балансировщик нагрузки. Клиент делает запрос к сервису через балансировщик нагрузки, который затем направляет запрос к доступному экземпляру сервиса.
 
-## Service Registry
+## Реестр сервисов
 
-A service registry is basically a database containing the network locations of service instances to which the clients can reach out. A Service Registry must be highly available and up-to-date.
+Реестр сервисов - это, по сути, база данных, содержащая сетевые расположения экземпляров сервисов, к которым могут обращаться клиенты. Реестр сервисов должен быть высокодоступным и актуальным.
 
-## Service Registration
+## Регистрация сервисов
 
-We also need a way to obtain service information, often known as service registration. Let's look at two possible service registration approaches:
+Нам также нужен способ получения информации о сервисе, часто называемый регистрацией сервиса. Давайте рассмотрим два возможных подхода к регистрации сервисов:
 
-### Self-Registration
+### Саморегистрация (Self-Registration)
 
-When using the self-registration model, a service instance is responsible for registering and de-registering itself in the Service Registry. In addition, if necessary, a service instance sends heartbeat requests to keep its registration alive.
+При использовании модели саморегистрации экземпляр службы отвечает за регистрацию и снятие с регистрации в реестре служб. Кроме того, если необходимо, экземпляр сервиса отправляет запросы heartbeat, чтобы поддерживать свою регистрацию в актуальном состоянии.
 
-### Third-party Registration
+### Регистрация третьих лиц (Third-party Registration)
 
-The registry keeps track of changes to running instances by polling the deployment environment or subscribing to events. When it detects a newly available service instance, it records it in its database. The Service Registry also de-registers terminated service instances.
+Реестр отслеживает изменения в запущенных экземплярах, опрашивая среду развертывания или подписываясь на события. Когда он обнаруживает новый доступный экземпляр службы, он записывает его в свою базу данных. Реестр служб также снимает с регистрации завершенные экземпляры служб.
 
-## Service mesh
+## Сервисная сетка (Service mesh)
 
-Service-to-service communication is essential in a distributed application but routing this communication, both within and across application clusters, becomes increasingly complex as the number of services grows. Service mesh enables managed, observable, and secure communication between individual services. It works with a service discovery protocol to detect services. [Istio](https://istio.io/latest/about/service-mesh) and [envoy](https://www.envoyproxy.io) are some of the most commonly used service mesh technologies.
+Связь между сервисами необходима в распределенных приложениях, но маршрутизация этой связи как внутри, так и между кластерами приложений становится все более сложной по мере роста числа сервисов. Service mesh обеспечивает управляемую, наблюдаемую и безопасную связь между отдельными сервисами. Для обнаружения сервисов она работает с протоколом обнаружения сервисов. [Istio](https://istio.io/latest/about/service-mesh) и [envoy](https://www.envoyproxy.io) - одни из наиболее часто используемых технологий сервисной сетки.
 
-## Examples
+## Примеры
 
-Here are some commonly used service discovery infrastructure tools:
+Вот некоторые часто используемые инструменты инфраструктуры обнаружения сервисов:
 
 - [etcd](https://etcd.io)
 - [Consul](https://www.consul.io)
@@ -3214,635 +3214,634 @@ Here are some commonly used service discovery infrastructure tools:
 
 # SLA, SLO, SLI
 
-Let's briefly discuss SLA, SLO, and SLI. These are mostly related to the business and site reliability side of things but good to know nonetheless.
+Давайте вкратце обсудим SLA, SLO и SLI. Они в основном относятся к бизнесу и надежности сайта, но, тем не менее, их полезно знать.
 
-## Why are they important?
+## Почему они важны?
 
-SLAs, SLOs, and SLIs allow companies to define, track and monitor the promises made for a service to its users. Together, SLAs, SLOs, and SLIs should help teams generate more user trust in their services with an added emphasis on continuous improvement to incident management and response processes.
+SLA, SLO и SLI позволяют компаниям определять, отслеживать и контролировать обещания, данные пользователям в отношении услуг. В совокупности SLA, SLO и SLI должны помочь командам повысить доверие пользователей к своим услугам, а также сделать акцент на постоянном совершенствовании процессов управления и реагирования на инциденты.
 
 ## SLA
 
-An SLA, or Service Level Agreement, is an agreement made between a company and its users of a given service. The SLA defines the different promises that the company makes to users regarding specific metrics, such as service availability.
+SLA, или соглашение об уровне обслуживания, - это соглашение, заключенное между компанией и пользователями определенного сервиса. SLA определяет различные обещания, которые компания дает пользователям в отношении конкретных показателей, таких как доступность сервиса.
 
-_SLAs are often written by a company's business or legal team._
+_SLA часто пишут бизнесмены или юристы компании._
 
 ## SLO
 
-An SLO, or Service Level Objective, is the promise that a company makes to users regarding a specific metric such as incident response or uptime. SLOs exist within an SLA as individual promises contained within the full user agreement. The SLO is the specific goal that the service must meet in order to comply with the SLA. SLOs should always be simple, clearly defined, and easily measured to determine whether or not the objective is being fulfilled.
+SLO (Service Level Objective) - это обещание, которое компания дает пользователям в отношении конкретного показателя, такого как реакция на инцидент или время безотказной работы. SLO существуют в SLA как отдельные обещания, содержащиеся в полном пользовательском соглашении. SLO - это конкретная цель, которую должна достичь служба, чтобы соответствовать SLA. SLO всегда должны быть простыми, четко определенными и легко измеряемыми, чтобы определить, выполняется ли цель.
 
 ## SLI
 
-An SLI, or Service Level Indicator, is a key metric used to determine whether or not the SLO is being met. It is the measured value of the metric described within the SLO. In order to remain in compliance with the SLA, the SLI's value must always meet or exceed the value determined by the SLO.
+SLI, или индикатор уровня сервиса, - это ключевая метрика, используемая для определения того, выполняется ли SLO. Это измеренное значение метрики, описанной в SLO. Для того чтобы оставаться в соответствии с SLA, значение SLI должно всегда соответствовать или превышать значение, определенное SLO.
 
-# Disaster recovery
+# Восстановление после катастроф
 
-Disaster recovery (DR) is a process of regaining access and functionality of the infrastructure after events like a natural disaster, cyber attack, or even business disruptions.
+Аварийное восстановление (DR) - это процесс восстановления доступа и функциональности инфраструктуры после таких событий, как стихийные бедствия, кибератаки или даже сбои в работе.
 
-Disaster recovery relies upon the replication of data and computer processing in an off-premises location not affected by the disaster. When servers go down because of a disaster, a business needs to recover lost data from a second location where the data is backed up. Ideally, an organization can transfer its computer processing to that remote location as well in order to continue operations.
+Аварийное восстановление основано на репликации данных и компьютерной обработки в удаленном месте, не затронутом катастрофой. Когда серверы выходят из строя из-за стихийного бедствия, предприятию необходимо восстановить потерянные данные из второго места, где хранятся резервные копии данных. В идеале организация может перенести свою компьютерную обработку и в это удаленное место, чтобы продолжить работу.
 
-_Disaster Recovery is often not actively discussed during system design interviews but it's important to have some basic understanding of this topic. You can learn more about disaster recovery from [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html)._
+Восстановление после катастроф часто не обсуждается на собеседованиях при проектировании системы, но важно иметь базовое представление об этой теме. Подробнее о восстановлении после катастроф вы можете узнать из [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html)._
 
-## Why is disaster recovery important?
+## Почему аварийное восстановление важно?
 
-Disaster recovery can have the following benefits:
+Аварийное восстановление может иметь следующие преимущества:
 
-- Minimize interruption and downtime
-- Limit damages
-- Fast restoration
-- Better customer retention
+- Минимизация перерывов и простоев
+- Ограничение ущерба
+- Быстрое восстановление
+- Лучшее удержание клиентов
 
-## Terms
+## Термины
 
-Let's discuss some important terms relevantly for disaster recovery:
+Давайте обсудим некоторые важные термины, имеющие отношение к аварийному восстановлению:
 
 ![disaster-recovery](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/disaster-recovery/disaster-recovery.png)
 
 ### RTO
 
-Recovery Time Objective (RTO) is the maximum acceptable delay between the interruption of service and restoration of service. This determines what is considered an acceptable time window when service is unavailable.
+Время восстановления (Recovery Time Objective, RTO) - это максимально допустимая задержка между прерыванием обслуживания и его восстановлением. Это определяет, что считается приемлемым промежутком времени, когда сервис недоступен.
 
 ### RPO
 
-Recovery Point Objective (RPO) is the maximum acceptable amount of time since the last data recovery point. This determines what is considered an acceptable loss of data between the last recovery point and the interruption of service.
+Цель точки восстановления (RPO) - это максимально допустимый промежуток времени с момента последней точки восстановления данных. Это определяет, что считается приемлемой потерей данных между последней точкой восстановления и прерыванием обслуживания.
 
-## Strategies
+## Стратегии
 
-A variety of disaster recovery (DR) strategies can be part of a disaster recovery plan.
+В план аварийного восстановления (DR) могут входить различные стратегии.
 
-### Back-up
+### Резервное копирование
 
-This is the simplest type of disaster recovery and involves storing data off-site or on a removable drive.
+Это самый простой тип аварийного восстановления, предполагающий хранение данных за пределами предприятия или на съемном диске.
 
-### Cold Site
+### Холодный сайт
 
-In this type of disaster recovery, an organization sets up basic infrastructure in a second site.
+При этом типе аварийного восстановления организация создает базовую инфраструктуру на второй площадке.
 
-### Hot site
+### Горячий сайт
 
-A hot site maintains up-to-date copies of data at all times. Hot sites are time-consuming to set up and more expensive than cold sites, but they dramatically reduce downtime.
+На "горячем" сайте постоянно поддерживаются актуальные копии данных. Создание "горячих" сайтов занимает много времени и обходится дороже, чем "холодных", но они значительно сокращают время простоя.
 
-# Virtual Machines (VMs) and Containers
+# Виртуальные машины (ВМ) и контейнеры
 
-Before we discuss virtualization vs containerization, let's learn what are virtual machines (VMs) and Containers.
+Прежде чем обсуждать виртуализацию и контейнеризацию, давайте узнаем, что такое виртуальные машины (ВМ) и контейнеры.
 
-## Virtual Machines (VM)
+## Виртуальные машины (ВМ)
 
-A Virtual Machine (VM) is a virtual environment that functions as a virtual computer system with its own CPU, memory, network interface, and storage, created on a physical hardware system. A software called a hypervisor separates the machine's resources from the hardware and provisions them appropriately so they can be used by the VM.
+Виртуальная машина (ВМ) - это виртуальная среда, которая функционирует как виртуальная компьютерная система с собственным процессором, памятью, сетевым интерфейсом и хранилищем, созданная на физической аппаратной системе. Программное обеспечение, называемое гипервизором, отделяет ресурсы машины от аппаратного обеспечения и соответствующим образом распределяет их, чтобы они могли использоваться ВМ.
 
-VMs are isolated from the rest of the system, and multiple VMs can exist on a single piece of hardware, like a server. They can be moved between host servers depending on the demand or to use resources more efficiently.
+ВМ изолированы от остальной системы, и несколько ВМ могут существовать на одном аппаратном обеспечении, например на сервере. Их можно перемещать между хост-серверами в зависимости от потребностей или для более эффективного использования ресурсов.
 
-### What is a Hypervisor?
+### Что такое гипервизор?
 
-A Hypervisor sometimes called a Virtual Machine Monitor (VMM), isolates the operating system and resources from the virtual machines and enables the creation and management of those VMs. The hypervisor treats resources like CPU, memory, and storage as a pool of resources that can be easily reallocated between existing guests or new virtual machines.
+Гипервизор, иногда называемый монитором виртуальных машин (VMM), изолирует операционную систему и ресурсы от виртуальных машин и позволяет создавать и управлять этими виртуальными машинами. Гипервизор рассматривает такие ресурсы, как процессор, память и хранилище, как пул ресурсов, которые можно легко перераспределять между существующими гостями или новыми виртуальными машинами.
 
-### Why use a Virtual Machine?
+### Зачем использовать виртуальную машину?
 
-Server consolidation is a top reason to use VMs. Most operating system and application deployments only use a small amount of the physical resources available. By virtualizing our servers, we can place many virtual servers onto each physical server to improve hardware utilization. This keeps us from needing to purchase additional physical resources.
+Консолидация серверов - главная причина использования виртуальных машин. Большинство операционных систем и приложений используют лишь небольшое количество доступных физических ресурсов. Благодаря виртуализации серверов мы можем разместить множество виртуальных серверов на каждом физическом сервере, чтобы повысить эффективность использования оборудования. Это избавляет нас от необходимости приобретать дополнительные физические ресурсы.
 
-A VM provides an environment that is isolated from the rest of a system, so whatever is running inside a VM won't interfere with anything else running on the host hardware. Because VMs are isolated, they are a good option for testing new applications or setting up a production environment. We can also run a single-purpose VM to support a specific use case.
+В виртуальной машине создается среда, изолированная от остальной системы, поэтому все, что выполняется внутри виртуальной машины, не будет мешать работе всего остального оборудования хоста. Поскольку ВМ изолированы, они являются хорошим вариантом для тестирования новых приложений или настройки производственной среды. Мы также можем запустить одноцелевую ВМ для поддержки конкретного случая использования.
 
-## Containers
+## Контейнеры
 
-A container is a standard unit of software that packages up code and all its dependencies such as specific versions of runtimes and libraries so that the application runs quickly and reliably from one computing environment to another. Containers offer a logical packaging mechanism in which applications can be abstracted from the environment in which they actually run. This decoupling allows container-based applications to be deployed easily and consistently, regardless of the target environment.
+Контейнер - это стандартная единица программного обеспечения, которая упаковывает код и все его зависимости, такие как конкретные версии времени выполнения и библиотек, чтобы приложение быстро и надежно запускалось из одной вычислительной среды в другую. Контейнеры представляют собой логический механизм упаковки, в котором приложения могут быть абстрагированы от среды, в которой они фактически выполняются. Такое разделение позволяет легко и последовательно развертывать приложения на основе контейнеров, независимо от целевой среды.
 
-### Why do we need containers?
+### Зачем нам нужны контейнеры?
 
-Let's discuss some advantages of using containers:
+Давайте обсудим некоторые преимущества использования контейнеров:
 
-**Separation of responsibility**
+**Разделение ответственности**.
 
-Containerization provides a clear separation of responsibility, as developers focus on application logic and dependencies, while operations teams can focus on deployment and management.
+Контейнеризация обеспечивает четкое разделение ответственности, поскольку разработчики сосредоточены на логике приложения и зависимостях, а операционные команды могут сосредоточиться на развертывании и управлении.
 
-**Workload portability**
+**Переносимость рабочей нагрузки**.
 
-Containers can run virtually anywhere, greatly easing development and deployment.
+Контейнеры могут работать практически в любом месте, что значительно облегчает разработку и развертывание.
 
-**Application isolation**
+**Изоляция приложений**.
 
-Containers virtualize CPU, memory, storage, and network resources at the operating system level, providing developers with a view of the OS logically isolated from other applications.
+Контейнеры виртуализируют ресурсы процессора, памяти, хранилища и сети на уровне операционной системы, предоставляя разработчикам представление об ОС, логически изолированное от других приложений.
 
-**Agile development**
+**Агильная разработка**
 
-Containers allow developers to move much more quickly by avoiding concerns about dependencies and environments.
+Контейнеры позволяют разработчикам двигаться гораздо быстрее, избавляя их от забот о зависимостях и окружении.
 
-**Efficient operations**
+**Эффективные операции**.
 
-Containers are lightweight and allow us to use just the computing resources we need.
+Контейнеры легковесны и позволяют использовать только те вычислительные ресурсы, которые нам нужны.
 
-## Virtualization vs Containerization
+## Виртуализация против контейнеризации
 
 ![virtualization-vs-containerization](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/virtual-machines-and-containers/virtualization-vs-containerization.png)
 
-In traditional virtualization, a hypervisor virtualizes physical hardware. The result is that each virtual machine contains a guest OS, a virtual copy of the hardware that the OS requires to run, and an application and its associated libraries and dependencies.
+При традиционной виртуализации гипервизор виртуализирует физическое оборудование. В результате каждая виртуальная машина содержит гостевую ОС, виртуальную копию аппаратного обеспечения, которое требуется ОС для работы, а также приложение и связанные с ним библиотеки и зависимости.
 
-Instead of virtualizing the underlying hardware, containers virtualize the operating system so each container contains only the application and its dependencies making them much more lightweight than VMs. Containers also share the OS kernel and use a fraction of the memory VMs require.
+Вместо виртуализации базового оборудования контейнеры виртуализируют операционную систему, поэтому каждый контейнер содержит только приложение и его зависимости, что делает их гораздо более легковесными, чем виртуальные машины. Контейнеры также разделяют ядро ОС и используют лишь часть памяти, которая требуется виртуальным машинам.
 
-# OAuth 2.0 and OpenID Connect (OIDC)
+# OAuth 2.0 и OpenID Connect (OIDC)
 
 ## OAuth 2.0
 
-OAuth 2.0, which stands for Open Authorization, is a standard designed to provide consented access to resources on behalf of the user, without ever sharing the user's credentials. OAuth 2.0 is an authorization protocol and not an authentication protocol, it is designed primarily as a means of granting access to a set of resources, for example, remote APIs or user's data.
+OAuth 2.0, что расшифровывается как Open Authorization, - это стандарт, разработанный для предоставления согласованного доступа к ресурсам от имени пользователя, без передачи его учетных данных. OAuth 2.0 - это протокол авторизации, а не аутентификации, он разработан в первую очередь как средство предоставления доступа к набору ресурсов, например, удаленным API или данным пользователя.
 
-### Concepts
+### Концепции
 
-The OAuth 2.0 protocol defines the following entities:
+Протокол OAuth 2.0 определяет следующие сущности:
 
-- **Resource Owner**: The user or system that owns the protected resources and can grant access to them.
-- **Client**: The client is the system that requires access to the protected resources.
-- **Authorization Server**: This server receives requests from the Client for Access Tokens and issues them upon successful authentication and consent by the Resource Owner.
-- **Resource Server**: A server that protects the user's resources and receives access requests from the Client. It accepts and validates an Access Token from the Client and returns the appropriate resources.
-- **Scopes**: They are used to specify exactly the reason for which access to resources may be granted. Acceptable scope values, and which resources they relate to, are dependent on the Resource Server.
-- **Access Token**: A piece of data that represents the authorization to access resources on behalf of the end-user.
+- **Владелец ресурса**: Пользователь или система, которая владеет защищенными ресурсами и может предоставлять к ним доступ.
+- **Клиент**: Клиент - это система, которой требуется доступ к защищенным ресурсам.
+- **Сервер авторизации**: Этот сервер получает от клиента запросы на токены доступа и выдает их после успешной аутентификации и согласия владельца ресурса.
+- **Сервер ресурсов**: Сервер, который защищает ресурсы пользователя и получает запросы на доступ от клиента. Он принимает и проверяет токен доступа от клиента и возвращает соответствующие ресурсы.
+- **Сферы**: Используются для указания причины, по которой может быть предоставлен доступ к ресурсам. Приемлемые значения диапазонов и то, к каким ресурсам они относятся, зависят от сервера ресурсов.
+- **Токен доступа**: Часть данных, которая представляет собой разрешение на доступ к ресурсам от имени конечного пользователя.
 
-### How does OAuth 2.0 work?
+### Как работает OAuth 2.0?
 
-Let's learn how OAuth 2.0 works:
+Давайте узнаем, как работает OAuth 2.0:
 
 ![oauth2](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/oauth2-and-openid-connect/oauth2.png)
 
-1. The client requests authorization from the Authorization Server, supplying the client id and secret as identification. It also provides the scopes and an endpoint URI to send the Access Token or the Authorization Code.
-2. The Authorization Server authenticates the client and verifies that the requested scopes are permitted.
-3. The resource owner interacts with the authorization server to grant access.
-4. The Authorization Server redirects back to the client with either an Authorization Code or Access Token, depending on the grant type. A Refresh Token may also be returned.
-5. With the Access Token, the client can request access to the resource from the Resource Server.
+1. Клиент запрашивает авторизацию у сервера авторизации, предоставляя идентификатор и секрет клиента в качестве идентификатора. Он также указывает область действия и URI конечной точки для отправки токена доступа или кода авторизации.
+2. Сервер авторизации проверяет подлинность клиента и убеждается, что запрошенные области разрешены.
+3. Владелец ресурса взаимодействует с сервером авторизации для предоставления доступа.
+4. Сервер авторизации перенаправляет клиенту код авторизации или токен доступа, в зависимости от типа разрешения. Также может быть возвращен токен обновления.
+5. Получив токен доступа, клиент может запросить доступ к ресурсу у сервера ресурсов.
 
-### Disadvantages
+### Недостатки
 
-Here are the most common disadvantages of OAuth 2.0:
+Вот наиболее распространенные недостатки OAuth 2.0:
 
-- Lacks built-in security features.
-- No standard implementation.
-- No common set of scopes.
+- Отсутствие встроенных средств безопасности.
+- Нет стандартной реализации.
+- Нет общего набора диапазонов.
 
 ## OpenID Connect
 
-OAuth 2.0 is designed only for _authorization_, for granting access to data and features from one application to another. OpenID Connect (OIDC) is a thin layer that sits on top of OAuth 2.0 that adds login and profile information about the person who is logged in.
+OAuth 2.0 предназначен только для _авторизации_, для предоставления доступа к данным и функциям от одного приложения к другому. OpenID Connect (OIDC) - это тонкий слой, который располагается поверх OAuth 2.0 и добавляет информацию о логине и профиле человека, который вошел в систему.
 
-When an Authorization Server supports OIDC, it is sometimes called an Identity Provider (IdP), since it provides information about the Resource Owner back to the Client. OpenID Connect is relatively new, resulting in lower adoption and industry implementation of best practices compared to OAuth.
+Когда сервер авторизации поддерживает OIDC, его иногда называют провайдером идентификации (IdP), поскольку он предоставляет информацию о владельце ресурса обратно клиенту. OpenID Connect появился относительно недавно, что привело к меньшему распространению и внедрению лучших практик по сравнению с OAuth.
 
-### Concepts
+### Концепции
 
-The OpenID Connect (OIDC) protocol defines the following entities:
+Протокол OpenID Connect (OIDC) определяет следующие сущности:
 
-- **Relying Party**: The current application.
-- **OpenID Provider**: This is essentially an intermediate service that provides a one-time code to the Relying Party.
-- **Token Endpoint**: A web server that accepts the One-Time Code (OTC) and provides an access code that's valid for an hour. The main difference between OIDC and OAuth 2.0 is that the token is provided using JSON Web Token (JWT).
-- **UserInfo Endpoint**: The Relying Party communicates with this endpoint, providing a secure token and receiving information about the end-user
+- **Relying Party**: Текущее приложение.
+- **OpenID Provider**: По сути, это промежуточная служба, которая предоставляет одноразовый код доверяющей стороне.
+- **Token Endpoint**: Веб-сервер, принимающий одноразовый код (OTC) и предоставляющий код доступа, действительный в течение часа. Основное различие между OIDC и OAuth 2.0 заключается в том, что токен предоставляется с помощью JSON Web Token (JWT).
+- **UserInfo Endpoint**: Реализующая сторона взаимодействует с этой конечной точкой, предоставляя защищенный токен и получая информацию о конечном пользователе.
 
-Both OAuth 2.0 and OIDC are easy to implement and are JSON based, which is supported by most web and mobile applications. However, the OpenID Connect (OIDC) specification is more strict than that of basic OAuth.
+Оба протокола - OAuth 2.0 и OIDC - просты в реализации и основаны на JSON, что поддерживается большинством веб- и мобильных приложений. Однако спецификация OpenID Connect (OIDC) более строгая, чем спецификация базового OAuth.
 
 # Single Sign-On (SSO)
 
-Single Sign-On (SSO) is an authentication process in which a user is provided access to multiple applications or websites by using only a single set of login credentials. This prevents the need for the user to log separately into the different applications.
+Single Sign-On (SSO) - это процесс аутентификации, при котором пользователю предоставляется доступ к нескольким приложениям или веб-сайтам с использованием только одного набора учетных данных. Это избавляет пользователя от необходимости отдельно входить в различные приложения.
 
-The user credentials and other identifying information are stored and managed by a centralized system called Identity Provider (IdP). The Identity Provider is a trusted system that provides access to other websites and applications.
+Учетные данные пользователя и другая идентифицирующая информация хранятся и управляются централизованной системой, называемой Identity Provider (IdP). Провайдер идентификации - это доверенная система, которая обеспечивает доступ к другим веб-сайтам и приложениям.
 
-Single Sign-On (SSO) based authentication systems are commonly used in enterprise environments where employees require access to multiple applications of their organizations.
+Системы аутентификации на основе единого входа (SSO) обычно используются в корпоративных средах, где сотрудникам требуется доступ к нескольким приложениям своей организации.
 
-## Components
+## Компоненты
 
-Let's discuss some key components of Single Sign-On (SSO).
+Давайте обсудим некоторые ключевые компоненты системы единого входа (SSO).
 
-### Identity Provider (IdP)
+### Провайдер идентификации (IdP)
 
-User Identity information is stored and managed by a centralized system called Identity Provider (IdP). The Identity Provider authenticates the user and provides access to the service provider.
+Информация о личности пользователя хранится и управляется централизованной системой, называемой Identity Provider (IdP). Провайдер идентификации аутентифицирует пользователя и предоставляет доступ к поставщику услуг.
 
-The identity provider can directly authenticate the user by validating a username and password or by validating an assertion about the user's identity as presented by a separate identity provider. The identity provider handles the management of user identities in order to free the service provider from this responsibility.
+Провайдер идентификации может непосредственно аутентифицировать пользователя, проверяя имя пользователя и пароль, или подтверждать утверждение об идентичности пользователя, представленное отдельным провайдером идентификации. Поставщик идентификации занимается управлением идентификационными данными пользователей, чтобы освободить поставщика услуг от этой обязанности.
 
-### Service Provider
+### Поставщик услуг
 
-A service provider provides services to the end-user. They rely on identity providers to assert the identity of a user, and typically certain attributes about the user are managed by the identity provider. Service providers may also maintain a local account for the user along with attributes that are unique to their service.
+Поставщик услуг предоставляет услуги конечному пользователю. Они полагаются на поставщиков идентификации для подтверждения личности пользователя, и обычно определенные атрибуты пользователя управляются поставщиком идентификации. Поставщики услуг могут также поддерживать локальную учетную запись пользователя вместе с атрибутами, уникальными для их услуг.
 
-### Identity Broker
+### Брокер идентификации
 
-An identity broker acts as an intermediary that connects multiple service providers with various different identity providers. Using Identity Broker, we can perform single sign-on over any application without the hassle of the protocol it follows.
+Брокер идентификации выступает в качестве посредника, который соединяет несколько поставщиков услуг с различными поставщиками идентификационных данных. Используя Identity Broker, мы можем выполнять единую регистрацию в любом приложении, не задумываясь о том, по какому протоколу оно работает.
 
 ## SAML
 
-Security Assertion Markup Language is an open standard that allows clients to share security information about identity, authentication, and permission across different systems. SAML is implemented with the Extensible Markup Language (XML) standard for sharing data.
+Security Assertion Markup Language - это открытый стандарт, позволяющий клиентам обмениваться информацией об идентификации, аутентификации и разрешениях в различных системах. SAML реализован с помощью стандарта Extensible Markup Language (XML) для обмена данными.
 
-SAML specifically enables identity federation, making it possible for identity providers (IdPs) to seamlessly and securely pass authenticated identities and their attributes to service providers.
+SAML обеспечивает федерацию идентификационных данных, позволяя поставщикам идентификационных данных (IdP) беспрепятственно и безопасно передавать аутентифицированные идентификационные данные и их атрибуты поставщикам услуг.
 
-## How does SSO work?
+## Как работает SSO?
 
-Now, let's discuss how Single Sign-On works:
+Теперь давайте обсудим, как работает Single Sign-On:
 
 ![sso](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/single-sign-on/sso.png)
 
-1. The user requests a resource from their desired application.
-2. The application redirects the user to the Identity Provider (IdP) for authentication.
-3. The user signs in with their credentials (usually, username and password).
-4. Identity Provider (IdP) sends a Single Sign-On response back to the client application.
-5. The application grants access to the user.
+1. Пользователь запрашивает ресурс у нужного ему приложения.
+2. Приложение перенаправляет пользователя к провайдеру идентификации (IdP) для аутентификации.
+3. Пользователь входит в систему, используя свои учетные данные (обычно имя пользователя и пароль).
+4. Провайдер идентификации (IdP) отправляет ответ Single Sign-On обратно клиентскому приложению.
+5. Приложение предоставляет пользователю доступ.
 
-## SAML vs OAuth 2.0 and OpenID Connect (OIDC)
+## SAML против OAuth 2.0 и OpenID Connect (OIDC)
 
-There are many differences between SAML, OAuth, and OIDC. SAML uses XML to pass messages, while OAuth and OIDC use JSON. OAuth provides a simpler experience, while SAML is geared towards enterprise security.
+Между SAML, OAuth и OIDC существует множество различий. SAML использует XML для передачи сообщений, в то время как OAuth и OIDC используют JSON. OAuth обеспечивает более простой опыт, в то время как SAML ориентирован на корпоративную безопасность.
 
-OAuth and OIDC use RESTful communication extensively, which is why mobile, and modern web applications find OAuth and OIDC a better experience for the user. SAML, on the other hand, drops a session cookie in a browser that allows a user to access certain web pages. This is great for short-lived workloads.
+OAuth и OIDC широко используют RESTful-коммуникации, поэтому мобильные и современные веб-приложения считают OAuth и OIDC более удобными для пользователей. SAML, с другой стороны, оставляет в браузере сессионный cookie, который позволяет пользователю получить доступ к определенным веб-страницам. Это отлично подходит для кратковременных рабочих нагрузок.
 
-OIDC is developer-friendly and simpler to implement, which broadens the use cases for which it might be implemented. It can be implemented from scratch pretty fast, via freely available libraries in all common programming languages. SAML can be complex to install and maintain, which only enterprise-size companies can handle well.
+OIDC удобен для разработчиков и более прост в реализации, что расширяет возможности его применения. Его можно довольно быстро реализовать с нуля с помощью свободно распространяемых библиотек на всех распространенных языках программирования. SAML может быть сложным в установке и обслуживании, с чем хорошо справляются только компании корпоративного уровня.
 
-OpenID Connect is essentially a layer on top of the OAuth framework. Therefore, it can offer a built-in layer of permission that asks a user to agree to what the service provider might access. Although SAML is also capable of allowing consent flow, it achieves this by hard-coding carried out by a developer and not as part of its protocol.
+OpenID Connect - это, по сути, слой поверх фреймворка OAuth. Поэтому он может предложить встроенный уровень разрешения, который просит пользователя согласиться с тем, что поставщик услуг может получить доступ. Хотя SAML также способен обеспечить поток разрешений, он достигает этого путем жесткого кодирования, выполняемого разработчиком, а не как часть своего протокола.
 
-_Both of these authentication protocols are good at what they do. As always, a lot depends on our specific use cases and target audience._
+_Оба этих протокола аутентификации хороши в том, что они делают. Как всегда, многое зависит от конкретного случая использования и целевой аудитории._
 
-## Advantages
+## Преимущества
 
-Following are the benefits of using Single Sign-On:
+Ниже перечислены преимущества использования единого входа:
 
-- Ease of use as users only need to remember one set of credentials.
-- Ease of access without having to go through a lengthy authorization process.
-- Enforced security and compliance to protect sensitive data.
-- Simplifying the management with reduced IT support cost and admin time.
+- Простота использования, поскольку пользователям нужно помнить только один набор учетных данных.
+- Простота доступа без необходимости проходить длительный процесс авторизации.
+- Обеспечение безопасности и соответствия нормативным требованиям для защиты конфиденциальных данных.
+- Упрощение управления за счет снижения затрат на ИТ-поддержку и времени администраторов.
 
-## Disadvantages
+## Недостатки
 
-Here are some disadvantages of Single Sign-On:
+Вот некоторые недостатки Single Sign-On:
 
-- Single Password Vulnerability, if the main SSO password gets compromised, all the supported applications get compromised.
-- The authentication process using Single Sign-On is slower than traditional authentication as every application has to request the SSO provider for verification.
+- Уязвимость единого пароля: если основной пароль SSO будет скомпрометирован, то под угрозой окажутся все поддерживаемые приложения.
+- Процесс аутентификации с помощью Single Sign-On медленнее, чем при традиционной аутентификации, поскольку каждое приложение должно запросить у провайдера SSO верификацию.
 
-## Examples
+## Примеры
 
-These are some commonly used Identity Providers (IdP):
+Вот некоторые часто используемые провайдеры идентификации (IdP):
 
 - [Okta](https://www.okta.com)
 - [Google](https://cloud.google.com/architecture/identity/single-sign-on)
 - [Auth0](https://auth0.com)
 - [OneLogin](https://www.onelogin.com)
 
+
 # SSL, TLS, mTLS
 
-Let's briefly discuss some important communication security protocols such as SSL, TLS, and mTLS. I would say that from a _"big picture"_ system design perspective, this topic is not very important but still good to know about.
+Давайте вкратце обсудим некоторые важные протоколы безопасности связи, такие как SSL, TLS и mTLS. Я бы сказал, что с точки зрения _"общей картины"_ проектирования системы эта тема не очень важна, но знать о ней все же полезно.
 
 ## SSL
 
-SSL stands for Secure Sockets Layer, and it refers to a protocol for encrypting and securing communications that take place on the internet. It was first developed in 1995 but since has been deprecated in favor of TLS (Transport Layer Security).
+SSL расшифровывается как Secure Sockets Layer и представляет собой протокол для шифрования и защиты коммуникаций, которые происходят в Интернете. Впервые он был разработан в 1995 году, но с тех пор был устаревшим в пользу TLS (Transport Layer Security).
 
-### Why is it called an SSL certificate if it is deprecated?
+### Почему сертификат называется SSL, если он устарел?
 
-Most major certificate providers still refer to certificates as SSL certificates, which is why the naming convention persists.
+Большинство крупных поставщиков сертификатов по-прежнему называют их SSL-сертификатами, поэтому такое название сохраняется.
 
-### Why was SSL so important?
+### Почему SSL так важен?
 
-Originally, data on the web was transmitted in plaintext that anyone could read if they intercepted the message. SSL was created to correct this problem and protect user privacy. By encrypting any data that goes between the user and a web server, SSL also stops certain kinds of cyber attacks by preventing attackers from tampering with data in transit.
+Первоначально данные в Интернете передавались в виде открытого текста, который мог прочесть любой, кто перехватит сообщение. SSL был создан для решения этой проблемы и защиты конфиденциальности пользователей. Шифруя все данные, которые передаются между пользователем и веб-сервером, SSL также предотвращает некоторые виды кибератак, не позволяя злоумышленникам подделывать данные во время их передачи.
 
 ## TLS
 
-Transport Layer Security, or TLS, is a widely adopted security protocol designed to facilitate privacy and data security for communications over the internet. TLS evolved from a previous encryption protocol called Secure Sockets Layer (SSL). A primary use case of TLS is encrypting the communication between web applications and servers.
+Transport Layer Security, или TLS, - это широко распространенный протокол безопасности, предназначенный для обеспечения конфиденциальности и защиты данных при обмене через Интернет. TLS развился из предыдущего протокола шифрования под названием Secure Sockets Layer (SSL). Основное применение TLS - шифрование связи между веб-приложениями и серверами.
 
-There are three main components to what the TLS protocol accomplishes:
+Протокол TLS состоит из трех основных компонентов:
 
-- **Encryption**: hides the data being transferred from third parties.
-- **Authentication**: ensures that the parties exchanging information are who they claim to be.
-- **Integrity**: verifies that the data has not been forged or tampered with.
+- **Шифрование**: скрывает передаваемые данные от третьих лиц.
+- **Аутентификация**: гарантирует, что стороны, обменивающиеся информацией, являются теми, за кого себя выдают.
+- **Целостность**: проверка того, что данные не были подделаны или фальсифицированы.
 
 ## mTLS
 
-Mutual TLS, or mTLS, is a method for mutual authentication. mTLS ensures that the parties at each end of a network connection are who they claim to be by verifying that they both have the correct private key. The information within their respective TLS certificates provides additional verification.
+Взаимный TLS, или mTLS, - это метод взаимной аутентификации. mTLS гарантирует, что стороны на каждом конце сетевого соединения являются теми, за кого себя выдают, проверяя, что у них обоих есть правильный закрытый ключ. Дополнительную проверку обеспечивает информация, содержащаяся в соответствующих сертификатах TLS.
 
-### Why use mTLS?
+### Зачем использовать mTLS?
 
-mTLS helps ensure that the traffic is secure and trusted in both directions between a client and server. This provides an additional layer of security for users who log in to an organization's network or applications. It also verifies connections with client devices that do not follow a login process, such as Internet of Things (IoT) devices.
+mTLS помогает обеспечить безопасность и доверие к трафику в обоих направлениях между клиентом и сервером. Это обеспечивает дополнительный уровень безопасности для пользователей, которые входят в сеть или приложения организации. Он также проверяет соединения с клиентскими устройствами, которые не проходят процедуру входа в систему, например устройствами Интернета вещей (IoT).
 
-Nowadays, mTLS is commonly used by microservices or distributed systems in a [zero trust security model](https://en.wikipedia.org/wiki/Zero_trust_security_model) to verify each other.
+В настоящее время mTLS обычно используется микросервисами или распределенными системами в [zero trust security model](https://en.wikipedia.org/wiki/Zero_trust_security_model) для проверки друг друга.
 
-# System Design Interviews
+# Собеседования по системному дизайну
 
-System design is a very extensive topic and system design interviews are designed to evaluate your capability to produce technical solutions to abstract problems, as such, they're not designed for a specific answer. The unique aspect of system design interviews is the two-way nature between the candidate and the interviewer.
+Проектирование систем - это очень обширная тема, и собеседования по проектированию систем предназначены для оценки вашей способности создавать технические решения абстрактных проблем, поэтому они не рассчитаны на конкретный ответ. Уникальным аспектом собеседований по проектированию систем является двусторонняя связь между кандидатом и интервьюером.
 
-Expectations are quite different at different engineering levels as well. This is because someone with a lot of practical experience will approach it quite differently from someone who's new in the industry. As a result, it's hard to come up with a single strategy that will help us stay organized during the interview.
+Ожидания на разных инженерных уровнях также сильно отличаются. Это связано с тем, что человек с большим практическим опытом будет подходить к собеседованию совсем иначе, чем новичок в этой отрасли. В результате трудно выработать единую стратегию, которая помогла бы нам оставаться организованными во время собеседования.
 
-Let's look at some common strategies for system design interviews:
+Давайте рассмотрим некоторые общие стратегии для собеседований по разработке систем:
 
-## Requirements clarifications
+## Уточнение требований
 
-System design interview questions, by nature, are vague or abstract. Asking questions about the exact scope of the problem, and clarifying functional requirements early in the interview is essential. Usually, requirements are divided into three parts:
+Вопросы на собеседовании по разработке системы по своей природе являются расплывчатыми или абстрактными. Задавать вопросы о точном масштабе проблемы и уточнять функциональные требования на ранних этапах собеседования очень важно. Обычно требования делятся на три части:
 
-### Functional requirements
+### Функциональные требования
 
-These are the requirements that the end user specifically demands as basic functionalities that the system should offer. All these functionalities need to be necessarily incorporated into the system as part of the contract.
+Это требования, которые конечный пользователь выдвигает в качестве основных функциональных возможностей, которые должна предоставлять система. Все эти функциональные возможности должны быть обязательно включены в систему в рамках контракта.
 
-For example:
+Например:
 
-- "What are the features that we need to design for this system?"
-- "What are the edge cases we need to consider, if any, in our design?"
+- "Какие функции нам нужно разработать для этой системы?".
+- "Какие крайние случаи мы должны учесть при проектировании, если таковые имеются?"
 
-### Non-functional requirements
+### Нефункциональные требования
 
-These are the quality constraints that the system must satisfy according to the project contract. The priority or extent to which these factors are implemented varies from one project to another. They are also called non-behavioral requirements. For example, portability, maintainability, reliability, scalability, security, etc.
+Это ограничения качества, которым должна удовлетворять система в соответствии с проектным контрактом. Приоритет или степень реализации этих факторов варьируется от проекта к проекту. Их также называют не-поведенческими требованиями. Например, переносимость, ремонтопригодность, надежность, масштабируемость, безопасность и т. д.
 
-For example:
+Например:
 
-- "Each request should be processed with the minimum latency"
-- "System should be highly available"
+- "Каждый запрос должен обрабатываться с минимальной задержкой".
+- "Система должна быть высокодоступной".
 
-### Extended requirements
+### Расширенные требования
 
-These are basically "nice to have" requirements that might be out of the scope of the system.
+В основном это "приятные" требования, которые могут выходить за рамки системы.
 
-For example:
+Например:
 
-- "Our system should record metrics and analytics"
-- "Service health and performance monitoring?"
+- "Наша система должна записывать метрики и аналитику".
+- "Мониторинг состояния и производительности сервиса?"
 
-## Estimation and Constraints
+## Оценка и ограничения
 
-Estimate the scale of the system we're going to design. It is important to ask questions such as:
+Оцените масштаб системы, которую мы собираемся проектировать. Важно задавать такие вопросы, как:
 
-- "What is the desired scale that this system will need to handle?"
-- "What is the read/write ratio of our system?"
-- "How many requests per second?"
-- "How much storage will be needed?"
+- "Каков желаемый масштаб, с которым должна справляться эта система?"
+- "Каково соотношение чтения и записи в нашей системе?"
+- "Сколько запросов в секунду?"
+- "Какой объем памяти потребуется?"
 
-These questions will help us scale our design later.
+Эти вопросы помогут нам масштабировать наш дизайн в дальнейшем.
 
-## Data model design
+## Разработка модели данных
 
-Once we have the estimations, we can start with defining the database schema. Doing so in the early stages of the interview would help us to understand the data flow which is the core of every system. In this step, we basically define all the entities and relationships between them.
+Получив оценки, мы можем приступить к определению схемы базы данных. Это необходимо сделать на ранних этапах интервью, чтобы понять поток данных, который является основой любой системы. На этом этапе мы определяем все сущности и отношения между ними.
 
-- "What are the different entities in the system?"
-- "What are the relationships between these entities?"
-- "How many tables do we need?"
-- "Is NoSQL a better choice here?"
+- "Что представляют собой различные сущности в системе?"
+- "Какие отношения существуют между этими сущностями?"
+- "Сколько таблиц нам нужно?"
+- "Является ли NoSQL лучшим выбором в данном случае?"
 
-## API design
+## Разработка API
 
-Next, we can start designing APIs for the system. These APIs will help us define the expectations from the system explicitly. We don't have to write any code, just a simple interface defining the API requirements such as parameters, functions, classes, types, entities, etc.
+Далее мы можем приступить к разработке API для системы. Эти API помогут нам определить ожидания от системы в явном виде. Нам не нужно писать никакого кода, достаточно простого интерфейса, определяющего требования к API, такие как параметры, функции, классы, типы, сущности и т. д.
 
-For example:
+Например:
 
 ```tsx
 createUser(name: string, email: string): User
 ```
 
-It is advised to keep the interface as simple as possible and come back to it later when covering extended requirements.
+Рекомендуется максимально упростить интерфейс и вернуться к нему позже, когда будут рассмотрены расширенные требования.
 
-## High-level component design
+## Высокоуровневый дизайн компонентов
 
-Now we have established our data model and API design, it's time to identify system components (such as Load Balancers, API Gateway, etc.) that are needed to solve our problem and draft the first design of our system.
+Теперь, когда мы определились с моделью данных и дизайном API, пришло время определить компоненты системы (такие как балансировщики нагрузки, шлюзы API и т. д.), необходимые для решения нашей задачи, и набросать первый проект нашей системы.
 
-- "Is it best to design a monolithic or a microservices architecture?"
-- "What type of database should we use?"
+- "Что лучше - монолитная или микросервисная архитектура?"
+- "Какой тип базы данных мы должны использовать?"
 
-Once we have a basic diagram, we can start discussing with the interviewer how the system will work from the client's perspective.
+Когда у нас есть базовая схема, мы можем начать обсуждать с интервьюером, как система будет работать с точки зрения клиента.
 
-## Detailed design
+## Детальное проектирование
 
-Now it's time to go into detail about the major components of the system we designed. As always discuss with the interviewer which component may need further improvements.
+Теперь пришло время подробно рассказать об основных компонентах системы, которую мы спроектировали. Как обычно, обсудите с интервьюером, какие компоненты могут нуждаться в дальнейших улучшениях.
 
-Here is a good opportunity to demonstrate your experience in the areas of your expertise. Present different approaches, advantages, and disadvantages. Explain your design decisions, and back them up with examples. This is also a good time to discuss any additional features the system might be able to support, though this is optional.
+Это хорошая возможность продемонстрировать свой опыт в тех областях, в которых вы разбираетесь. Представьте различные подходы, преимущества и недостатки. Объясните свои проектные решения и подкрепите их примерами. Это также хорошее время для обсуждения дополнительных возможностей, которые может поддерживать система, хотя это необязательно.
 
-- "How should we partition our data?"
-- "What about load distribution?"
-- "Should we use cache?"
-- "How will we handle a sudden spike in traffic?"
+- "Как мы должны разделить наши данные?"
+- "Как насчет распределения нагрузки?"
+- "Нужно ли использовать кэш?"
+- "Как мы справимся с внезапным всплеском трафика?"
 
-Also, try not to be too opinionated about certain technologies, statements like "I believe that NoSQL databases are just better, SQL databases are not scalable" reflect poorly. As someone who has interviewed a lot of people over the years, my two cents here would be to be humble about what you know and what you do not. Use your existing knowledge with examples to navigate this part of the interview.
+Также постарайтесь не быть слишком категоричным в отношении определенных технологий, заявления типа "Я считаю, что базы данных NoSQL просто лучше, а базы данных SQL не масштабируемы" отражают плохую репутацию. Как человек, который за годы работы провел множество собеседований, скажу, что нужно быть скромным в том, что вы знаете и чего не знаете. Используйте свои знания и примеры, чтобы пройти эту часть собеседования.
 
-## Identify and resolve bottlenecks
+## Выявление и устранение узких мест
 
-Finally, it's time to discuss bottlenecks and approaches to mitigate them. Here are some important questions to ask:
+Наконец, пришло время обсудить узкие места и подходы к их устранению. Вот несколько важных вопросов, которые следует задать:
 
-- "Do we have enough database replicas?"
-- "Is there any single point of failure?"
-- "Is database sharding required?"
-- "How can we make our system more robust?"
-- "How to improve the availability of our cache?"
+- "Достаточно ли у нас реплик базы данных?"
+- "Есть ли единая точка отказа?"
+- "Требуется ли шардинг базы данных?"
+- "Как мы можем сделать нашу систему более надежной?"
+- "Как повысить доступность нашего кэша?".
 
-Make sure to read the engineering blog of the company you're interviewing with. This will help you get a sense of what technology stack they're using and which problems are important to them.
+Обязательно читайте инженерный блог компании, в которую вы идете на собеседование. Это поможет вам понять, какой стек технологий они используют и какие проблемы для них важны.
 
 # URL Shortener
 
-Let's design a URL shortener, similar to services like [Bitly](https://bitly.com), [TinyURL](https://tinyurl.com/app).
+Давайте разработаем сокращатель URL-адресов, подобный таким сервисам, как [Bitly](https://bitly.com), [TinyURL](https://tinyurl.com/app).
 
-## What is a URL Shortener?
+## Что такое сокращатель URL?
 
-A URL shortener service creates an alias or a short URL for a long URL. Users are redirected to the original URL when they visit these short links.
+Сервис сокращатель URL создает псевдоним или короткий URL для длинного URL. При переходе по этим коротким ссылкам пользователи перенаправляются на оригинальный URL.
 
-For example, the following long URL can be changed to a shorter URL.
+Например, следующий длинный URL-адрес может быть заменен на более короткий.
 
-**Long URL**: [https://karanpratapsingh.com/courses/system-design/url-shortener](https://karanpratapsingh.com/courses/system-design/url-shortener)
+**Длинный URL**: [https://karanpratapsingh.com/courses/system-design/url-shortener](https://karanpratapsingh.com/courses/system-design/url-shortener)
 
-**Short URL**: [https://bit.ly/3I71d3o](https://bit.ly/3I71d3o)
+**Короткий URL**: [https://bit.ly/3I71d3o](https://bit.ly/3I71d3o)
 
-## Why do we need a URL shortener?
+## Зачем нам нужен сокращатель URL?
 
-URL shortener saves space in general when we are sharing URLs. Users are also less likely to mistype shorter URLs. Moreover, we can also optimize links across devices, this allows us to track individual links.
+Сокращатель URL позволяет экономить место при обмене URL-адресами. Пользователи также реже ошибаются при вводе коротких URL. Кроме того, мы можем оптимизировать ссылки на разных устройствах, что позволяет нам отслеживать отдельные ссылки.
 
-## Requirements
+## Требования
 
-Our URL shortening system should meet the following requirements:
+Наша система сокращения URL должна отвечать следующим требованиям:
 
-### Functional requirements
+### Функциональные требования
 
-- Given a URL, our service should generate a _shorter and unique_ alias for it.
-- Users should be redirected to the original URL when they visit the short link.
-- Links should expire after a default timespan.
+- При задании URL-адреса наш сервис должен генерировать для него _короткий и уникальный_ псевдоним.
+- При переходе по короткой ссылке пользователи должны перенаправляться на оригинальный URL.
+- Срок действия ссылок должен истекать через заданный по умолчанию промежуток времени.
 
-### Non-functional requirements
+### Нефункциональные требования
 
-- High availability with minimal latency.
-- The system should be scalable and efficient.
+- Высокая доступность при минимальных задержках.
+- Система должна быть масштабируемой и эффективной.
 
-### Extended requirements
+### Расширенные требования
 
-- Prevent abuse of services.
-- Record analytics and metrics for redirections.
+- Предотвращение злоупотребления услугами.
+- Запись аналитики и метрик для перенаправлений.
 
-## Estimation and Constraints
+## Оценка и ограничения
 
-Let's start with the estimation and constraints.
+Давайте начнем с оценки и ограничений.
 
-_Note: Make sure to check any scale or traffic related assumptions with your interviewer._
+_Примечание: Обязательно уточните у интервьюера любые предположения, связанные с масштабом или трафиком._
 
-### Traffic
+### Трафик
 
-This will be a read-heavy system, so let's assume a `100:1` read/write ratio with 100 million links generated per month.
+Это будет система с большим объемом чтения, поэтому предположим соотношение чтения и записи `100:1` и 100 миллионов генерируемых ссылок в месяц.
 
-**Reads/Writes Per month**
+**Чтения/Записи в месяц**.
 
-For reads per month:
+Для чтения в месяц:
 
 $$
 100 \times 100 \space million = 10 \space billion/month
 $$
 
-Similarly for writes:
-
+Аналогично и с записью:
 $$
 1 \times 100 \space million = 100 \space million/month
 $$
 
-**What would be Requests Per Second (RPS) for our system?**
+**Какова будет скорость обработки запросов в секунду (RPS) для нашей системы?**
 
-100 million requests per month translate into 40 requests per second.
+100 миллионов запросов в месяц - это 40 запросов в секунду.
 
 $$
 \frac{100 \space million}{(30 \space days \times 24 \space hrs \times 3600 \space seconds)} = \sim 40 \space URLs/second
 $$
 
-And with a `100:1` read/write ratio, the number of redirections will be:
+А при соотношении чтения и записи `100:1` количество перенаправлений будет:
 
 $$
 100 \times 40 \space URLs/second = 4000 \space requests/second
 $$
 
-### Bandwidth
+### Пропускная способность
 
-Since we expect about 40 URLs every second, and if we assume each request is of size 500 bytes then the total incoming data for write requests would be:
+Поскольку мы ожидаем около 40 URL каждую секунду, и если мы предположим, что каждый запрос имеет размер 500 байт, то общее количество входящих данных для запросов на запись будет составлять:
 
 $$
 40 \times 500 \space bytes = 20 \space KB/second
 $$
 
-Similarly, for the read requests, since we expect about 4K redirections, the total outgoing data would be:
+Аналогично, для запросов на чтение, поскольку мы ожидаем около 4K перенаправлений, общее количество исходящих данных будет составлять:
 
 $$
 4000 \space URLs/second \times 500 \space bytes = \sim 2 \space MB/second
 $$
 
-### Storage
+### Хранение
 
-For storage, we will assume we store each link or record in our database for 10 years. Since we expect around 100M new requests every month, the total number of records we will need to store would be:
+Для хранения данных мы предположим, что каждая ссылка или запись будет храниться в нашей базе данных в течение 10 лет. Поскольку мы ожидаем около 100 миллионов новых запросов каждый месяц, общее количество записей, которые нам нужно будет хранить, составит:
 
 $$
 100 \space million \times 10\space years \times 12 \space months = 12 \space billion
 $$
 
-Like earlier, if we assume each stored record will be approximately 500 bytes. We will need around 6TB of storage:
+Как и ранее, если мы предположим, что каждая хранимая запись будет иметь размер около 500 байт. Нам потребуется около 6 ТБ памяти:
 
 $$
 12 \space billion \times 500 \space bytes = 6 \space TB
 $$
 
-### Cache
+### Кэш
 
-For caching, we will follow the classic [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle) also known as the 80/20 rule. This means that 80% of the requests are for 20% of the data, so we can cache around 20% of our requests.
+Для кэширования мы будем следовать классическому [принципу Парето](https://en.wikipedia.org/wiki/Pareto_principle), также известному как правило 80/20. Это означает, что 80% запросов приходится на 20% данных, поэтому мы можем кэшировать около 20% запросов.
 
-Since we get around 4K read or redirection requests each second, this translates into 350M requests per day.
+Поскольку каждую секунду мы получаем около 4K запросов на чтение или переадресацию, это означает 350M запросов в день.
 
 $$
 4000 \space URLs/second \times 24 \space hours \times 3600 \space seconds = \sim 350 \space million \space requests/day
 $$
 
-Hence, we will need around 35GB of memory per day.
+Таким образом, нам потребуется около 35 ГБ памяти в день.
 
 $$
 20 \space percent \times 350 \space million \times 500 \space bytes = 35 \space GB/day
 $$
 
-### High-level estimate
+### Оценка высокого уровня
 
-Here is our high-level estimate:
 
-| Type                 | Estimate   |
+| Тип | Смета |
 | -------------------- | ---------- |
-| Writes (New URLs)    | 40/s       |
-| Reads (Redirection)  | 4K/s       |
-| Bandwidth (Incoming) | 20 KB/s    |
-| Bandwidth (Outgoing) | 2 MB/s     |
-| Storage (10 years)   | 6 TB       |
-| Memory (Caching)     | ~35 GB/day |
+| Запись (новые URL) | 40/с |
+| Чтения (перенаправление) | 4K/s |
+| Пропускная способность (входящие)| 20 КБ/с |
+| Пропускная способность (исходящая) | 2 МБ/с |
+| Хранение (10 лет) | 6 ТБ |
+| Память (кэширование)| ~35 ГБ/день |
 
-## Data model design
+## Проектирование модели данных
 
-Next, we will focus on the data model design. Here is our database schema:
+Далее мы сосредоточимся на проектировании модели данных. Вот схема нашей базы данных:
 
 ![url-shortener-datamodel](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/url-shortener/url-shortener-datamodel.png)
 
-Initially, we can get started with just two tables:
+Изначально мы можем начать с двух таблиц:
 
 **users**
 
-Stores user's details such as `name`, `email`, `createdAt`, etc.
+Хранит данные о пользователях, такие как `имя`, `электронная почта`, `созданАт` и т.д.
 
 **urls**
 
-Contains the new short URL's properties such as `expiration`, `hash`, `originalURL`, and `userID` of the user who created the short URL. We can also use the `hash` column as an [index](https://karanpratapsingh.com/courses/system-design/indexes) to improve the query performance.
+Содержит свойства нового короткого URL, такие как `expiration`, `hash`, `originalURL` и `userID` пользователя, создавшего короткий URL. Мы также можем использовать столбец `hash` в качестве [индекса](https://karanpratapsingh.com/courses/system-design/indexes) для повышения производительности запросов.
 
-### What kind of database should we use?
+### Какую базу данных мы должны использовать?
 
-Since the data is not strongly relational, NoSQL databases such as [Amazon DynamoDB](https://aws.amazon.com/dynamodb), [Apache Cassandra](https://cassandra.apache.org/_/index.html), or [MongoDB](https://www.mongodb.com) will be a better choice here, if we do decide to use an SQL database then we can use something like [Azure SQL Database](https://azure.microsoft.com/en-in/products/azure-sql/database) or [Amazon RDS](https://aws.amazon.com/rds).
+Поскольку данные не являются реляционными, лучшим выбором здесь будут NoSQL базы данных, такие как [Amazon DynamoDB](https://aws.amazon.com/dynamodb), [Apache Cassandra](https://cassandra.apache.org/_/index.html) или [MongoDB](https://www.mongodb.com), если мы все же решим использовать SQL базу данных, то мы можем использовать что-то вроде [Azure SQL Database](https://azure.microsoft.com/en-in/products/azure-sql/database) или [Amazon RDS](https://aws.amazon.com/rds).
 
-_For more details, refer to [SQL vs NoSQL](https://karanpratapsingh.com/courses/system-design/sql-vs-nosql-databases)._
+_Более подробную информацию см. в статье [SQL vs NoSQL](https://karanpratapsingh.com/courses/system-design/sql-vs-nosql-databases)._
 
-## API design
+## Дизайн API
 
-Let us do a basic API design for our services:
+Давайте сделаем базовый дизайн API для наших сервисов:
 
-### Create URL
+### Создать URL
 
-This API should create a new short URL in our system given an original URL.
+Этот API должен создавать новый короткий URL в нашей системе при наличии исходного URL.
 
 ```tsx
 createURL(apiKey: string, originalURL: string, expiration?: Date): string
 ```
 
-**Parameters**
+**Параметры**
 
-API Key (`string`): API key provided by the user.
+Ключ API (`строка`): Ключ API, предоставленный пользователем.
 
-Original URL (`string`): Original URL to be shortened.
+Оригинальный URL (`string`): Оригинальный URL, который будет сокращен.
 
-Expiration (`Date`): Expiration date of the new URL _(optional)_.
+Expiration (`Date`): Дата истечения срока действия нового URL _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Short URL (`string`): New shortened URL.
+Короткий URL (`string`): Новый сокращенный URL
 
-### Get URL
+### Получить URL
 
-This API should retrieve the original URL from a given short URL.
+Этот API должен получить оригинальный URL из заданного короткого URL.
 
 ```tsx
 getURL(apiKey: string, shortURL: string): string
 ```
 
-**Parameters**
+**Параметры**
 
-API Key (`string`): API key provided by the user.
+Ключ API (`строка`): Ключ API, предоставленный пользователем.
 
-Short URL (`string`): Short URL mapped to the original URL.
+Короткий URL (`string`): Короткий URL, сопоставленный с исходным URL.
 
-**Returns**
+**Возврат**.
 
-Original URL (`string`): Original URL to be retrieved.
+Оригинальный URL (`string`): Исходный URL, который будет получен.
 
-### Delete URL
+### Удалить URL
 
-This API should delete a given shortURL from our system.
+Этот API должен удалить заданный короткий URL из нашей системы.
 
 ```tsx
 deleteURL(apiKey: string, shortURL: string): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-API Key (`string`): API key provided by the user.
+Ключ API (`строка`): Ключ API, предоставленный пользователем.
 
-Short URL (`string`): Short URL to be deleted.
+Короткий URL (`string`): Короткий URL-адрес, который нужно удалить.
 
-**Returns**
+**Возвраты**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Результат (`boolean`): Указывает, была ли операция успешной или нет.
 
-### Why do we need an API key?
+### Зачем нам нужен ключ API?
 
-As you must've noticed, we're using an API key to prevent abuse of our services. Using this API key we can limit the users to a certain number of requests per second or minute. This is quite a standard practice for developer APIs and should cover our extended requirement.
+Как вы, должно быть, заметили, мы используем API-ключ, чтобы предотвратить злоупотребление нашими услугами. Используя этот API-ключ, мы можем ограничить пользователей определенным количеством запросов в секунду или минуту. Это вполне стандартная практика для API разработчиков, и она должна покрыть наши расширенные требования.
 
-## High-level design
+## Высокоуровневый дизайн
 
-Now let us do a high-level design of our system.
+Теперь давайте сделаем высокоуровневый дизайн нашей системы.
 
-### URL Encoding
+### Кодировка URL
 
-Our system's primary goal is to shorten a given URL, let's look at different approaches:
+Основная задача нашей системы - сократить заданный URL, давайте рассмотрим различные подходы:
 
-**Base62 Approach**
+**Подход Base62**.
 
-In this approach, we can encode the original URL using [Base62](https://en.wikipedia.org/wiki/Base62) which consists of the capital letters A-Z, the lower case letters a-z, and the numbers 0-9.
+В этом подходе мы можем закодировать исходный URL с помощью [Base62](https://en.wikipedia.org/wiki/Base62), который состоит из заглавных букв A-Z, строчных букв a-z и цифр 0-9.
 
 $$
 Number \space of \space URLs = 62^N
