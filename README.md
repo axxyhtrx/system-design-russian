@@ -2079,81 +2079,81 @@ _Мы подробно рассмотрим эти шаблоны обмена �
 - [RabbitMQ](https://www.rabbitmq.com)
 - [ActiveMQ](https://activemq.apache.org)
 
-# Message Queues
+# Очереди сообщений
 
-A message queue is a form of service-to-service communication that facilitates asynchronous communication. It asynchronously receives messages from producers and sends them to consumers.
+Очередь сообщений - это форма межсервисного взаимодействия, которая обеспечивает асинхронную связь. Она асинхронно получает сообщения от производителей и отправляет их потребителям.
 
-Queues are used to effectively manage requests in large-scale distributed systems. In small systems with minimal processing loads and small databases, writes can be predictably fast. However, in more complex and large systems writes can take an almost non-deterministic amount of time.
+Очереди используются для эффективного управления запросами в крупномасштабных распределенных системах. В небольших системах с минимальной нагрузкой на обработку и небольшими базами данных запись может быть предсказуемо быстрой. Однако в более сложных и больших системах запись может занимать практически недетерминированное время.
 
 ![message-queue](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/message-queues/message-queue.png)
 
-## Working
+## Устройство
 
-Messages are stored in the queue until they are processed and deleted. Each message is processed only once by a single consumer. Here's how it works:
+Сообщения хранятся в очереди до тех пор, пока не будут обработаны и удалены. Каждое сообщение обрабатывается только один раз одним потребителем. Вот как это работает:
 
-- A producer publishes a job to the queue, then notifies the user of the job status.
-- A consumer picks up the job from the queue, processes it, then signals that the job is complete.
+- Производитель публикует задание в очереди, а затем уведомляет пользователя о статусе задания.
+- Потребитель забирает задание из очереди, обрабатывает его и сигнализирует о завершении работы.
 
-## Advantages
+## Преимущества
 
-Let's discuss some advantages of using a message queue:
+Давайте обсудим некоторые преимущества использования очереди сообщений:
 
-- **Scalability**: Message queues make it possible to scale precisely where we need to. When workloads peak, multiple instances of our application can add all requests to the queue without the risk of collision.
-- **Decoupling**: Message queues remove dependencies between components and significantly simplify the implementation of decoupled applications.
-- **Performance**: Message queues enable asynchronous communication, which means that the endpoints that are producing and consuming messages interact with the queue, not each other. Producers can add requests to the queue without waiting for them to be processed.
-- **Reliability**: Queues make our data persistent, and reduce the errors that happen when different parts of our system go offline.
+- **Масштабируемость**: Очереди сообщений позволяют масштабировать именно там, где это необходимо. При пиковых нагрузках несколько экземпляров нашего приложения могут добавлять все запросы в очередь без риска столкновения.
+- **Отсоединение**: Очереди сообщений устраняют зависимости между компонентами и значительно упрощают реализацию разделенных приложений.
+- **Производительность**: Очереди сообщений обеспечивают асинхронную связь, что означает, что конечные точки, производящие и потребляющие сообщения, взаимодействуют с очередью, а не друг с другом. Производители могут добавлять запросы в очередь, не дожидаясь их обработки.
+- **Надежность**: Очереди делают наши данные постоянными и уменьшают количество ошибок, которые возникают, когда различные части нашей системы выходят из строя.
 
-## Features
+## Особенности
 
-Now, let's discuss some desired features of message queues:
+Теперь давайте обсудим некоторые необходимые функции очередей сообщений:
 
 ### Push or Pull Delivery
 
-Most message queues provide both push and pull options for retrieving messages. Pull means continuously querying the queue for new messages. Push means that a consumer is notified when a message is available. We can also use long-polling to allow pulls to wait a specified amount of time for new messages to arrive.
+Большинство очередей сообщений предоставляют как push, так и pull варианты получения сообщений. Pull означает постоянное обращение к очереди за новыми сообщениями. Push означает, что потребитель получает уведомление, когда сообщение доступно. Мы также можем использовать long-polling, чтобы позволить потребителям ожидать поступления новых сообщений в течение определенного времени.
 
-### FIFO (First-In-First-Out) Queues
+### Очереди FIFO (First-In-First-Out)
 
-In these queues, the oldest (or first) entry, sometimes called the _"head"_ of the queue, is processed first.
+В таких очередях первой обрабатывается самая старая (или первая) запись, которую иногда называют "головой" очереди.
 
-### Schedule or Delay Delivery
+### Расписание или задержка доставки
 
-Many message queues support setting a specific delivery time for a message. If we need to have a common delay for all messages, we can set up a delay queue.
+Многие очереди сообщений поддерживают установку определенного времени доставки сообщения. Если нам нужна общая задержка для всех сообщений, мы можем настроить очередь задержки.
 
-### At-Least-Once Delivery
+### Доставка по очереди (At-Least-Once Delivery)
 
-Message queues may store multiple copies of messages for redundancy and high availability, and resend messages in the event of communication failures or errors to ensure they are delivered at least once.
+Очереди сообщений могут хранить несколько копий сообщений для обеспечения избыточности и высокой доступности, а также повторно отправлять сообщения в случае сбоев или ошибок связи, чтобы обеспечить их доставку хотя бы один раз.
 
 ### Exactly-Once Delivery
 
-When duplicates can't be tolerated, FIFO (first-in-first-out) message queues will make sure that each message is delivered exactly once (and only once) by filtering out duplicates automatically.
+Когда дубликаты недопустимы, очереди сообщений FIFO (first-in-first-out) обеспечивают доставку каждого сообщения ровно один раз (и только один), автоматически отсеивая дубликаты.
 
-### Dead-letter Queues
+### Очереди с мертвой буквой (Dead-letter Queues)
 
-A dead-letter queue is a queue to which other queues can send messages that can't be processed successfully. This makes it easy to set them aside for further inspection without blocking the queue processing or spending CPU cycles on a message that might never be consumed successfully.
+Очередь с мертвой буквой (DLQ) - это очередь, в которую другие очереди могут отправлять сообщения, которые не могут быть успешно обработаны. Это позволяет легко отложить их для дальнейшей проверки, не блокируя обработку очереди и не тратя циклы процессора на сообщение, которое, возможно, никогда не будет успешно обработано.
 
-### Ordering
+### Упорядочивание
 
-Most message queues provide best-effort ordering which ensures that messages are generally delivered in the same order as they're sent and that a message is delivered at least once.
+Большинство очередей сообщений обеспечивают упорядочивание по принципу best-effort, что гарантирует доставку сообщений в том же порядке, в каком они были отправлены, и что сообщение будет доставлено хотя бы один раз.
 
-### Poison-pill Messages
+### Сообщения с ядовитыми таблетками
 
-Poison pills are special messages that can be received, but not processed. They are a mechanism used in order to signal a consumer to end its work so it is no longer waiting for new inputs, and are similar to closing a socket in a client/server model.
+Ядовитые таблетки - это специальные сообщения, которые могут быть получены, но не обработаны. Они являются механизмом, используемым для того, чтобы сигнализировать потребителю о завершении его работы, чтобы он больше не ждал новых входных данных, и похожи на закрытие сокета в модели клиент/сервер.
 
-### Security
+### Безопасность
 
-Message queues will authenticate applications that try to access the queue, this allows us to encrypt messages over the network as well as in the queue itself.
+Очереди сообщений аутентифицируют приложения, которые пытаются получить доступ к очереди. Это позволяет нам шифровать сообщения по сети, а также в самой очереди.
 
-### Task Queues
+### Очереди задач
 
-Tasks queues receive tasks and their related data, run them, then deliver their results. They can support scheduling and can be used to run computationally-intensive jobs in the background.
+Очереди задач получают задания и связанные с ними данные, выполняют их, а затем доставляют результаты. Они могут поддерживать планирование и использоваться для выполнения вычислительно-интенсивных заданий в фоновом режиме.
 
-## Backpressure
+## Обратное давление
 
-If queues start to grow significantly, the queue size can become larger than memory, resulting in cache misses, disk reads, and even slower performance. Backpressure can help by limiting the queue size, thereby maintaining a high throughput rate and good response times for jobs already in the queue. Once the queue fills up, clients get a server busy or HTTP 503 status code to try again later. Clients can retry the request at a later time, perhaps with [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) strategy.
+Если очереди начинают сильно разрастаться, их размер может превысить объем памяти, что приведет к пропуску кэша, чтению с диска и еще большему снижению производительности. Обратное давление может помочь, ограничив размер очереди, тем самым поддерживая высокую пропускную способность и хорошее время отклика для заданий, уже находящихся в очереди. Когда очередь заполняется, клиенты получают сообщение о занятости сервера или код состояния HTTP 503, чтобы повторить попытку позже. Клиенты могут повторить запрос в более позднее время, возможно, с помощью стратегии [экспоненциального отката](https://en.wikipedia.org/wiki/Exponential_backoff).
 
-## Examples
+## Примеры
 
-Following are some widely used message queues:
+Ниже приведены некоторые широко используемые очереди сообщений:
 
 - [Amazon SQS](https://aws.amazon.com/sqs)
 - [RabbitMQ](https://www.rabbitmq.com)
@@ -2162,60 +2162,60 @@ Following are some widely used message queues:
 
 # Publish-Subscribe
 
-Similar to a message queue, publish-subscribe is also a form of service-to-service communication that facilitates asynchronous communication. In a pub/sub model, any message published to a topic is pushed immediately to all the subscribers of the topic.
+Подобно очереди сообщений, публикация-подписка также является формой связи между сервисами, которая обеспечивает асинхронное взаимодействие. В модели pub/sub любое сообщение, опубликованное в теме, немедленно рассылается всем подписчикам этой темы.
 
 ![publish-subscribe](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/publish-subscribe/publish-subscribe.png)
 
-The subscribers to the message topic often perform different functions, and can each do something different with the message in parallel. The publisher doesn't need to know who is using the information that it is broadcasting, and the subscribers don't need to know where the message comes from. This style of messaging is a bit different than message queues, where the component that sends the message often knows the destination it is sending to.
+Подписчики темы сообщения часто выполняют разные функции, и каждый из них может параллельно делать с сообщением что-то свое. Издателю не нужно знать, кто использует передаваемую им информацию, а подписчикам не нужно знать, откуда пришло сообщение. Такой стиль обмена сообщениями немного отличается от очередей сообщений, где компонент, отправляющий сообщение, часто знает, кому оно отправляется.
 
-## Working
+## Устройство
 
-Unlike message queues, which batch messages until they are retrieved, message topics transfer messages with little or no queuing and push them out immediately to all subscribers. Here's how it works:
+В отличие от очередей сообщений, которые хранят сообщения до тех пор, пока они не будут получены, темы сообщений передают сообщения практически без очереди и сразу же рассылают их всем подписчикам. Вот как это работает:
 
-- A message topic provides a lightweight mechanism to broadcast asynchronous event notifications and endpoints that allow software components to connect to the topic in order to send and receive those messages.
-- To broadcast a message, a component called a _publisher_ simply pushes a message to the topic.
-- All components that subscribe to the topic (known as _subscribers_) will receive every message that was broadcasted.
+- Тема сообщений предоставляет легкий механизм для передачи асинхронных уведомлений о событиях и конечные точки, которые позволяют программным компонентам подключаться к теме для отправки и получения этих сообщений.
+- Чтобы передать сообщение, компонент, называемый _издателем_, просто отправляет сообщение в тему.
+- Все компоненты, подписанные на эту тему (известные как _подписчики_), получат каждое сообщение, которое было передано.
 
-## Advantages
+## Преимущества
 
-Let's discuss some advantages of using publish-subscribe:
+Давайте обсудим некоторые преимущества использования publish-subscribe:
 
-- **Eliminate Polling**: Message topics allow instantaneous, push-based delivery, eliminating the need for message consumers to periodically check or _"poll"_ for new information and updates. This promotes faster response time and reduces the delivery latency which can be particularly problematic in systems where delays cannot be tolerated.
-- **Dynamic Targeting**: Pub/Sub makes the discovery of services easier, more natural, and less error-prone. Instead of maintaining a roster of peers where an application can send messages, a publisher will simply post messages to a topic. Then, any interested party will subscribe its endpoint to the topic, and start receiving these messages. Subscribers can change, upgrade, multiply or disappear and the system dynamically adjusts.
-- **Decoupled and Independent Scaling**: Publishers and subscribers are decoupled and work independently from each other, which allows us to develop and scale them independently.
-- **Simplify Communication**: The Publish-Subscribe model reduces complexity by removing all the point-to-point connections with a single connection to a message topic, which will manage subscriptions and decide what messages should be delivered to which endpoints.
+- **Устранение опроса**: Темы сообщений обеспечивают мгновенную доставку на основе push, устраняя необходимость для потребителей сообщений периодически проверять или _"опрашивать"_ новую информацию и обновления. Это способствует ускорению времени отклика и уменьшению задержки доставки, которая может быть особенно проблематичной в системах, где задержки недопустимы.
+- **Динамическое нацеливание**: Pub/Sub делает процесс обнаружения сервисов более простым, естественным и менее подверженным ошибкам. Вместо того чтобы вести реестр пиров, которым приложение может отправлять сообщения, издатель просто публикует сообщения в теме. Затем любая заинтересованная сторона подписывает свою конечную точку на эту тему и начинает получать эти сообщения. Подписчики могут меняться, обновляться, множиться или исчезать, и система динамически подстраивается.
+- **Разделённое и независимое масштабирование**: Издатели и подписчики разделены и работают независимо друг от друга, что позволяет нам развивать и масштабировать их независимо друг от друга.
+- **Упрощение коммуникации**: Модель Publish-Subscribe снижает сложность, устраняя все соединения "точка-точка" с помощью одного соединения с темой сообщений, которая будет управлять подписками и решать, какие сообщения должны быть доставлены на конечные точки.
 
 ## Features
 
-Now, let's discuss some desired features of publish-subscribe:
+Теперь давайте обсудим некоторые необходимые функции publish-subscribe:
 
 ### Push Delivery
 
-Pub/Sub messaging instantly pushes asynchronous event notifications when messages are published to the message topic. Subscribers are notified when a message is available.
+Сообщения Pub/Sub мгновенно отправляют асинхронные уведомления о событиях, когда сообщения публикуются в теме сообщения. Подписчики получают уведомления, когда сообщение становится доступным.
 
-### Multiple Delivery Protocols
+### Несколько протоколов доставки
 
-In the Publish-Subscribe model, topics can typically connect to multiple types of endpoints, such as message queues, serverless functions, HTTP servers, etc.
+В модели Publish-Subscribe темы, как правило, могут подключаться к нескольким типам конечных точек, таким как очереди сообщений, бессерверные функции, HTTP-серверы и т. д.
 
 ### Fanout
 
-This scenario happens when a message is sent to a topic and then replicated and pushed to multiple endpoints. Fanout provides asynchronous event notifications which in turn allows for parallel processing.
+В этом случае сообщение отправляется в тему, а затем реплицируется и рассылается по нескольким конечным точкам. Fanout обеспечивает асинхронные уведомления о событиях, что, в свою очередь, позволяет выполнять параллельную обработку.
 
-### Filtering
+### Фильтрация
 
-This feature empowers the subscriber to create a message filtering policy so that it will only get the notifications it is interested in, as opposed to receiving every single message posted to the topic.
+Эта функция позволяет подписчику создать политику фильтрации сообщений, чтобы он получал только те уведомления, которые его интересуют, а не все сообщения, опубликованные в данной теме.
 
-### Durability
+### Долговечность
 
-Pub/Sub messaging services often provide very high durability, and at least once delivery, by storing copies of the same message on multiple servers.
+Службы обмена сообщениями Pub/Sub часто обеспечивают очень высокую долговечность и, по крайней мере, однократную доставку, храня копии одного и того же сообщения на нескольких серверах.
 
-### Security
+### Безопасность
 
-Message topics authenticate applications that try to publish content, this allows us to use encrypted endpoints and encrypt messages in transit over the network.
+Темы сообщений аутентифицируют приложения, которые пытаются опубликовать содержимое, что позволяет нам использовать зашифрованные конечные точки и шифровать сообщения при передаче по сети.
 
-## Examples
+## Примеры
 
-Here are some commonly used publish-subscribe technologies:
+Вот некоторые часто используемые технологии публикации-подписки:
 
 - [Amazon SNS](https://aws.amazon.com/sns)
 - [Google Pub/Sub](https://cloud.google.com/pubsub)
