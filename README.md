@@ -1887,15 +1887,15 @@ $$
 
 В теории последовательное хеширование должно равномерно распределять нагрузку, однако на практике этого не происходит. Обычно нагрузка распределяется неравномерно, и один сервер может в итоге обрабатывать большую часть запросов, становясь _горячей точкой_, по сути, узким местом в системе. Это можно исправить, добавив дополнительные узлы, но это может быть дорого.
 
-## Virtual Nodes
+## Виртуальные узлы
 
-In order to ensure a more evenly distributed load, we can introduce the idea of a virtual node, sometimes also referred to as a VNode.
+Чтобы обеспечить более равномерное распределение нагрузки, мы можем ввести идею виртуального узла, иногда также называемого VNode.
 
-Instead of assigning a single position to a node, the hash range is divided into multiple smaller ranges, and each physical node is assigned several of these smaller ranges. Each of these subranges is considered a VNode. Hence, virtual nodes are basically existing physical nodes mapped multiple times across the hash ring to minimize changes to a node's assigned range.
+Вместо того чтобы назначать узлу одну позицию, хэш-диапазон делится на несколько меньших диапазонов, и каждому физическому узлу назначается несколько таких меньших диапазонов. Каждый из этих поддиапазонов считается виртуальным узлом. Таким образом, виртуальные узлы - это, по сути, существующие физические узлы, отображенные несколько раз в хэш-кольце, чтобы минимизировать изменения в назначенном узлу диапазоне.
 
 ![virtual-nodes](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-II/consistent-hashing/virtual-nodes.png)
 
-For this, we can use `k` number of hash functions.
+Для этого мы можем использовать `k` количество хэш-функций.
 
 $$
 \begin{align*}
@@ -1907,17 +1907,17 @@ $$
 \end{align*}
 $$
 
-Where,
+Где,
 
-`key`: Request/Node ID or IP.
+`ключ`: Идентификатор запроса/узла или IP.
 
-`k`: Number of hash functions.
+`k`: Количество хэш-функций.
 
-`P`: Position on the hash ring.
+`P`: Позиция в хэш-кольце.
 
-`m`: Total range of the hash ring.
+`m`: Общий диапазон хэш-кольца.
 
-As VNodes help spread the load more evenly across the physical nodes on the cluster by diving the hash ranges into smaller subranges, this speeds up the re-balancing process after adding or removing nodes. This also helps us reduce the probability of hotspots.
+Поскольку VNodes помогают более равномерно распределить нагрузку между физическими узлами кластера, разбивая хэш-диапазоны на более мелкие поддиапазоны, это ускоряет процесс перебалансировки после добавления или удаления узлов. Это также помогает нам уменьшить вероятность возникновения "горячих точек".
 
 ## Data Replication
 
