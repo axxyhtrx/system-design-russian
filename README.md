@@ -3847,11 +3847,11 @@ $$
 Number \space of \space URLs = 62^N
 $$
 
-Where,
+Где,
 
-`N`: Number of characters in the generated URL.
+`N`: Количество символов в генерируемом URL.
 
-So, if we want to generate a URL that is 7 characters long, we will generate ~3.5 trillion different URLs.
+Таким образом, если мы хотим сгенерировать URL длиной 7 символов, мы сгенерируем ~3,5 триллиона различных URL.
 
 $$
 \begin{gather*}
@@ -3861,29 +3861,29 @@ $$
 \end{gather*}
 $$
 
-This is the simplest solution here, but it does not guarantee non-duplicate or collision-resistant keys.
+Это самое простое решение, но оно не гарантирует отсутствие дублирования или устойчивость ключей к столкновениям.
 
-**MD5 Approach**
+**Подход MD5**
 
-The [MD5 message-digest algorithm](https://en.wikipedia.org/wiki/MD5) is a widely used hash function producing a 128-bit hash value (or 32 hexadecimal digits). We can use these 32 hexadecimal digits for generating 7 characters long URL.
+Алгоритм [MD5 message-digest algorithm](https://en.wikipedia.org/wiki/MD5) - это широко используемая хэш-функция, создающая 128-битное хэш-значение (или 32 шестнадцатеричные цифры). Мы можем использовать эти 32 шестнадцатеричные цифры для генерации URL длиной 7 символов.
 
 $$
 MD5(original\_url) \rightarrow base62encode \rightarrow hash
 $$
 
-However, this creates a new issue for us, which is duplication and collision. We can try to re-compute the hash until we find a unique one but that will increase the overhead of our systems. It's better to look for more scalable approaches.
+Однако это создает для нас новую проблему - дублирование и коллизии. Мы можем попытаться повторно вычислить хэш, пока не найдем уникальный, но это приведет к увеличению накладных расходов нашей системы. Лучше искать более масштабируемые подходы.
 
-**Counter Approach**
+**Подход со счетчиком**.
 
-In this approach, we will start with a single server which will maintain the count of the keys generated. Once our service receives a request, it can reach out to the counter which returns a unique number and increments the counter. When the next request comes the counter again returns the unique number and this goes on.
+В этом подходе мы начнем с одного сервера, который будет вести подсчет сгенерированных ключей. Как только наш сервис получает запрос, он может обратиться к счетчику, который возвращает уникальный номер и увеличивает счетчик. Когда приходит следующий запрос, счетчик снова возвращает уникальный номер, и так продолжается.
 
 $$
 Counter(0-3.5 \space trillion) \rightarrow base62encode \rightarrow hash
 $$
 
-The problem with this approach is that it can quickly become a single point for failure. And if we run multiple instances of the counter we can have collision as it's essentially a distributed system.
+Проблема такого подхода заключается в том, что он может быстро превратиться в единую точку отказа. А если запустить несколько экземпляров счетчика, то могут возникнуть коллизии, так как это по сути распределенная система.
 
-To solve this issue we can use a distributed system manager such as [Zookeeper](https://zookeeper.apache.org) which can provide distributed synchronization. Zookeeper can maintain multiple ranges for our servers.
+Чтобы решить эту проблему, мы можем использовать менеджер распределенных систем, например [Zookeeper](https://zookeeper.apache.org), который может обеспечить распределенную синхронизацию. Zookeeper может поддерживать несколько диапазонов для наших серверов.
 
 $$
 \begin{align*}
@@ -3894,709 +3894,705 @@ $$
 \end{align*}
 $$
 
-Once a server reaches its maximum range Zookeeper will assign an unused counter range to the new server. This approach can guarantee non-duplicate and collision-resistant URLs. Also, we can run multiple instances of Zookeeper to remove the single point of failure.
+Когда сервер достигнет своего максимального диапазона, Zookeeper назначит неиспользованный диапазон счетчиков новому серверу. Такой подход позволяет гарантировать отсутствие дубликатов и устойчивость URL к коллизиям. Кроме того, мы можем запустить несколько экземпляров Zookeeper, чтобы устранить единую точку отказа.
 
-### Key Generation Service (KGS)
+### Служба генерации ключей (KGS)
 
-As we discussed, generating a unique key at scale without duplication and collisions can be a bit of a challenge. To solve this problem, we can create a standalone Key Generation Service (KGS) that generates a unique key ahead of time and stores it in a separate database for later use. This approach can make things simple for us.
+Как мы уже говорили, генерирование уникального ключа в масштабе без дублирования и коллизий может оказаться непростой задачей. Чтобы решить эту проблему, мы можем создать отдельную службу генерации ключей (KGS), которая будет генерировать уникальный ключ заранее и хранить его в отдельной базе данных для последующего использования. Такой подход может упростить нам задачу.
 
-**How to handle concurrent access?**
+**Как обрабатывать одновременный доступ?
 
-Once the key is used, we can mark it in the database to make sure we don't reuse it, however, if there are multiple server instances reading data concurrently, two or more servers might try to use the same key.
+После использования ключа мы можем пометить его в базе данных, чтобы исключить повторное использование, однако, если несколько экземпляров сервера читают данные одновременно, два или более сервера могут попытаться использовать один и тот же ключ.
 
-The easiest way to solve this would be to store keys in two tables. As soon as a key is used, we move it to a separate table with appropriate locking in place. Also, to improve reads, we can keep some of the keys in memory.
+Самый простой способ решить эту проблему - хранить ключи в двух таблицах. Как только ключ используется, мы перемещаем его в отдельную таблицу с соответствующей блокировкой. Кроме того, для улучшения качества чтения мы можем хранить некоторые ключи в памяти.
 
-**KGS database estimations**
+**Оценки базы данных KGS**.
 
-As per our discussion, we can generate up to ~56.8 billion unique 6 character long keys which will result in us having to store 300 GB of keys.
+Согласно нашим расчетам, мы можем сгенерировать до ~56,8 млрд уникальных ключей длиной 6 символов, что приведет к необходимости хранения 300 ГБ ключей.
 
 $$
 6 \space characters \times 56.8 \space billion = \sim 390 \space GB
 $$
 
-While 390 GB seems like a lot for this simple use case, it is important to remember this is for the entirety of our service lifetime and the size of the keys database would not increase like our main database.
+Хотя 390 ГБ кажется многовато для этого простого случая использования, важно помнить, что это на весь срок службы нашего сервиса, и размер базы данных ключей не будет увеличиваться, как наша основная база данных.
 
-### Caching
+### Кэширование
 
-Now, let's talk about [caching](https://karanpratapsingh.com/courses/system-design/caching). As per our estimations, we will require around ~35 GB of memory per day to cache 20% of the incoming requests to our services. For this use case, we can use [Redis](https://redis.io) or [Memcached](https://memcached.org) servers alongside our API server.
+Теперь поговорим о [кэшировании](https://karanpratapsingh.com/courses/system-design/caching). По нашим оценкам, для кэширования 20% входящих запросов к нашим сервисам нам потребуется около ~35 ГБ памяти в день. Для этого случая мы можем использовать серверы [Redis](https://redis.io) или [Memcached](https://memcached.org) вместе с нашим сервером API.
 
-_For more details, refer to [caching](https://karanpratapsingh.com/courses/system-design/caching)._
+_Более подробную информацию можно найти в [caching](https://karanpratapsingh.com/courses/system-design/caching)._
 
-### Design
+### Дизайн
 
-Now that we have identified some core components, let's do the first draft of our system design.
+Теперь, когда мы определили некоторые основные компоненты, давайте сделаем первый набросок дизайна нашей системы.
 
 ![url-shortener-basic-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/url-shortener/url-shortener-basic-design.png)
 
-Here's how it works:
+Вот как это работает:
 
-**Creating a new URL**
+**Создание нового URL**.
 
-1. When a user creates a new URL, our API server requests a new unique key from the Key Generation Service (KGS).
-2. Key Generation Service provides a unique key to the API server and marks the key as used.
-3. API server writes the new URL entry to the database and cache.
-4. Our service returns an HTTP 201 (Created) response to the user.
+1. Когда пользователь создает новый URL, наш сервер API запрашивает новый уникальный ключ у службы генерации ключей (KGS).
+2. Служба генерации ключей предоставляет уникальный ключ серверу API и помечает его как использованный.
+3. Сервер API записывает новую запись URL в базу данных и кэш.
+4. Наш сервис возвращает пользователю ответ HTTP 201 (Created).
 
-**Accessing a URL**
+**Получение доступа к URL**
 
-1. When a client navigates to a certain short URL, the request is sent to the API servers.
-2. The request first hits the cache, and if the entry is not found there then it is retrieved from the database and an HTTP 301 (Redirect) is issued to the original URL.
-3. If the key is still not found in the database, an HTTP 404 (Not found) error is sent to the user.
+1. Когда клиент переходит на определенный короткий URL, запрос отправляется на серверы API.
+2. Сначала запрос попадает в кэш, и если запись в нем не найдена, то она извлекается из базы данных и выдается HTTP 301 (Redirect) на исходный URL.
+3. Если ключ по-прежнему не найден в базе данных, пользователю отправляется ошибка HTTP 404 (Not found).
 
-## Detailed design
+## Детальный дизайн
 
-It's time to discuss the finer details of our design.
+Пришло время обсудить более тонкие детали нашего дизайна.
 
-### Data Partitioning
+### Разбиение данных
 
-To scale out our databases we will need to partition our data. Horizontal partitioning (aka [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) can be a good first step. We can use partitions schemes such as:
+Чтобы масштабировать наши базы данных, нам нужно разделить данные. Горизонтальное разделение (оно же [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) может стать хорошим первым шагом. Мы можем использовать такие схемы разбиения, как:
 
 - Hash-Based Partitioning
-- List-Based Partitioning
-- Range Based Partitioning
-- Composite Partitioning
+- Разбиение на основе списков
+- Разбиение на основе диапазонов
+- составные разделы
 
-The above approaches can still cause uneven data and load distribution, we can solve this using [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
+Вышеперечисленные подходы могут привести к неравномерному распределению данных и нагрузки, но мы можем решить эту проблему с помощью [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-_For more details, refer to [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) and [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
+_Более подробную информацию вы найдете в разделах [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) и [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
 
-### Database cleanup
+### Очистка базы данных
 
-This is more of a maintenance step for our services and depends on whether we keep the expired entries or remove them. If we do decide to remove expired entries, we can approach this in two different ways:
+Это скорее шаг по обслуживанию наших сервисов, который зависит от того, оставим ли мы записи с истекшим сроком действия или удалим их. Если мы решим удалить истекшие записи, мы можем подойти к этому двумя разными способами:
 
-**Active cleanup**
+**Активная очистка**.
 
-In active cleanup, we will run a separate cleanup service which will periodically remove expired links from our storage and cache. This will be a very lightweight service like a [cron job](https://en.wikipedia.org/wiki/Cron).
+При активной очистке мы запустим отдельную службу очистки, которая будет периодически удалять просроченные ссылки из нашего хранилища и кэша. Это будет очень легкая служба, похожая на [cron job](https://en.wikipedia.org/wiki/Cron).
 
-**Passive cleanup**
+**Пассивная очистка**.
 
-For passive cleanup, we can remove the entry when a user tries to access an expired link. This can ensure a lazy cleanup of our database and cache.
+При пассивной очистке мы можем удалять запись, когда пользователь пытается получить доступ к просроченной ссылке. Это обеспечит "ленивую" очистку нашей базы данных и кэша.
 
-### Cache
+### Кэш
 
-Now let us talk about [caching](https://karanpratapsingh.com/courses/system-design/caching).
+Теперь давайте поговорим о [кэшировании](https://karanpratapsingh.com/courses/system-design/caching).
 
-**Which cache eviction policy to use?**
+**Какую политику вытеснения кэша использовать?**
 
-As we discussed before, we can use solutions like [Redis](https://redis.io) or [Memcached](https://memcached.org) and cache 20% of the daily traffic but what kind of cache eviction policy would best fit our needs?
+Как мы уже говорили, мы можем использовать такие решения, как [Redis](https://redis.io) или [Memcached](https://memcached.org), и кэшировать 20 % ежедневного трафика, но какая политика вытеснения кэша лучше всего подойдет для наших нужд?
 
-[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) can be a good policy for our system. In this policy, we discard the least recently used key first.
+[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) может быть хорошей политикой для нашей системы. В этой политике мы отбрасываем в первую очередь наименее недавно использованный ключ.
 
-**How to handle cache miss?**
+**Как обрабатывать пропуски кэша?**
 
-Whenever there is a cache miss, our servers can hit the database directly and update the cache with the new entries.
+Когда происходит пропуск кэша, наши серверы могут напрямую обращаться к базе данных и обновлять кэш новыми записями.
 
-### Metrics and Analytics
+### Метрики и аналитика
 
-Recording analytics and metrics is one of our extended requirements. We can store and update metadata like visitor's country, platform, the number of views, etc alongside the URL entry in our database.
+Запись аналитики и метрик - одно из наших расширенных требований. Мы можем хранить и обновлять метаданные, такие как страна посетителя, платформа, количество просмотров и т. д., вместе с записью URL в нашей базе данных.
 
-### Security
+### Безопасность
 
-For security, we can introduce private URLs and authorization. A separate table can be used to store user ids that have permission to access a specific URL. If a user does not have proper permissions, we can return an HTTP 401 (Unauthorized) error.
+Для обеспечения безопасности мы можем ввести приватные URL и авторизацию. Отдельная таблица может быть использована для хранения идентификаторов пользователей, имеющих право доступа к определенному URL. Если у пользователя нет соответствующих прав, мы можем вернуть ошибку HTTP 401 (Unauthorized).
 
-We can also use an [API Gateway](https://karanpratapsingh.com/courses/system-design/api-gateway) as they can support capabilities like authorization, rate limiting, and load balancing out of the box.
+Мы также можем использовать [API Gateway](https://karanpratapsingh.com/courses/system-design/api-gateway), поскольку они поддерживают такие возможности, как авторизация, ограничение скорости и балансировка нагрузки.
 
-## Identify and resolve bottlenecks
+## Выявление и устранение узких мест
 
 ![url-shortener-advanced-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/url-shortener/url-shortener-advanced-design.png)
 
-Let us identify and resolve bottlenecks such as single points of failure in our design:
+Давайте определим и устраним узкие места, такие как единые точки отказа в нашем проекте:
 
-- "What if the API service or Key Generation Service crashes?"
-- "How will we distribute our traffic between our components?"
-- "How can we reduce the load on our database?"
-- "What if the key database used by KGS fails?"
-- "How to improve the availability of our cache?"
+- "Что, если служба API или служба генерации ключей сломается?"
+- "Как мы будем распределять трафик между компонентами?"
+- "Как мы можем снизить нагрузку на нашу базу данных?"
+- "Что, если база данных ключей, используемая KGS, выйдет из строя?"
+- "Как повысить доступность нашего кэша?"
 
-To make our system more resilient we can do the following:
+Чтобы сделать нашу систему более устойчивой, мы можем сделать следующее:
 
-- Running multiple instances of our Servers and Key Generation Service.
-- Introducing [load balancers](https://karanpratapsingh.com/courses/system-design/load-balancing) between clients, servers, databases, and cache servers.
-- Using multiple read replicas for our database as it's a read-heavy system.
-- Standby replica for our key database in case it fails.
-- Multiple instances and replicas for our distributed cache.
+- Запустить несколько экземпляров наших серверов и службы генерации ключей.
+- Внедрение [балансировщиков нагрузки](https://karanpratapsingh.com/courses/system-design/load-balancing) между клиентами, серверами, базами данных и серверами кэша.
+- Использование нескольких реплик на чтение для нашей базы данных, поскольку это система с высокой интенсивностью чтения.
+- Резервная реплика для нашей ключевой базы данных на случай ее сбоя.
+- Несколько экземпляров и реплик для нашего распределенного кэша.
 
 # WhatsApp
 
-Let's design a [WhatsApp](https://whatsapp.com) like instant messaging service, similar to services like [Facebook Messenger](https://www.messenger.com), and [WeChat](https://www.wechat.com).
+Давайте разработаем сервис обмена мгновенными сообщениями [WhatsApp](https://whatsapp.com), похожий на такие сервисы, как [Facebook Messenger](https://www.messenger.com) и [WeChat](https://www.wechat.com).
 
-## What is WhatsApp?
+## Что такое WhatsApp?
 
-WhatsApp is a chat application that provides instant messaging services to its users. It is one of the most used mobile applications on the planet, connecting over 2 billion users in 180+ countries. WhatsApp is also available on the web.
+WhatsApp - это чат-приложение, предоставляющее своим пользователям услуги обмена мгновенными сообщениями. Это одно из самых используемых мобильных приложений на планете, объединяющее более 2 миллиардов пользователей в 180 с лишним странах. WhatsApp также доступен в Интернете.
 
-## Requirements
+## Требования
 
-Our system should meet the following requirements:
+Наша система должна отвечать следующим требованиям:
 
-### Functional requirements
+### Функциональные требования
 
-- Should support one-on-one chat.
-- Group chats (max 100 people).
-- Should support file sharing (image, video, etc.).
+- Должна поддерживать чат один на один.
+- Групповые чаты (не более 100 человек).
+- Должна поддерживать обмен файлами (изображениями, видео и т. д.).
 
-### Non-functional requirements
+### Нефункциональные требования
 
-- High availability with minimal latency.
-- The system should be scalable and efficient.
+- Высокая доступность при минимальных задержках.
+- Система должна быть масштабируемой и эффективной.
 
-### Extended requirements
+### Расширенные требования
 
-- Sent, Delivered, and Read receipts of the messages.
-- Show the last seen time of users.
-- Push notifications.
+- Квитанции об отправке, доставке и прочтении сообщений.
+- Отображение времени последнего посещения пользователей.
+- Push-уведомления.
 
-## Estimation and Constraints
+## Оценка и ограничения
 
-Let's start with the estimation and constraints.
+Давайте начнем с оценки и ограничений.
 
-_Note: Make sure to check any scale or traffic-related assumptions with your interviewer._
+_Примечание: Обязательно уточните у интервьюера все допущения, связанные с масштабом или трафиком._
 
-### Traffic
+### Трафик
 
-Let us assume we have 50 million daily active users (DAU) and on average each user sends at least 10 messages to 4 different people every day. This gives us 2 billion messages per day.
-
-$$
-50 \space million \times 40 \space messages = 2 \space billion/day
-$$
-
-Messages can also contain media such as images, videos, or other files. We can assume that 5 percent of messages are media files shared by the users, which gives us additional 100 million files we would need to store.
+Предположим, что у нас 50 миллионов ежедневных активных пользователей (DAU), и в среднем каждый пользователь отправляет не менее 10 сообщений 4 разным людям в день. Это дает нам 2 миллиарда сообщений в день.
 
 $$
-5 \space percent \times 2 \space billion = 100 \space million/day
+50 \пространственных миллионов \times 40 \пространственных сообщений = 2 \пространственных миллиарда в день
 $$
 
-**What would be Requests Per Second (RPS) for our system?**
+Сообщения также могут содержать медиафайлы, такие как изображения, видео или другие файлы. Мы можем предположить, что 5 процентов сообщений - это медиафайлы, которыми делятся пользователи, что дает нам дополнительные 100 миллионов файлов, которые необходимо хранить.
 
-2 billion requests per day translate into 24K requests per second.
+**Что такое количество запросов в секунду (RPS) для нашей системы?
+
+2 миллиарда запросов в день - это 24K запросов в секунду.
 
 $$
 \frac{2 \space billion}{(24 \space hrs \times 3600 \space seconds)} = \sim 24K \space requests/second
 $$
 
-### Storage
+### Хранилище
 
-If we assume each message on average is 100 bytes, we will require about 200 GB of database storage every day.
+Если предположить, что каждое сообщение в среднем составляет 100 байт, то нам потребуется около 200 ГБ хранилища базы данных в день.
 
 $$
 2 \space billion \times 100 \space bytes = \sim 200 \space GB/day
 $$
 
-As per our requirements, we also know that around 5 percent of our daily messages (100 million) are media files. If we assume each file is 100 KB on average, we will require 10 TB of storage every day.
+Согласно нашим требованиям, мы также знаем, что около 5 % наших ежедневных сообщений (100 миллионов) - это медиафайлы. Если предположить, что каждый файл в среднем занимает 100 КБ, то нам потребуется 10 ТБ хранилища каждый день.
 
 $$
 100 \space million \times 100 \space KB = 10 \space TB/day
 $$
 
-And for 10 years, we will require about 38 PB of storage.
+А за 10 лет нам потребуется около 38 ПБ хранилища.
 
 $$
 (10 \space TB + 0.2 \space TB) \times 10 \space years \times 365 \space days = \sim 38 \space PB
 $$
 
-### Bandwidth
+### Пропускная способность
 
-As our system is handling 10.2 TB of ingress every day, we will require a minimum bandwidth of around 120 MB per second.
+Поскольку наша система ежедневно обрабатывает 10,2 ТБ входящих данных, нам потребуется минимальная пропускная способность около 120 МБ в секунду.
 
 $$
 \frac{10.2 \space TB}{(24 \space hrs \times 3600 \space seconds)} = \sim 120 \space MB/second
 $$
 
-### High-level estimate
+### Оценка высокого уровня
 
-Here is our high-level estimate:
+Вот наши оценки высокого уровня:
 
-| Type                      | Estimate   |
+| Тип | Смета |
 | ------------------------- | ---------- |
-| Daily active users (DAU)  | 50 million |
-| Requests per second (RPS) | 24K/s      |
-| Storage (per day)         | ~10.2 TB   |
-| Storage (10 years)        | ~38 PB     |
-| Bandwidth                 | ~120 MB/s  |
+| Ежедневные активные пользователи (DAU) | 50 миллионов |
+| Запросы в секунду (RPS) | 24K/s |
+| Хранение (в день)| ~10,2 ТБ |
+| Хранение (10 лет)| ~38 ПБ |
+| Пропускная способность | ~120 МБ/с |
 
-## Data model design
+## Разработка модели данных
 
-This is the general data model which reflects our requirements.
+Это общая модель данных, которая отражает наши требования.
 
 ![whatsapp-datamodel](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/whatsapp/whatsapp-datamodel.png)
 
-We have the following tables:
+У нас есть следующие таблицы:
 
 **users**
 
-This table will contain a user's information such as `name`, `phoneNumber`, and other details.
+Эта таблица содержит информацию о пользователе, такую как `имя`, `номер телефона` и другие данные.
 
 **messages**
 
-As the name suggests, this table will store messages with properties such as `type` (text, image, video, etc.), `content`, and timestamps for message delivery. The message will also have a corresponding `chatID` or `groupID`.
+Как следует из названия, в этой таблице хранятся сообщения с такими свойствами, как `тип` (текст, изображение, видео и т.д.), `содержание` и временные метки для доставки сообщений. Сообщение также будет иметь соответствующий `chatID` или `groupID`.
 
-**chats**
+**chats**.
 
-This table basically represents a private chat between two users and can contain multiple messages.
+Эта таблица представляет собой приватный чат между двумя пользователями и может содержать несколько сообщений.
 
 **users_chats**
 
-This table maps users and chats as multiple users can have multiple chats (N:M relationship) and vice versa.
+Эта таблица отображает пользователей и чаты, поскольку несколько пользователей могут иметь несколько чатов (связь N:M) и наоборот.
 
 **groups**
 
-This table represents a group made up of multiple users.
+Эта таблица представляет группу, состоящую из нескольких пользователей.
 
 **users_groups**
 
-This table maps users and groups as multiple users can be a part of multiple groups (N:M relationship) and vice versa.
+Эта таблица отображает пользователей и группы, поскольку несколько пользователей могут состоять в нескольких группах (связь N:M) и наоборот.
 
-### What kind of database should we use?
+### Какую базу данных мы должны использовать?
 
-While our data model seems quite relational, we don't necessarily need to store everything in a single database, as this can limit our scalability and quickly become a bottleneck.
+Хотя наша модель данных выглядит вполне реляционной, нам не обязательно хранить все в одной базе данных, поскольку это может ограничить масштабируемость и быстро превратиться в узкое место.
 
-We will split the data between different services each having ownership over a particular table. Then we can use a relational database such as [PostgreSQL](https://www.postgresql.org) or a distributed NoSQL database such as [Apache Cassandra](https://cassandra.apache.org/_/index.html) for our use case.
+Мы разделим данные между различными службами, каждая из которых будет владеть определенной таблицей. Тогда мы можем использовать реляционную базу данных, например [PostgreSQL](https://www.postgresql.org), или распределенную базу данных NoSQL, например [Apache Cassandra](https://cassandra.apache.org/_/index.html), для нашего случая.
 
-## API design
+## Дизайн API
 
-Let us do a basic API design for our services:
+Давайте сделаем базовый дизайн API для наших сервисов:
 
-### Get all chats or groups
+### Получить все чаты или группы
 
-This API will get all chats or groups for a given `userID`.
+Этот API позволяет получить все чаты или группы для заданного `userID`.
 
 ```tsx
 getAll(userID: UUID): Chat[] | Group[]
 ```
 
-**Parameters**
+**Параметры**
 
-User ID (`UUID`): ID of the current user.
+User ID (`UUID`): ID текущего пользователя.
 
-**Returns**
+**Возврат**.
 
-Result (`Chat[] | Group[]`): All the chats and groups the user is a part of.
+Результат (`Chat[] | Group[]`): Все чаты и группы, в которых состоит пользователь.
 
-### Get messages
+### Получить сообщения
 
-Get all messages for a user given the `channelID` (chat or group id).
+Получение всех сообщений для пользователя, заданного `channelID` (идентификатор чата или группы).
 
 ```tsx
 getMessages(userID: UUID, channelID: UUID): Message[]
 ```
 
-**Parameters**
+**Параметры**
 
-User ID (`UUID`): ID of the current user.
+User ID (`UUID`): Идентификатор текущего пользователя.
 
-Channel ID (`UUID`): ID of the channel (chat or group) from which messages need to be retrieved.
+Channel ID (`UUID`): Идентификатор канала (чата или группы), из которого необходимо извлечь сообщения.
 
-**Returns**
+**Возвращается**
 
-Messages (`Message[]`): All the messages in a given chat or group.
+Messages (`Message[]`): Все сообщения в данном чате или группе.
 
-### Send message
+### Отправить сообщение
 
-Send a message from a user to a channel (chat or group).
+Отправка сообщения от пользователя в канал (чат или группу).
 
 ```tsx
 sendMessage(userID: UUID, channelID: UUID, message: Message): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-User ID (`UUID`): ID of the current user.
+User ID (`UUID`): Идентификатор текущего пользователя.
 
-Channel ID (`UUID`): ID of the channel (chat or group) user wants to send a message to.
+Channel ID (`UUID`): ID канала (чата или группы), на который пользователь хочет отправить сообщение.
 
-Message (`Message`): The message (text, image, video, etc.) that the user wants to send.
+Message (`Message`): Сообщение (текст, изображение, видео и т. д.), которое пользователь хочет отправить.
 
-**Returns**
+**Возврат**.
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Указывает, была ли операция успешной или нет.
 
-### Join or leave a channel
+### Присоединиться к каналу или покинуть его
 
-Allows the user to join or leave a channel (chat or group).
+Позволяет пользователю присоединиться к каналу (чату или группе) или покинуть его.
 
 ```tsx
 joinGroup(userID: UUID, channelID: UUID): boolean
 leaveGroup(userID: UUID, channelID: UUID): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-User ID (`UUID`): ID of the current user.
+User ID (`UUID`): Идентификатор текущего пользователя.
 
-Channel ID (`UUID`): ID of the channel (chat or group) the user wants to join or leave.
+Channel ID (`UUID`): ID канала (чата или группы), к которому пользователь хочет присоединиться или покинуть.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Результат (`boolean`): Указывает, была ли операция успешной или нет.
 
-## High-level design
+## Высокоуровневый дизайн
 
-Now let us do a high-level design of our system.
+Теперь давайте сделаем высокоуровневый дизайн нашей системы.
 
-### Architecture
+### Архитектура
 
-We will be using [microservices architecture](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices) since it will make it easier to horizontally scale and decouple our services. Each service will have ownership of its own data model. Let's try to divide our system into some core services.
+Мы будем использовать [архитектуру микросервисов](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices), так как она облегчает горизонтальное масштабирование и разделение наших сервисов. Каждый сервис будет владеть своей собственной моделью данных. Давайте попробуем разделить нашу систему на несколько основных сервисов.
 
-**User Service**
+**Сервис пользователя**
 
-This is an HTTP-based service that handles user-related concerns such as authentication and user information.
+Это служба на основе HTTP, которая обрабатывает вопросы, связанные с пользователями, такие как аутентификация и информация о пользователе.
 
-**Chat Service**
+**Сервис чата**
 
-The chat service will use WebSockets and establish connections with the client to handle chat and group message-related functionality. We can also use cache to keep track of all the active connections sort of like sessions which will help us determine if the user is online or not.
+Служба чата будет использовать WebSockets и устанавливать соединения с клиентом для обработки функций чата и групповых сообщений. Мы также можем использовать кэш для отслеживания всех активных подключений, что-то вроде сессий, что поможет нам определить, находится ли пользователь онлайн или нет.
 
-**Notification Service**
+**Сервис уведомлений**
 
-This service will simply send push notifications to the users. It will be discussed in detail separately.
+Этот сервис будет просто отправлять пользователям push-уведомления. Он будет подробно рассмотрен отдельно.
 
-**Presence Service**
+**Служба присутствия**
 
-The presence service will keep track of the _last seen_ status of all users. It will be discussed in detail separately.
+Служба присутствия будет отслеживать статус _последнего увиденного_ всех пользователей. Подробнее об этом будет рассказано отдельно.
 
-**Media service**
+**Медиа-сервис**
 
-This service will handle the media (images, videos, files, etc.) uploads. It will be discussed in detail separately.
+Эта служба будет обрабатывать загрузку медиафайлов (изображений, видео, файлов и т. д.). Подробнее об этом будет рассказано отдельно.
 
-**What about inter-service communication and service discovery?**
+**Что касается межсервисного взаимодействия и обнаружения сервисов?**
 
-Since our architecture is microservices-based, services will be communicating with each other as well. Generally, REST or HTTP performs well but we can further improve the performance using [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc) which is more lightweight and efficient.
+Поскольку наша архитектура основана на микросервисах, сервисы также будут взаимодействовать друг с другом. Как правило, REST или HTTP работают хорошо, но мы можем еще больше повысить производительность, используя [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc), который является более легким и эффективным.
 
-[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) is another thing we will have to take into account. We can also use a service mesh that enables managed, observable, and secure communication between individual services.
+[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) - это еще одна вещь, которую мы должны принять во внимание. Мы также можем использовать сетку сервисов, которая обеспечивает управляемую, наблюдаемую и безопасную связь между отдельными сервисами.
 
-_Note: Learn more about [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) and how they compare with each other._
+_Примечание: Узнайте больше о [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) и их сравнении друг с другом._
 
-### Real-time messaging
+### Обмен сообщениями в реальном времени
 
-How do we efficiently send and receive messages? We have two different options:
+Как эффективно отправлять и получать сообщения? У нас есть два варианта:
 
-**Pull model**
+**Модель "тяни-толкай "**.
 
-The client can periodically send an HTTP request to servers to check if there are any new messages. This can be achieved via something like [Long polling](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#long-polling).
+Клиент может периодически отправлять HTTP-запрос на сервер, чтобы проверить, есть ли новые сообщения. Этого можно добиться с помощью чего-то вроде [Long polling](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#long-polling).
 
-**Push model**
+**Модель Push**
 
-The client opens a long-lived connection with the server and once new data is available it will be pushed to the client. We can use [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets) or [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse) for this.
+Клиент открывает долговременное соединение с сервером, и как только появляются новые данные, они передаются клиенту. Для этого можно использовать [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets) или [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse).
 
-The pull model approach is not scalable as it will create unnecessary request overhead on our servers and most of the time the response will be empty, thus wasting our resources. To minimize latency, using the push model with [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets) is a better choice because then we can push data to the client once it's available without any delay, given the connection is open with the client. Also, WebSockets provide full-duplex communication, unlike [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse) which are only unidirectional.
+Подход с использованием модели pull не является масштабируемым, поскольку он создает ненужные накладные расходы на запросы на наших серверах и большую часть времени ответ будет пустым, что приводит к потере наших ресурсов. Для минимизации задержек лучше использовать модель push с [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets), поскольку в этом случае мы можем передавать данные клиенту, как только они становятся доступными, без каких-либо задержек, учитывая, что соединение с клиентом открыто. Кроме того, WebSockets обеспечивают полнодуплексную связь, в отличие от [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse), которые являются только однонаправленными.
 
-_Note: Learn more about [Long polling, WebSockets, Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events)._
+_Примечание: Узнайте больше о [длинном опросе, WebSockets, Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events)._
 
 ### Last seen
 
-To implement the last seen functionality, we can use a [heartbeat](<https://en.wikipedia.org/wiki/Heartbeat_(computing)>) mechanism, where the client can periodically ping the servers indicating its liveness. Since this needs to be as low overhead as possible, we can store the last active timestamp in the cache as follows:
+Для реализации функциональности last seen мы можем использовать механизм [heartbeat](<https://en.wikipedia.org/wiki/Heartbeat_(computing)>), в котором клиент может периодически пинговать серверы, указывая на свою активность. Поскольку это должно быть как можно менее накладным, мы можем хранить в кэше временную метку последней активности следующим образом:
 
-| Key    | Value               |
+| Ключ | Значение |
 | ------ | ------------------- |
-| User A | 2022-07-01T14:32:50 |
-| User B | 2022-07-05T05:10:35 |
-| User C | 2022-07-10T04:33:25 |
+| Пользователь A | 2022-07-01T14:32:50 |
+| Пользователь B | 2022-07-05T05:10:35 |
+| Пользователь C | 2022-07-10T04:33:25 |
 
-This will give us the last time the user was active. This functionality will be handled by the presence service combined with [Redis](https://redis.io) or [Memcached](https://memcached.org) as our cache.
+Это даст нам информацию о том, когда пользователь был активен в последний раз. Эта функциональность будет выполняться сервисом присутствия в сочетании с [Redis](https://redis.io) или [Memcached](https://memcached.org) в качестве кэша.
 
-Another way to implement this is to track the latest action of the user, once the last activity crosses a certain threshold, such as _"user hasn't performed any action in the last 30 seconds"_, we can show the user as offline and last seen with the last recorded timestamp. This will be more of a lazy update approach and might benefit us over heartbeat in certain cases.
+Другой способ реализовать это - отслеживать последние действия пользователя, как только последняя активность пересечет определенный порог, например _"пользователь не выполнял никаких действий в течение последних 30 секунд"_, мы можем показать пользователя как не в сети и последний раз видеть его с последней записанной временной меткой. Это будет больше похоже на подход "ленивого обновления", и в некоторых случаях мы можем выиграть по сравнению с heartbeat.
 
-### Notifications
+### Уведомления
 
-Once a message is sent in a chat or a group, we will first check if the recipient is active or not, we can get this information by taking the user's active connection and last seen into consideration.
+После отправки сообщения в чате или группе мы сначала проверим, активен ли получатель или нет; эту информацию можно получить, приняв во внимание активное соединение пользователя и его последнее посещение.
 
-If the recipient is not active, the chat service will add an event to a [message queue](https://karanpratapsingh.com/courses/system-design/message-queues) with additional metadata such as the client's device platform which will be used to route the notification to the correct platform later on.
+Если получатель не активен, служба чата добавит событие в [очередь сообщений] (https://karanpratapsingh.com/courses/system-design/message-queues) с дополнительными метаданными, такими как платформа устройства клиента, которые в дальнейшем будут использованы для маршрутизации уведомления на нужную платформу.
 
-The notification service will then consume the event from the message queue and forward the request to [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) or [Apple Push Notification Service (APNS)](https://developer.apple.com/documentation/usernotifications) based on the client's device platform (Android, iOS, web, etc). We can also add support for email and SMS.
+Затем служба уведомлений получит событие из очереди сообщений и направит запрос в [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) или [Apple Push Notification Service (APNS)](https://developer.apple.com/documentation/usernotifications) в зависимости от платформы устройства клиента (Android, iOS, web и т. д.). Мы также можем добавить поддержку электронной почты и SMS.
 
-**Why are we using a message queue?**
+**Почему мы используем очередь сообщений?
 
-Since most message queues provide best-effort ordering which ensures that messages are generally delivered in the same order as they're sent and that a message is delivered at least once which is an important part of our service functionality.
+Поскольку большинство очередей сообщений обеспечивают наилучшее упорядочивание, что гарантирует доставку сообщений в том же порядке, в каком они были отправлены, и что сообщение будет доставлено хотя бы один раз, что является важной частью функциональности нашего сервиса.
 
-While this seems like a classic [publish-subscribe](https://karanpratapsingh.com/courses/system-design/publish-subscribe) use case, it is actually not as mobile devices and browsers each have their own way of handling push notifications. Usually, notifications are handled externally via Firebase Cloud Messaging (FCM) or Apple Push Notification Service (APNS) unlike message fan-out which we commonly see in backend services. We can use something like [Amazon SQS](https://aws.amazon.com/sqs) or [RabbitMQ](https://www.rabbitmq.com) to support this functionality.
+Хотя это кажется классическим вариантом использования [publish-subscribe](https://karanpratapsingh.com/courses/system-design/publish-subscribe), на самом деле это не так, поскольку мобильные устройства и браузеры каждый по-своему обрабатывают push-уведомления. Обычно уведомления обрабатываются извне через Firebase Cloud Messaging (FCM) или Apple Push Notification Service (APNS), в отличие от веерной рассылки сообщений, которую мы обычно видим в бэкенд-сервисах. Для поддержки этой функциональности мы можем использовать что-то вроде [Amazon SQS](https://aws.amazon.com/sqs) или [RabbitMQ](https://www.rabbitmq.com).
 
-### Read receipts
+### Квитанции на чтение
 
-Handling read receipts can be tricky, for this use case we can wait for some sort of [Acknowledgment (ACK)](<https://en.wikipedia.org/wiki/Acknowledgement_(data_networks)>) from the client to determine if the message was delivered and update the corresponding `deliveredAt` field. Similarly, we will mark the message as seen once the user opens the chat and update the corresponding `seenAt` timestamp field.
+Обработка квитанций о прочтении может быть непростой задачей, поэтому в данном случае мы можем дождаться какого-нибудь [Acknowledgment (ACK)](<https://en.wikipedia.org/wiki/Acknowledgement_(data_networks)>) от клиента, чтобы определить, было ли сообщение доставлено, и обновить соответствующее поле `deliveredAt`. Аналогично, мы пометим сообщение как увиденное, как только пользователь откроет чат, и обновим соответствующее поле `seenAt`.
 
-### Design
+### Дизайн
 
-Now that we have identified some core components, let's do the first draft of our system design.
+Теперь, когда мы определили некоторые основные компоненты, давайте сделаем первый набросок дизайна нашей системы.
 
 ![whatsapp-basic-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/whatsapp/whatsapp-basic-design.png)
 
-## Detailed design
+## Детальный дизайн
 
-It's time to discuss our design decisions in detail.
+Пришло время обсудить наши проектные решения в деталях.
 
-### Data Partitioning
+### Разбиение данных
 
-To scale out our databases we will need to partition our data. Horizontal partitioning (aka [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) can be a good first step. We can use partitions schemes such as:
+Чтобы масштабировать наши базы данных, нам нужно разделить данные. Горизонтальное разделение (оно же [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) может стать хорошим первым шагом. Мы можем использовать такие схемы разбиения, как:
 
 - Hash-Based Partitioning
-- List-Based Partitioning
-- Range Based Partitioning
-- Composite Partitioning
+- Разбиение на основе списков
+- Разбиение на основе диапазонов
+- составные разделы
 
-The above approaches can still cause uneven data and load distribution, we can solve this using [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
+Вышеперечисленные подходы могут привести к неравномерному распределению данных и нагрузки, но мы можем решить эту проблему с помощью [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-_For more details, refer to [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) and [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
+_Более подробную информацию вы найдете в разделах [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) и [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
 
-### Caching
+### Кэширование
 
-In a messaging application, we have to be careful about using cache as our users expect the latest data, but many users will be requesting the same messages, especially in a group chat. So, to prevent usage spikes from our resources we can cache older messages.
+В приложении для обмена сообщениями мы должны быть осторожны с использованием кэша, поскольку наши пользователи ожидают самые свежие данные, но многие пользователи будут запрашивать одни и те же сообщения, особенно в групповом чате. Поэтому, чтобы предотвратить скачки использования наших ресурсов, мы можем кэшировать старые сообщения.
 
-Some group chats can have thousands of messages and sending that over the network will be really inefficient, to improve efficiency we can add pagination to our system APIs. This decision will be helpful for users with limited network bandwidth as they won't have to retrieve old messages unless requested.
+Некоторые групповые чаты могут содержать тысячи сообщений, и отправка их по сети будет очень неэффективной, поэтому для повышения эффективности мы можем добавить пагинацию в API нашей системы. Это решение будет полезно для пользователей с ограниченной пропускной способностью сети, так как им не придется получать старые сообщения, если они не запрашиваются.
 
-**Which cache eviction policy to use?**
+**Какую политику вытеснения кэша использовать?**
 
-We can use solutions like [Redis](https://redis.io) or [Memcached](https://memcached.org) and cache 20% of the daily traffic but what kind of cache eviction policy would best fit our needs?
+Мы можем использовать такие решения, как [Redis](https://redis.io) или [Memcached](https://memcached.org), и кэшировать 20 % ежедневного трафика, но какая политика вытеснения кэша лучше всего подойдет для наших нужд?
 
-[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) can be a good policy for our system. In this policy, we discard the least recently used key first.
+[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) может быть хорошей политикой для нашей системы. В этой политике мы отбрасываем в первую очередь наименее недавно использованный ключ.
 
-**How to handle cache miss?**
+**Как справиться с пропуском кэша?
 
-Whenever there is a cache miss, our servers can hit the database directly and update the cache with the new entries.
+Когда происходит пропуск кэша, наши серверы могут напрямую обращаться к базе данных и обновлять кэш новыми записями.
 
-_For more details, refer to [Caching](https://karanpratapsingh.com/courses/system-design/caching)._
+Более подробную информацию вы найдете в разделе [Кэширование](https://karanpratapsingh.com/courses/system-design/caching)._
 
-### Media access and storage
+### Доступ к носителям и их хранение
 
-As we know, most of our storage space will be used for storing media files such as images, videos, or other files. Our media service will be handling both access and storage of the user media files.
+Как мы знаем, большая часть нашего хранилища будет использоваться для хранения медиафайлов, таких как изображения, видео или другие файлы. Наш медиасервис будет управлять доступом и хранением пользовательских медиафайлов.
 
-But where can we store files at scale? Well, [object storage](https://karanpratapsingh.com/courses/system-design/storage#object-storage) is what we're looking for. Object stores break data files up into pieces called objects. It then stores those objects in a single repository, which can be spread out across multiple networked systems. We can also use distributed file storage such as [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs) or [GlusterFS](https://www.gluster.org).
+Но где мы можем хранить файлы в масштабе? Что ж, [объектное хранилище](https://karanpratapsingh.com/courses/system-design/storage#object-storage) - это то, что нам нужно. Объектные хранилища разбивают файлы данных на части, называемые объектами. Затем эти объекты хранятся в едином хранилище, которое может быть распределено по нескольким сетевым системам. Мы также можем использовать распределенные файловые хранилища, такие как [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs) или [GlusterFS](https://www.gluster.org).
 
-_Fun fact: WhatsApp deletes media on its servers once it has been downloaded by the user._
+_Забавный факт: WhatsApp удаляет медиафайлы на своих серверах после того, как они были загружены пользователем._
 
-We can use object stores like [Amazon S3](https://aws.amazon.com/s3), [Azure Blob Storage](https://azure.microsoft.com/en-in/services/storage/blobs), or [Google Cloud Storage](https://cloud.google.com/storage) for this use case.
+Для этого случая мы можем использовать такие объектные хранилища, как [Amazon S3](https://aws.amazon.com/s3), [Azure Blob Storage](https://azure.microsoft.com/en-in/services/storage/blobs) или [Google Cloud Storage](https://cloud.google.com/storage).
 
-### Content Delivery Network (CDN)
+### Сеть доставки контента (CDN)
 
-[Content Delivery Network (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) increases content availability and redundancy while reducing bandwidth costs. Generally, static files such as images, and videos are served from CDN. We can use services like [Amazon CloudFront](https://aws.amazon.com/cloudfront) or [Cloudflare CDN](https://www.cloudflare.com/cdn) for this use case.
+[Сеть доставки контента (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) повышает доступность и избыточность контента, снижая при этом затраты на пропускную способность. Как правило, статические файлы, такие как изображения и видео, обслуживаются из CDN. Для этого случая мы можем использовать такие сервисы, как [Amazon CloudFront](https://aws.amazon.com/cloudfront) или [Cloudflare CDN](https://www.cloudflare.com/cdn).
 
-### API gateway
+### API-шлюз
 
-Since we will be using multiple protocols like HTTP, WebSocket, TCP/IP, deploying multiple L4 (transport layer) or L7 (application layer) type load balancers separately for each protocol will be expensive. Instead, we can use an [API Gateway](https://karanpratapsingh.com/courses/system-design/api-gateway) that supports multiple protocols without any issues.
+Поскольку мы будем использовать несколько протоколов, таких как HTTP, WebSocket, TCP/IP, развертывание нескольких балансиров нагрузки типа L4 (транспортный уровень) или L7 (прикладной уровень) отдельно для каждого протокола будет дорогостоящим. Вместо этого мы можем использовать [API Gateway](https://karanpratapsingh.com/courses/system-design/api-gateway), который поддерживает несколько протоколов без каких-либо проблем.
 
-API Gateway can also offer other features such as authentication, authorization, rate limiting, throttling, and API versioning which will improve the quality of our services.
+API Gateway также может предлагать другие функции, такие как аутентификация, авторизация, ограничение скорости, дросселирование и версионирование API, что повысит качество наших услуг.
 
-We can use services like [Amazon API Gateway](https://aws.amazon.com/api-gateway) or [Azure API Gateway](https://azure.microsoft.com/en-in/services/api-management) for this use case.
+Для этого случая мы можем использовать такие сервисы, как [Amazon API Gateway](https://aws.amazon.com/api-gateway) или [Azure API Gateway](https://azure.microsoft.com/en-in/services/api-management).
 
-## Identify and resolve bottlenecks
+## Выявление и устранение узких мест
 
 ![whatsapp-advanced-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/whatsapp/whatsapp-advanced-design.png)
 
-Let us identify and resolve bottlenecks such as single points of failure in our design:
+Давайте определим и устраним узкие места, такие как единые точки отказа в нашем дизайне:
 
-- "What if one of our services crashes?"
-- "How will we distribute our traffic between our components?"
-- "How can we reduce the load on our database?"
-- "How to improve the availability of our cache?"
-- "Wouldn't API Gateway be a single point of failure?"
-- "How can we make our notification system more robust?"
-- "How can we reduce media storage costs"?
-- "Does chat service has too much responsibility?"
+- "Что, если один из наших сервисов сломается?"
+- "Как мы будем распределять трафик между компонентами?"
+- "Как мы можем снизить нагрузку на нашу базу данных?"
+- "Как повысить доступность нашего кэша?"
+- "Не будет ли API Gateway единой точкой отказа?"
+- "Как сделать нашу систему уведомлений более надежной?"
+- "Как мы можем сократить расходы на хранение медиафайлов?"
+- "Не слишком ли много обязанностей у чат-службы?".
 
-To make our system more resilient we can do the following:
+Чтобы сделать нашу систему более устойчивой, мы можем сделать следующее:
 
-- Running multiple instances of each of our services.
-- Introducing [load balancers](https://karanpratapsingh.com/courses/system-design/load-balancing) between clients, servers, databases, and cache servers.
-- Using multiple read replicas for our databases.
-- Multiple instances and replicas for our distributed cache.
-- We can have a standby replica of our API Gateway.
-- Exactly once delivery and message ordering is challenging in a distributed system, we can use a dedicated [message broker](https://karanpratapsingh.com/courses/system-design/message-brokers) such as [Apache Kafka](https://kafka.apache.org) or [NATS](https://nats.io) to make our notification system more robust.
-- We can add media processing and compression capabilities to the media service to compress large files similar to WhatsApp which will save a lot of storage space and reduce cost.
-- We can create a group service separate from the chat service to further decouple our services.
+- Запустить несколько экземпляров каждой из наших служб.
+- Внедрение [балансировщиков нагрузки](https://karanpratapsingh.com/courses/system-design/load-balancing) между клиентами, серверами, базами данных и серверами кэша.
+- Использование нескольких реплик чтения для наших баз данных.
+- Несколько экземпляров и реплик для нашего распределенного кэша.
+- Мы можем иметь резервную копию нашего API-шлюза.
+- В распределенной системе доставка и упорядочивание сообщений является сложной задачей, поэтому мы можем использовать специализированный [брокер сообщений](https://karanpratapsingh.com/courses/system-design/message-brokers), такой как [Apache Kafka](https://kafka.apache.org) или [NATS](https://nats.io), чтобы сделать нашу систему уведомлений более надежной.
+- Мы можем добавить возможности обработки и сжатия медиафайлов в медиасервис, чтобы сжимать большие файлы подобно WhatsApp, что позволит сэкономить много места для хранения и снизить стоимость.
+- Мы можем создать сервис групп отдельно от сервиса чатов, чтобы еще больше разделить наши сервисы.
 
 # Twitter
 
-Let's design a [Twitter](https://twitter.com) like social media service, similar to services like [Facebook](https://facebook.com), [Instagram](https://instagram.com), etc.
+Давайте разработаем социальный медиасервис [Twitter](https://twitter.com), похожий на такие сервисы, как [Facebook](https://facebook.com), [Instagram](https://instagram.com) и т.д.
 
-## What is Twitter?
+## Что такое Twitter?
 
-Twitter is a social media service where users can read or post short messages (up to 280 characters) called tweets. It is available on the web and mobile platforms such as Android and iOS.
+Twitter - это социальный медиасервис, где пользователи могут читать или публиковать короткие сообщения (до 280 символов), называемые твитами. Он доступен в Интернете и на мобильных платформах, таких как Android и iOS.
 
-## Requirements
+## Требования
 
-Our system should meet the following requirements:
+Наша система должна отвечать следующим требованиям:
 
-### Functional requirements
+### Функциональные требования
 
-- Should be able to post new tweets (can be text, image, video, etc.).
-- Should be able to follow other users.
-- Should have a newsfeed feature consisting of tweets from the people the user is following.
-- Should be able to search tweets.
+- Должна быть возможность публиковать новые твиты (это может быть текст, изображение, видео и т. д.).
+- Должна быть возможность следовать за другими пользователями.
+- Должна быть лента новостей, состоящая из твитов людей, за которыми следит пользователь.
+- Должна быть возможность поиска по твитам.
 
-### Non-Functional requirements
+### Нефункциональные требования
 
-- High availability with minimal latency.
-- The system should be scalable and efficient.
+- Высокая доступность при минимальной задержке.
+- Система должна быть масштабируемой и эффективной.
 
-### Extended requirements
+### Расширенные требования
 
-- Metrics and analytics.
-- Retweet functionality.
-- Favorite tweets.
+- Метрика и аналитика.
+- Функциональность ретвитов.
+- Любимые твиты.
 
-## Estimation and Constraints
+## Оценка и ограничения
 
-Let's start with the estimation and constraints.
+Давайте начнем с оценки и ограничений.
 
-_Note: Make sure to check any scale or traffic-related assumptions with your interviewer._
+_Примечание: Обязательно уточните у интервьюера любые допущения, связанные с масштабом или трафиком._
 
-### Traffic
+### Трафик
 
-This will be a read-heavy system, let us assume we have 1 billion total users with 200 million daily active users (DAU), and on average each user tweets 5 times a day. This gives us 1 billion tweets per day.
+Это будет система с большим объемом чтения. Предположим, что у нас 1 миллиард пользователей с 200 миллионами ежедневных активных пользователей (DAU), и в среднем каждый пользователь пишет твиты 5 раз в день. Это дает нам 1 миллиард твитов в день.
 
 $$
 200 \space million \times 5 \space tweets = 1 \space billion/day
 $$
 
-Tweets can also contain media such as images, or videos. We can assume that 10 percent of tweets are media files shared by the users, which gives us additional 100 million files we would need to store.
+Твиты также могут содержать медиафайлы, такие как изображения или видео. Мы можем предположить, что 10 % твитов - это медиафайлы, которыми делятся пользователи, что дает нам дополнительные 100 миллионов файлов, которые необходимо хранить.
 
 $$
 10 \space percent \times 1 \space billion = 100 \space million/day
 $$
 
-**What would be Requests Per Second (RPS) for our system?**
+**Какова будет скорость запросов в секунду (RPS) для нашей системы?
 
-1 billion requests per day translate into 12K requests per second.
+1 миллиард запросов в день - это 12 тысяч запросов в секунду.
 
 $$
 \frac{1 \space billion}{(24 \space hrs \times 3600 \space seconds)} = \sim 12K \space requests/second
 $$
 
-### Storage
+### Хранилище
 
-If we assume each message on average is 100 bytes, we will require about 100 GB of database storage every day.
+Если предположить, что каждое сообщение в среднем занимает 100 байт, то нам потребуется около 100 ГБ хранилища базы данных в день.
 
 $$
 1 \space billion \times 100 \space bytes = \sim 100 \space GB/day
 $$
 
-We also know that around 10 percent of our daily messages (100 million) are media files per our requirements. If we assume each file is 50 KB on average, we will require 5 TB of storage every day.
+Мы также знаем, что около 10 процентов наших ежедневных сообщений (100 миллионов) - это медиафайлы, соответствующие нашим требованиям. Если предположить, что каждый файл в среднем занимает 50 КБ, то нам потребуется 5 ТБ хранилища каждый день.
 
 $$
 100 \space million \times 50 \space KB = 5 \space TB/day
 $$
 
-And for 10 years, we will require about 19 PB of storage.
+А за 10 лет нам потребуется около 19 ПБ хранилища.
 
 $$
 (5 \space TB + 0.1 \space TB) \times 365 \space days \times 10 \space years = \sim 19 \space PB
 $$
 
-### Bandwidth
+### Пропускная способность
 
-As our system is handling 5.1 TB of ingress every day, we will require a minimum bandwidth of around 60 MB per second.
+Поскольку наша система ежедневно обрабатывает 5,1 ТБ входящих данных, нам потребуется минимальная пропускная способность около 60 МБ в секунду.
 
 $$
 \frac{5.1 \space TB}{(24 \space hrs \times 3600 \space seconds)} = \sim 60 \space MB/second
 $$
 
-### High-level estimate
+### Оценка высокого уровня
 
-Here is our high-level estimate:
+Вот наша оценка высокого уровня:
 
-| Type                      | Estimate    |
+| Тип | Смета |
 | ------------------------- | ----------- |
-| Daily active users (DAU)  | 100 million |
-| Requests per second (RPS) | 12K/s       |
-| Storage (per day)         | ~5.1 TB     |
-| Storage (10 years)        | ~19 PB      |
-| Bandwidth                 | ~60 MB/s    |
+| Ежедневные активные пользователи (DAU) | 100 миллионов |
+| Запросы в секунду (RPS) | 12K/s |
+| Хранение (в день)| ~5,1 ТБ |
+| Хранение (10 лет)| ~19 ПБ |
+| Пропускная способность | ~60 МБ/с |
 
-## Data model design
+## Разработка модели данных
 
-This is the general data model which reflects our requirements.
+Это общая модель данных, которая отражает наши требования.
 
 ![twitter-datamodel](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/twitter/twitter-datamodel.png)
 
-We have the following tables:
+У нас есть следующие таблицы:
 
 **users**
 
-This table will contain a user's information such as `name`, `email`, `dob`, and other details.
+Эта таблица будет содержать информацию о пользователе, такую как `имя`, `электронная почта`, `добавка` и другие данные.
 
 **tweets**
 
-As the name suggests, this table will store tweets and their properties such as `type` (text, image, video, etc.), `content`, etc. We will also store the corresponding `userID`.
+Как следует из названия, в этой таблице будут храниться твиты и их свойства, такие как `тип` (текст, изображение, видео и т. д.), `содержание` и т. д. Мы также будем хранить соответствующий `userID`.
 
 **favorites**
 
-This table maps tweets with users for the favorite tweets functionality in our application.
+Эта таблица сопоставляет твиты с пользователями для функциональности избранных твитов в нашем приложении.
 
 **followers**
 
-This table maps the followers and [followees](https://en.wiktionary.org/wiki/followee) as users can follow each other (N:M relationship).
+В этой таблице отображаются последователи и [followees](https://en.wiktionary.org/wiki/followee), поскольку пользователи могут следовать друг за другом (отношения N:M).
 
 **feeds**
 
-This table stores feed properties with the corresponding `userID`.
+В этой таблице хранятся свойства фида с соответствующим `userID`.
 
 **feeds_tweets**
 
-This table maps tweets and feed (N:M relationship).
+В этой таблице отображаются твиты и фиды (связь N:M).
 
-### What kind of database should we use?
+### Какую базу данных мы должны использовать?
 
-While our data model seems quite relational, we don't necessarily need to store everything in a single database, as this can limit our scalability and quickly become a bottleneck.
+Хотя наша модель данных выглядит вполне реляционной, нам не обязательно хранить все в одной базе данных, поскольку это может ограничить масштабируемость и быстро превратиться в узкое место.
 
-We will split the data between different services each having ownership over a particular table. Then we can use a relational database such as [PostgreSQL](https://www.postgresql.org) or a distributed NoSQL database such as [Apache Cassandra](https://cassandra.apache.org/_/index.html) for our use case.
+Мы разделим данные между различными службами, каждая из которых будет владеть определенной таблицей. Тогда мы можем использовать реляционную базу данных, например [PostgreSQL](https://www.postgresql.org), или распределенную базу данных NoSQL, например [Apache Cassandra](https://cassandra.apache.org/_/index.html), для нашего случая.
 
-## API design
+## Дизайн API
 
-Let us do a basic API design for our services:
+Давайте сделаем базовый дизайн API для наших сервисов:
 
-### Post a tweet
+### Опубликовать твит
 
-This API will allow the user to post a tweet on the platform.
+Этот API позволит пользователю опубликовать твит на платформе.
 
 ```tsx
 postTweet(userID: UUID, content: string, mediaURL?: string): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-User ID (`UUID`): ID of the user.
+User ID (`UUID`): Идентификатор пользователя.
 
-Content (`string`): Contents of the tweet.
+Content (`string`): Содержание твита.
 
-Media URL (`string`): URL of the attached media _(optional)_.
+Media URL (`string`): URL-адрес прикрепленного медиафайла _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`булево`): Отражает, была ли операция успешной или нет.
 
-### Follow or unfollow a user
+### Следовать или не следовать за пользователем
 
-This API will allow the user to follow or unfollow another user.
+Этот API позволяет пользователю следовать или не следовать за другим пользователем.
 
-```tsx
+``tsx
 follow(followerID: UUID, followeeID: UUID): boolean
 unfollow(followerID: UUID, followeeID: UUID): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-Follower ID (`UUID`): ID of the current user.
+Follower ID (`UUID`): Идентификатор текущего пользователя.
 
-Followee ID (`UUID`): ID of the user we want to follow or unfollow.
+Followee ID(`UUID`): ID пользователя, за которым мы хотим следить или от которого хотим откреститься.
 
-Media URL (`string`): URL of the attached media _(optional)_.
+Media URL (`string`): URL-адрес прикрепленного медиафайла _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Отражает, была ли операция успешной или нет.
 
-### Get newsfeed
+### Получить ленту новостей
 
-This API will return all the tweets to be shown within a given newsfeed.
+Этот API вернет все твиты, которые будут показаны в заданной ленте новостей.
 
-```tsx
+``tsx
 getNewsfeed(userID: UUID): Tweet[]
 ```
 
-**Parameters**
+**Параметры**
 
-User ID (`UUID`): ID of the user.
+User ID (`UUID`): ID пользователя.
 
-**Returns**
+**Возвращает**
 
-Tweets (`Tweet[]`): All the tweets to be shown within a given newsfeed.
+Tweets (`Tweet[]`): Все твиты, которые будут показаны в данной ленте новостей.
 
 ## High-level design
 
