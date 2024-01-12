@@ -4561,7 +4561,7 @@ Result (`булево`): Отражает, была ли операция усп
 
 Этот API позволяет пользователю следовать или не следовать за другим пользователем.
 
-``tsx
+```tsx
 follow(followerID: UUID, followeeID: UUID): boolean
 unfollow(followerID: UUID, followeeID: UUID): boolean
 ```
@@ -4574,6 +4574,7 @@ Followee ID(`UUID`): ID пользователя, за которым мы хо�
 
 Media URL (`string`): URL-адрес прикрепленного медиафайла _(необязательно)_.
 
+
 **Возврат**
 
 Result (`boolean`): Отражает, была ли операция успешной или нет.
@@ -4582,7 +4583,7 @@ Result (`boolean`): Отражает, была ли операция успеш�
 
 Этот API вернет все твиты, которые будут показаны в заданной ленте новостей.
 
-``tsx
+```tsx
 getNewsfeed(userID: UUID): Tweet[]
 ```
 
@@ -4594,780 +4595,779 @@ User ID (`UUID`): ID пользователя.
 
 Tweets (`Tweet[]`): Все твиты, которые будут показаны в данной ленте новостей.
 
-## High-level design
+## Высокоуровневый дизайн
 
-Now let us do a high-level design of our system.
+Теперь давайте сделаем высокоуровневый дизайн нашей системы.
 
-### Architecture
+### Архитектура
 
-We will be using [microservices architecture](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices) since it will make it easier to horizontally scale and decouple our services. Each service will have ownership of its own data model. Let's try to divide our system into some core services.
+Мы будем использовать [архитектуру микросервисов](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices), так как она облегчает горизонтальное масштабирование и разделение наших сервисов.Каждый сервис будет владеть своей собственной моделью данных. Давайте попробуем разделить нашу систему на несколько основных сервисов.
 
-**User Service**
+**Сервис пользователя**.
 
-This service handles user-related concerns such as authentication and user information.
+Этот сервис занимается вопросами, связанными с пользователями, такими как аутентификация и информация о пользователе.
 
-**Newsfeed Service**
+**Сервис новостной ленты**.
 
-This service will handle the generation and publishing of user newsfeeds. It will be discussed in detail separately.
+Этот сервис будет заниматься созданием и публикацией новостных лент пользователей. Он будет подробно рассмотрен отдельно.
 
-**Tweet Service**
+**Сервис твитов**
 
-The tweet service will handle tweet-related use cases such as posting a tweet, favorites, etc.
+Сервис твитов будет обрабатывать связанные с твитами сценарии использования, такие как публикация твита, избранное и т.д.
 
-**Search Service**
+**Поисковый сервис**
 
-The service is responsible for handling search-related functionality. It will be discussed in detail separately.
+Этот сервис отвечает за работу с функциями, связанными с поиском. Он будет подробно рассмотрен отдельно.
 
-**Media service**
+**Медиа-сервис**
 
-This service will handle the media (images, videos, files, etc.) uploads. It will be discussed in detail separately.
+Этот сервис отвечает за загрузку медиафайлов (изображений, видео, файлов и т. д.). Подробнее об этом будет рассказано отдельно.
 
-**Notification Service**
+**Сервис уведомлений**
 
-This service will simply send push notifications to the users.
+Этот сервис будет просто отправлять пользователям push-уведомления.
 
-**Analytics Service**
+**Аналитический сервис**
 
-This service will be used for metrics and analytics use cases.
+Этот сервис будет использоваться для метрик и аналитики.
 
-**What about inter-service communication and service discovery?**
+**А как насчет межсервисного взаимодействия и обнаружения сервисов?
 
-Since our architecture is microservices-based, services will be communicating with each other as well. Generally, REST or HTTP performs well but we can further improve the performance using [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc) which is more lightweight and efficient.
+Поскольку наша архитектура основана на микросервисах, сервисы также будут взаимодействовать друг с другом. Как правило, REST или HTTP работают хорошо, но мы можем еще больше повысить производительность, используя [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc), который является более легким и эффективным.
 
-[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) is another thing we will have to take into account. We can also use a service mesh that enables managed, observable, and secure communication between individual services.
+[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) - это еще одна вещь, которую мы должны принять во внимание. Мы также можем использовать сетку сервисов, которая обеспечивает управляемую, наблюдаемую и безопасную связь между отдельными сервисами.
 
-_Note: Learn more about [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) and how they compare with each other._
+_Примечание: Узнайте больше о [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) и их сравнении друг с другом._
 
-### Newsfeed
+### Лента новостей
 
-When it comes to the newsfeed, it seems easy enough to implement, but there are a lot of things that can make or break this feature. So, let's divide our problem into two parts:
+Когда речь заходит о ленте новостей, кажется, что реализовать ее достаточно просто, но есть много вещей, которые могут сделать или сломать эту функцию. Итак, давайте разделим нашу проблему на две части:
 
-**Generation**
+**Генерация**.
 
-Let's assume we want to generate the feed for user A, we will perform the following steps:
+Допустим, мы хотим сгенерировать ленту для пользователя A, для этого мы выполним следующие шаги:
 
-1. Retrieve the IDs of all the users and entities (hashtags, topics, etc.) user A follows.
-2. Fetch the relevant tweets for each of the retrieved IDs.
-3. Use a ranking algorithm to rank the tweets based on parameters such as relevance, time, engagement, etc.
-4. Return the ranked tweets data to the client in a paginated manner.
+1. Получим идентификаторы всех пользователей и сущностей (хэштегов, тем и т. д.), за которыми следит пользователь A.
+2. Найти релевантные твиты для каждого из полученных идентификаторов.
+3. Используйте алгоритм ранжирования для ранжирования твитов по таким параметрам, как релевантность, время, вовлеченность и т. д.
+4. Возврат ранжированных твитов клиенту в постраничном виде.
 
-Feed generation is an intensive process and can take quite a lot of time, especially for users following a lot of people. To improve the performance, the feed can be pre-generated and stored in the cache, then we can have a mechanism to periodically update the feed and apply our ranking algorithm to the new tweets.
+Формирование ленты - интенсивный процесс, который может занимать довольно много времени, особенно для пользователей, следящих за большим количеством людей. Чтобы повысить производительность, фид может быть предварительно сгенерирован и сохранен в кэше, а затем мы можем иметь механизм для периодического обновления фида и применения нашего алгоритма ранжирования к новым твитам.
 
-**Publishing**
+**Публикация**
 
-Publishing is the step where the feed data is pushed according to each specific user. This can be a quite heavy operation, as a user may have millions of friends or followers. To deal with this, we have three different approaches:
+Публикация - это этап, на котором данные ленты рассылаются каждому конкретному пользователю. Это может быть довольно сложной операцией, поскольку у пользователя могут быть миллионы друзей или подписчиков. Чтобы справиться с этим, у нас есть три различных подхода:
 
-- Pull Model (or Fan-out on load)
+- Pull Model (или Fan-out on load)
 
 ![newsfeed-pull-model](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/twitter/newsfeed-pull-model.png)
 
-When a user creates a tweet, and a follower reloads their newsfeed, the feed is created and stored in memory. The most recent feed is only loaded when the user requests it. This approach reduces the number of write operations on our database.
+Когда пользователь создает твит, а его последователь перезагружает свою ленту новостей, лента создается и сохраняется в памяти. Самая последняя лента загружается только тогда, когда пользователь ее запрашивает. Такой подход позволяет сократить количество операций записи в нашу базу данных.
 
-The downside of this approach is that the users will not be able to view recent feeds unless they "pull" the data from the server, which will increase the number of read operations on the server.
+Недостатком этого подхода является то, что пользователи не смогут просматривать последние ленты, пока не "вытащат" данные с сервера, что увеличит количество операций чтения на сервере.
 
-- Push Model (or Fan-out on write)
+- Модель Push (или веерная запись)
 
 ![newsfeed-push-model](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/twitter/newsfeed-push-model.png)
 
-In this model, once a user creates a tweet, it is "pushed" to all the follower's feeds immediately. This prevents the system from having to go through a user's entire followers list to check for updates.
+В этой модели, как только пользователь создает твит, он сразу же "проталкивается" во все ленты последователей. Это избавляет систему от необходимости просматривать весь список подписчиков пользователя, чтобы проверить наличие обновлений.
 
-However, the downside of this approach is that it would increase the number of write operations on the database.
+Однако недостатком такого подхода является увеличение количества операций записи в базу данных.
 
-- Hybrid Model
+- Гибридная модель
 
-A third approach is a hybrid model between the pull and push model. It combines the beneficial features of the above two models and tries to provide a balanced approach between the two.
+Третий подход - это гибридная модель между "тянущей" и "толкающей" моделями. Она сочетает в себе положительные черты двух вышеупомянутых моделей и пытается обеспечить сбалансированный подход между ними.
 
-The hybrid model allows only users with a lesser number of followers to use the push model. For users with a higher number of followers such as celebrities, the pull model is used.
+Гибридная модель позволяет использовать модель push только пользователям с меньшим числом подписчиков. Для пользователей с большим числом подписчиков, например знаменитостей, используется модель pull.
 
-### Ranking Algorithm
+### Алгоритм ранжирования
 
-As we discussed, we will need a ranking algorithm to rank each tweet according to its relevance to each specific user.
+Как мы уже говорили, нам понадобится алгоритм ранжирования, чтобы ранжировать каждый твит в соответствии с его релевантностью для каждого конкретного пользователя.
 
-For example, Facebook used to utilize an [EdgeRank](https://en.wikipedia.org/wiki/EdgeRank) algorithm. Here, the rank of each feed item is described by:
+Например, в Facebook используется алгоритм [EdgeRank](https://en.wikipedia.org/wiki/EdgeRank). Здесь ранг каждого элемента ленты описывается:
 
 $$
 Rank = Affinity \times Weight \times Decay
 $$
 
-Where,
+Где,
 
-`Affinity`: is the "closeness" of the user to the creator of the edge. If a user frequently likes, comments, or messages the edge creator, then the value of affinity will be higher, resulting in a higher rank for the post.
+`Affinity`: это "близость" пользователя к создателю края. Если пользователь часто ставит лайки, комментирует или пишет сообщения создателю ребра, то значение близости будет выше, что приведет к более высокому рангу поста.
 
-`Weight`: is the value assigned according to each edge. A comment can have a higher weightage than likes, and thus a post with more comments is more likely to get a higher rank.
+`Weight`: значение, присваиваемое каждому краю. Комментарий может иметь больший вес, чем лайк, и поэтому пост с большим количеством комментариев с большей вероятностью получит более высокий ранг.
 
-`Decay`: is the measure of the creation of the edge. The older the edge, the lesser will be the value of decay and eventually the rank.
+`Decay`: показатель времени создания края. Чем старше край, тем меньше значение распада и, в конечном счете, ранг.
 
-Nowadays, algorithms are much more complex and ranking is done using machine learning models which can take thousands of factors into consideration.
+В настоящее время алгоритмы стали намного сложнее, и ранжирование осуществляется с помощью моделей машинного обучения, которые могут учитывать тысячи факторов.
 
-### Retweets
+### Ретвиты
 
-Retweets are one of our extended requirements. To implement this feature, we can simply create a new tweet with the user id of the user retweeting the original tweet and then modify the `type` enum and `content` property of the new tweet to link it with the original tweet.
+Ретвиты - одно из наших расширенных требований. Чтобы реализовать эту функцию, мы можем просто создать новый твит с идентификатором пользователя, ретвитнувшего оригинальный твит, а затем изменить свойства `type` enum и `content` нового твита, чтобы связать его с оригинальным твитом.
 
-For example, the `type` enum property can be of type tweet, similar to text, video, etc and `content` can be the id of the original tweet. Here the first row indicates the original tweet while the second row is how we can represent a retweet.
+Например, свойство перечисления `type` может быть типом твита, таким же, как текст, видео и т. д., а `content` может быть идентификатором оригинального твита. Здесь первая строка указывает на оригинальный твит, а вторая - на то, как мы можем представить ретвит.
 
-| id                  | userID              | type  | content                      | createdAt     |
+| id | userID | type | content | createdAt |
 | ------------------- | ------------------- | ----- | ---------------------------- | ------------- |
-| ad34-291a-45f6-b36c | 7a2c-62c4-4dc8-b1bb | text  | Hey, this is my first tweet… | 1658905644054 |
-| f064-49ad-9aa2-84a6 | 6aa2-2bc9-4331-879f | tweet | ad34-291a-45f6-b36c          | 1658906165427 |
+| ad34-291a-45f6-b36c | 7a2c-62c4-4dc8-b1bb | text | Привет, это мой первый твит...| 1658905644054 |
+| f064-49ad-9aa2-84a6 | 6aa2-2bc9-4331-879f | tweet | ad34-291a-45f6-b36c | 1658906165427 |
 
-This is a very basic implementation. To improve this we can create a separate table itself to store retweets.
+Это очень базовая реализация. Чтобы улучшить ее, мы можем создать отдельную таблицу для хранения ретвитов.
 
-### Search
+### Поиск
 
-Sometimes traditional DBMS are not performant enough, we need something which allows us to store, search, and analyze huge volumes of data quickly and in near real-time and give results within milliseconds. [Elasticsearch](https://www.elastic.co) can help us with this use case.
+Иногда традиционные СУБД недостаточно производительны, нам нужно что-то, что позволяет хранить, искать и анализировать огромные объемы данных быстро и практически в режиме реального времени, выдавая результаты в течение миллисекунд. В этом нам может помочь [Elasticsearch](https://www.elastic.co).
 
-[Elasticsearch](https://www.elastic.co) is a distributed, free and open search and analytics engine for all types of data, including textual, numerical, geospatial, structured, and unstructured. It is built on top of [Apache Lucene](https://lucene.apache.org).
+[Elasticsearch](https://www.elastic.co) - это распределенная, бесплатная и открытая поисковая и аналитическая система для всех типов данных, включая текстовые, числовые, геопространственные, структурированные и неструктурированные. Он построен на основе [Apache Lucene](https://lucene.apache.org).
 
-**How do we identify trending topics?**
+**Как мы будем определять трендовые темы?**
 
-Trending functionality will be based on top of the search functionality. We can cache the most frequently searched queries, hashtags, and topics in the last `N` seconds and update them every `M` seconds using some sort of batch job mechanism. Our ranking algorithm can also be applied to the trending topics to give them more weight and personalize them for the user.
+Функциональность трендов будет основана на функциональности поиска. Мы можем кэшировать наиболее часто встречающиеся запросы, хэштеги и темы за последние `N` секунд и обновлять их каждые `M` секунд, используя какой-то механизм пакетной работы. Наш алгоритм ранжирования также может быть применен к трендовым темам, чтобы придать им больший вес и персонализировать их для пользователя.
 
-### Notifications
+### Уведомления
 
-Push notifications are an integral part of any social media platform. We can use a message queue or a message broker such as [Apache Kafka](https://kafka.apache.org) with the notification service to dispatch requests to [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) or [Apple Push Notification Service (APNS)](https://developer.apple.com/documentation/usernotifications) which will handle the delivery of the push notifications to user devices.
+Push-уведомления являются неотъемлемой частью любой платформы социальных сетей. Мы можем использовать очередь сообщений или брокер сообщений, например [Apache Kafka](https://kafka.apache.org), вместе со службой уведомлений для отправки запросов в [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) или [Apple Push Notification Service (APNS)](https://developer.apple.com/documentation/usernotifications), которые будут заниматься доставкой push-уведомлений на пользовательские устройства.
 
-_For more details, refer to the [WhatsApp](https://karanpratapsingh.com/courses/system-design/whatsapp#notifications) system design where we discuss push notifications in detail._
+За более подробной информацией обратитесь к проекту системы [WhatsApp](https://karanpratapsingh.com/courses/system-design/whatsapp#notifications), где мы подробно обсуждаем push-уведомления._
 
-## Detailed design
+## Детальный дизайн
 
-It's time to discuss our design decisions in detail.
+Пришло время обсудить наши проектные решения в деталях.
 
-### Data Partitioning
+### Разбиение данных
 
-To scale out our databases we will need to partition our data. Horizontal partitioning (aka [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) can be a good first step. We can use partitions schemes such as:
+Чтобы масштабировать наши базы данных, нам нужно разделить данные. Горизонтальное разделение (оно же [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) может быть хорошим первым шагом. Мы можем использовать такие схемы разбиения, как:
 
 - Hash-Based Partitioning
-- List-Based Partitioning
-- Range Based Partitioning
-- Composite Partitioning
+- Разбиение на основе списков
+- Разбиение на основе диапазонов
+- составные разделы
 
-The above approaches can still cause uneven data and load distribution, we can solve this using [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
+Вышеперечисленные подходы могут привести к неравномерному распределению данных и нагрузки, но мы можем решить эту проблему с помощью [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-_For more details, refer to [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) and [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
+Более подробную информацию вы найдете в разделах [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) и [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-### Mutual friends
+### Взаимные друзья
 
-For mutual friends, we can build a social graph for every user. Each node in the graph will represent a user and a directional edge will represent followers and followees. After that, we can traverse the followers of a user to find and suggest a mutual friend. This would require a graph database such as [Neo4j](https://neo4j.com) and [ArangoDB](https://www.arangodb.com).
+Для поиска общих друзей мы можем построить социальный граф для каждого пользователя. Каждый узел в графе будет представлять пользователя, а направленное ребро - последователей и подписчиков. После этого мы можем просмотреть последователей пользователя, чтобы найти и предложить ему общего друга. Для этого потребуется база данных графов, такая как [Neo4j](https://neo4j.com) и [ArangoDB](https://www.arangodb.com).
 
-This is a pretty simple algorithm, to improve our suggestion accuracy, we will need to incorporate a recommendation model which uses machine learning as part of our algorithm.
+Это довольно простой алгоритм, но для повышения точности рекомендаций нам потребуется включить в алгоритм модель рекомендаций, использующую машинное обучение.
 
-### Metrics and Analytics
+### Метрики и аналитика
 
-Recording analytics and metrics is one of our extended requirements. As we will be using [Apache Kafka](https://kafka.apache.org) to publish all sorts of events, we can process these events and run analytics on the data using [Apache Spark](https://spark.apache.org) which is an open-source unified analytics engine for large-scale data processing.
+Запись аналитики и метрик - одно из наших расширенных требований. Поскольку мы будем использовать [Apache Kafka](https://kafka.apache.org) для публикации всевозможных событий, мы можем обрабатывать эти события и проводить аналитику данных с помощью [Apache Spark](https://spark.apache.org), который является унифицированным аналитическим движком с открытым исходным кодом для обработки крупномасштабных данных.
 
-### Caching
+### Кэширование
 
-In a social media application, we have to be careful about using cache as our users expect the latest data. So, to prevent usage spikes from our resources we can cache the top 20% of the tweets.
+В приложениях для социальных сетей мы должны быть осторожны с использованием кэша, поскольку наши пользователи ожидают самых свежих данных. Поэтому, чтобы предотвратить перегрузку наших ресурсов, мы можем кэшировать 20 % самых свежих твитов.
 
-To further improve efficiency we can add pagination to our system APIs. This decision will be helpful for users with limited network bandwidth as they won't have to retrieve old messages unless requested.
+Для дальнейшего повышения эффективности мы можем добавить пагинацию в API нашей системы. Это решение будет полезно для пользователей с ограниченной пропускной способностью сети, так как им не придется получать старые сообщения, если они не запрашиваются.
 
-**Which cache eviction policy to use?**
+**Какую политику вытеснения кэша использовать?**
 
-We can use solutions like [Redis](https://redis.io) or [Memcached](https://memcached.org) and cache 20% of the daily traffic but what kind of cache eviction policy would best fit our needs?
+Мы можем использовать такие решения, как [Redis](https://redis.io) или [Memcached](https://memcached.org), и кэшировать 20 % ежедневного трафика, но какая политика вытеснения кэша лучше всего подойдет для наших нужд?
 
-[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) can be a good policy for our system. In this policy, we discard the least recently used key first.
+[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) может быть хорошей политикой для нашей системы. В этой политике мы отбрасываем в первую очередь наименее недавно использованный ключ.
 
-**How to handle cache miss?**
+**Как справиться с пропуском кэша?**
 
-Whenever there is a cache miss, our servers can hit the database directly and update the cache with the new entries.
+Когда происходит пропуск кэша, наши серверы могут напрямую обращаться к базе данных и обновлять кэш новыми записями.
 
-_For more details, refer to [Caching](https://karanpratapsingh.com/courses/system-design/caching)._
+Более подробную информацию вы найдете в разделе [Кэширование](https://karanpratapsingh.com/courses/system-design/caching)._
 
-### Media access and storage
+### Доступ к носителям и их хранение
 
-As we know, most of our storage space will be used for storing media files such as images, videos, or other files. Our media service will be handling both access and storage of the user media files.
+Как мы знаем, большая часть нашего хранилища будет использоваться для хранения медиафайлов, таких как изображения, видео или другие файлы. Наш медиасервис будет управлять доступом и хранением пользовательских медиафайлов.
 
-But where can we store files at scale? Well, [object storage](https://karanpratapsingh.com/courses/system-design/storage#object-storage) is what we're looking for. Object stores break data files up into pieces called objects. It then stores those objects in a single repository, which can be spread out across multiple networked systems. We can also use distributed file storage such as [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs) or [GlusterFS](https://www.gluster.org).
+Но где мы можем хранить файлы в масштабе? Что ж, [объектное хранилище](https://karanpratapsingh.com/courses/system-design/storage#object-storage) - это то, что нам нужно. Объектные хранилища разбивают файлы данных на части, называемые объектами. Затем эти объекты хранятся в едином хранилище, которое может быть распределено по нескольким сетевым системам. Мы также можем использовать распределенные файловые хранилища, такие как [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs) или [GlusterFS](https://www.gluster.org).
 
-### Content Delivery Network (CDN)
+### Сеть доставки контента (CDN)
 
-[Content Delivery Network (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) increases content availability and redundancy while reducing bandwidth costs. Generally, static files such as images, and videos are served from CDN. We can use services like [Amazon CloudFront](https://aws.amazon.com/cloudfront) or [Cloudflare CDN](https://www.cloudflare.com/cdn) for this use case.
+[Content Delivery Network (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) повышает доступность и избыточность контента, снижая при этом затраты на пропускную способность. Как правило, статические файлы, такие как изображения и видео, обслуживаются из CDN. Для этого случая мы можем использовать такие сервисы, как [Amazon CloudFront](https://aws.amazon.com/cloudfront) или [Cloudflare CDN](https://www.cloudflare.com/cdn).
 
-## Identify and resolve bottlenecks
+## Выявление и устранение узких мест
 
 ![twitter-advanced-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/twitter/twitter-advanced-design.png)
 
-Let us identify and resolve bottlenecks such as single points of failure in our design:
+Давайте определим и устраним узкие места, такие как единые точки отказа в нашем дизайне:
 
-- "What if one of our services crashes?"
-- "How will we distribute our traffic between our components?"
-- "How can we reduce the load on our database?"
-- "How to improve the availability of our cache?"
-- "How can we make our notification system more robust?"
-- "How can we reduce media storage costs"?
+- "Что, если один из наших сервисов сломается?"
+- "Как мы будем распределять трафик между компонентами?"
+- "Как мы можем снизить нагрузку на нашу базу данных?"
+- "Как повысить доступность нашего кэша?"
+- "Как сделать нашу систему уведомлений более надежной?"
+- "Как мы можем сократить расходы на хранение информации?"
 
-To make our system more resilient we can do the following:
+Чтобы сделать нашу систему более устойчивой, мы можем сделать следующее:
 
-- Running multiple instances of each of our services.
-- Introducing [load balancers](https://karanpratapsingh.com/courses/system-design/load-balancing) between clients, servers, databases, and cache servers.
-- Using multiple read replicas for our databases.
-- Multiple instances and replicas for our distributed cache.
-- Exactly once delivery and message ordering is challenging in a distributed system, we can use a dedicated [message broker](https://karanpratapsingh.com/courses/system-design/message-brokers) such as [Apache Kafka](https://kafka.apache.org) or [NATS](https://nats.io) to make our notification system more robust.
-- We can add media processing and compression capabilities to the media service to compress large files which will save a lot of storage space and reduce cost.
+- Запустить несколько экземпляров каждой из наших служб.
+- Внедрение [балансировщиков нагрузки](https://karanpratapsingh.com/courses/system-design/load-balancing) между клиентами, серверами, базами данных и серверами кэша.
+- Использование нескольких реплик чтения для наших баз данных.
+- Несколько экземпляров и реплик для нашего распределенного кэша.
+- Именно тогда, когда доставка и упорядочивание сообщений в распределенной системе являются сложной задачей, мы можем использовать специализированный [брокер сообщений](https://karanpratapsingh.com/courses/system-design/message-brokers), такой как [Apache Kafka](https://kafka.apache.org) или [NATS](https://nats.io), чтобы сделать нашу систему уведомлений более надежной.
+- Мы можем добавить возможности обработки и сжатия медиафайлов в медиасервис, чтобы сжимать большие файлы, что позволит сэкономить много места для хранения и снизить стоимость.
 
 # Netflix
 
-Let's design a [Netflix](https://netflix.com) like video streaming service, similar to services like [Amazon Prime Video](https://www.primevideo.com), [Disney Plus](https://www.disneyplus.com), [Hulu](https://www.hulu.com), [Youtube](https://youtube.com), [Vimeo](https://vimeo.com), etc.
+Давайте спроектируем потоковый видеосервис [Netflix](https://netflix.com), подобный таким сервисам, как [Amazon Prime Video](https://www.primevideo.com), [Disney Plus](https://www.disneyplus.com), [Hulu](https://www.hulu.com), [Youtube](https://youtube.com), [Vimeo](https://vimeo.com) и т.д.
 
-## What is Netflix?
+## Что такое Netflix?
 
-Netflix is a subscription-based streaming service that allows its members to watch TV shows and movies on an internet-connected device. It is available on platforms such as the Web, iOS, Android, TV, etc.
+Netflix - это основанный на подписке потоковый сервис, который позволяет своим пользователям смотреть телешоу и фильмы на подключенных к интернету устройствах. Он доступен на таких платформах, как Web, iOS, Android, TV и т. д.
 
-## Requirements
+## Требования
 
-Our system should meet the following requirements:
+Наша система должна отвечать следующим требованиям:
 
-### Functional requirements
+### Функциональные требования
 
-- Users should be able to stream and share videos.
-- The content team (or users in YouTube's case) should be able to upload new videos (movies, tv shows episodes, and other content).
-- Users should be able to search for videos using titles or tags.
-- Users should be able to comment on a video similar to YouTube.
+- Пользователи должны иметь возможность транслировать видео и обмениваться им.
+- Команда разработчиков контента (или пользователи в случае YouTube) должна иметь возможность загружать новые видео (фильмы, эпизоды телешоу и другой контент).
+- Пользователи должны иметь возможность искать видео по названиям или тегам.
+- Пользователи должны иметь возможность комментировать видео, как на YouTube.
 
-### Non-Functional requirements
+### Нефункциональные требования
 
-- High availability with minimal latency.
-- High reliability, no uploads should be lost.
-- The system should be scalable and efficient.
+- Высокая доступность с минимальными задержками.
+- Высокая надежность, ни одна загрузка не должна быть потеряна.
+- Система должна быть масштабируемой и эффективной.
 
-### Extended requirements
+### Расширенные требования
 
-- Certain content should be [geo-blocked](https://en.wikipedia.org/wiki/Geo-blocking).
-- Resume video playback from the point user left off.
-- Record metrics and analytics of videos.
+- Определенный контент должен быть [geo-blocked](https://en.wikipedia.org/wiki/Geo-blocking).
+- Возобновление воспроизведения видео с того места, на котором пользователь остановился.
+- Запись метрик и аналитика видео.
 
-## Estimation and Constraints
+## Оценка и ограничения
 
-Let's start with the estimation and constraints.
+Давайте начнем с оценки и ограничений.
 
-_Note: Make sure to check any scale or traffic-related assumptions with your interviewer._
+Примечание: Обязательно уточните у интервьюера все допущения, связанные с масштабом или трафиком.
 
-### Traffic
+### Трафик
 
-This will be a read-heavy system, let us assume we have 1 billion total users with 200 million daily active users (DAU), and on average each user watches 5 videos a day. This gives us 1 billion videos watched per day.
+Это будет система с высокой нагрузкой на чтение. Предположим, что у нас 1 миллиард пользователей с 200 миллионами ежедневных активных пользователей (DAU), и в среднем каждый пользователь смотрит 5 видео в день. Это дает нам 1 миллиард просмотренных видео в день.
 
 $$
 200 \space million \times 5 \space videos = 1 \space billion/day
 $$
 
-Assuming a `200:1` read/write ratio, about 5 million videos will be uploaded every day.
+Если предположить, что соотношение чтения и записи будет составлять 200:1, то каждый день будет загружаться около 5 миллионов видео.
 
 $$
 \frac{1}{200} \times 1 \space billion = 5 \space million/day
 $$
 
-**What would be Requests Per Second (RPS) for our system?**
+**Какова будет скорость запросов в секунду (RPS) для нашей системы?**
 
-1 billion requests per day translate into 12K requests per second.
+1 миллиард запросов в день - это 12 тысяч запросов в секунду.
 
 $$
 \frac{1 \space billion}{(24 \space hrs \times 3600 \space seconds)} = \sim 12K \space requests/second
 $$
 
-### Storage
+### Хранение
 
-If we assume each video is 100 MB on average, we will require about 500 TB of storage every day.
+Если предположить, что каждый видеоролик в среднем занимает 100 МБ, то нам потребуется около 500 ТБ хранилища в день.
 
 $$
 5 \space million \times 100 \space MB = 500 \space TB/day
 $$
 
-And for 10 years, we will require an astounding 1,825 PB of storage.
+А в течение 10 лет нам потребуется 1 825 ПБ хранилищ.
 
 $$
 500 \space TB \times 365 \space days \times 10 \space years = \sim 1,825 \space PB
 $$
+### Пропускная способность
 
-### Bandwidth
-
-As our system is handling 500 TB of ingress every day, we will require a minimum bandwidth of around 5.8 GB per second.
+Поскольку наша система ежедневно обрабатывает 500 ТБ входящего потока, нам потребуется минимальная пропускная способность около 5,8 ГБ в секунду.
 
 $$
 \frac{500 \space TB}{(24 \space hrs \times 3600 \space seconds)} = \sim 5.8 \space GB/second
 $$
 
-### High-level estimate
+### Оценка высокого уровня
 
-Here is our high-level estimate:
+Вот наша оценка  высокого уровня:
 
-| Type                      | Estimate    |
+| Тип | Смета |
 | ------------------------- | ----------- |
-| Daily active users (DAU)  | 200 million |
-| Requests per second (RPS) | 12K/s       |
-| Storage (per day)         | ~500 TB     |
-| Storage (10 years)        | ~1,825 PB   |
-| Bandwidth                 | ~5.8 GB/s   |
+| Ежедневные активные пользователи (DAU) | 200 миллионов |
+| Запросы в секунду (RPS) | 12K/s |
+| Хранение (в день)| ~500 ТБ |
+| Хранение (10 лет)| ~1,825 ПБ |
+| Пропускная способность | ~5,8 ГБ/с |
 
-## Data model design
+## Дизайн модели данных
 
-This is the general data model which reflects our requirements.
+Это общая модель данных, которая отражает наши требования.
 
 ![netflix-datamodel](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/netflix/netflix-datamodel.png)
 
-We have the following tables:
+У нас есть следующие таблицы:
 
-**users**
+**users**.
 
-This table will contain a user's information such as `name`, `email`, `dob`, and other details.
+Эта таблица содержит информацию о пользователе, такую как `имя`, `email`, `dob` и другие данные.
 
 **videos**
 
-As the name suggests, this table will store videos and their properties such as `title`, `streamURL`, `tags`, etc. We will also store the corresponding `userID`.
+Как следует из названия, в этой таблице будут храниться видео и их свойства, такие как `title`, `streamURL`, `tags` и т.д. Мы также будем хранить соответствующий `userID`.
 
 **tags**
 
-This table will simply store tags associated with a video.
+В этой таблице хранятся теги, связанные с видео.
 
 **views**
 
-This table helps us to store all the views received on a video.
+Эта таблица поможет нам хранить все просмотры, полученные видео.
 
 **comments**
 
-This table stores all the comments received on a video (like YouTube).
+В этой таблице хранятся все комментарии, полученные к видео (как на YouTube).
 
-### What kind of database should we use?
+### Какую базу данных мы должны использовать?
 
-While our data model seems quite relational, we don't necessarily need to store everything in a single database, as this can limit our scalability and quickly become a bottleneck.
+Хотя наша модель данных выглядит вполне реляционной, нам не обязательно хранить все в одной базе данных, поскольку это может ограничить масштабируемость и быстро превратиться в узкое место.
 
-We will split the data between different services each having ownership over a particular table. Then we can use a relational database such as [PostgreSQL](https://www.postgresql.org) or a distributed NoSQL database such as [Apache Cassandra](https://cassandra.apache.org/_/index.html) for our use case.
+Мы разделим данные между различными службами, каждая из которых будет владеть определенной таблицей. Тогда мы можем использовать реляционную базу данных, например [PostgreSQL](https://www.postgresql.org), или распределенную базу данных NoSQL, например [Apache Cassandra](https://cassandra.apache.org/_/index.html), для нашего случая.
 
-## API design
+## Дизайн API
 
-Let us do a basic API design for our services:
+Давайте сделаем базовый дизайн API для наших сервисов:
 
-### Upload a video
+### Загрузка видео
 
-Given a byte stream, this API enables video to be uploaded to our service.
+Этот API позволяет загрузить видео в наш сервис, получив поток байтов.
 
 ```tsx
 uploadVideo(title: string, description: string, data: Stream<byte>, tags?: string[]): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-Title (`string`): Title of the new video.
+Title (`string`): Название нового видео.
 
-Description (`string`): Description of the new video.
+Description (`string`): Описание нового видео.
 
-Data (`Byte[]`): Byte stream of the video data.
+Data (`Byte[]`): Поток байтов видеоданных.
 
-Tags (`string[]`): Tags for the video _(optional)_.
+Tags (`string[]`): Теги для видео _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Указывает, была ли операция успешной или нет.
 
-### Streaming a video
+### Потоковое видео
 
-This API allows our users to stream a video with the preferred codec and resolution.
+Этот API позволяет нашим пользователям передавать потоковое видео с выбранным кодеком и разрешением.
 
 ```tsx
 streamVideo(videoID: UUID, codec: Enum<string>, resolution: Tuple<int>, offset?: int): VideoStream
 ```
 
-**Parameters**
+**Параметры**
 
-Video ID (`UUID`): ID of the video that needs to be streamed.
+Video ID (`UUID`): Идентификатор видео, которое необходимо транслировать.
 
-Codec (`Enum<string>`): Required [codec](https://en.wikipedia.org/wiki/Video_codec) of the requested video, such as `h.265`, `h.264`, `VP9`, etc.
+Codec (`Enum<string>`): Требуемый [кодек](https://en.wikipedia.org/wiki/Video_codec) запрашиваемого видео, например `h.265`, `h.264`, `VP9` и т. д.
 
-Resolution (`Tuple<int>`): [Resolution](https://en.wikipedia.org/wiki/Display_resolution) of the requested video.
+Resolution (`Tuple<int>`): [Разрешение](https://en.wikipedia.org/wiki/Display_resolution) запрашиваемого видео.
 
-Offset (`int`): Offset of the video stream in seconds to stream data from any point in the video _(optional)_.
+Offset (`int`): Смещение видеопотока в секундах для передачи данных из любой точки видео _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Stream (`VideoStream`): Data stream of the requested video.
+Stream (`VideoStream`): Поток данных запрашиваемого видео.
 
-### Search for a video
+### Поиск видео
 
-This API will enable our users to search for a video based on its title or tags.
+Этот API позволит нашим пользователям искать видео по его названию или тегам.
 
-```tsx
+``tsx
 searchVideo(query: string, nextPage?: string): Video[]
 ```
 
-**Parameters**
+**Параметры**
 
-Query (`string`): Search query from the user.
+Query (`string`): Поисковый запрос от пользователя.
 
-Next Page (`string`): Token for the next page, this can be used for pagination _(optional)_.
+Next Page (`строка`): Токен для следующей страницы, который может быть использован для пагинации _(необязательно)_.
 
-**Returns**
+**Возвраты**.
 
-Videos (`Video[]`): All the videos available for a particular search query.
+Videos (`Video[]`): Все видео, доступные для определенного поискового запроса.
 
-### Add a comment
+### Добавить комментарий
 
-This API will allow our users to post a comment on a video (like YouTube).
+Этот API позволит нашим пользователям оставлять комментарии к видео (как на YouTube).
 
-```tsx
+``tsx
 comment(videoID: UUID, comment: string): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-VideoID (`UUID`): ID of the video user wants to comment on.
+VideoID (`UUID`): ID видео, которое пользователь хочет прокомментировать.
 
-Comment (`string`): The text content of the comment.
+Comment (`string`): Текстовое содержимое комментария.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Указывает, была ли операция успешной или нет.
 
-## High-level design
+## Высокоуровневый дизайн
 
-Now let us do a high-level design of our system.
+Теперь давайте сделаем высокоуровневый дизайн нашей системы.
 
-### Architecture
+### Архитектура
 
-We will be using [microservices architecture](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices) since it will make it easier to horizontally scale and decouple our services. Each service will have ownership of its own data model. Let's try to divide our system into some core services.
+Мы будем использовать [архитектуру микросервисов](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices), так как она облегчает горизонтальное масштабирование и разделение наших сервисов. Каждый сервис будет владеть своей собственной моделью данных. Давайте попробуем разделить нашу систему на несколько основных сервисов.
 
-**User Service**
+**Сервис пользователя**.
 
-This service handles user-related concerns such as authentication and user information.
+Этот сервис занимается вопросами, связанными с пользователями, такими как аутентификация и информация о пользователе.
 
-**Stream Service**
+**Сервис потока**
 
-The stream service will handle video streaming-related functionality.
+Служба потоков будет обрабатывать функции, связанные с потоковым видео.
 
-**Search Service**
+**Поисковый сервис**
 
-The service is responsible for handling search-related functionality. It will be discussed in detail separately.
+Эта служба отвечает за работу с функциями, связанными с поиском. Он будет подробно рассмотрен отдельно.
 
-**Media service**
+**Медиа-сервис**
 
-This service will handle the video uploads and processing. It will be discussed in detail separately.
+Этот сервис отвечает за загрузку и обработку видео. Подробнее об этом будет рассказано отдельно.
 
-**Analytics Service**
+**Аналитический сервис**.
 
-This service will be used for metrics and analytics use cases.
+Этот сервис будет использоваться для работы с метриками и аналитикой.
 
-**What about inter-service communication and service discovery?**
+**А как насчет межсервисного взаимодействия и обнаружения сервисов?**
 
-Since our architecture is microservices-based, services will be communicating with each other as well. Generally, REST or HTTP performs well but we can further improve the performance using [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc) which is more lightweight and efficient.
+Поскольку наша архитектура основана на микросервисах, сервисы также будут взаимодействовать друг с другом. Как правило, REST или HTTP работают хорошо, но мы можем еще больше повысить производительность, используя [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc), который является более легким и эффективным.
 
-[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) is another thing we will have to take into account. We can also use a service mesh that enables managed, observable, and secure communication between individual services.
+[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) - это еще одна вещь, которую мы должны принять во внимание. Мы также можем использовать сетку сервисов, которая обеспечивает управляемую, наблюдаемую и безопасную связь между отдельными сервисами.
 
-_Note: Learn more about [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) and how they compare with each other._
+_Примечание: Узнайте больше о [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) и их сравнении друг с другом._
 
-### Video processing
+### Обработка видео
 
 ![video-processing-pipeline](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/netflix/video-processing-pipeline.png)
 
-There are so many variables in play when it comes to processing a video. For example, an average data size of two-hour raw 8K footage from a high-end camera can easily be up to 4 TB, thus we need to have some kind of processing to reduce both storage and delivery costs.
+Когда речь заходит об обработке видео, в игру вступает множество переменных. Например, средний размер данных двухчасового необработанного 8K-видео с высококлассной камеры может легко достигать 4 ТБ, поэтому нам необходима определенная обработка, чтобы сократить расходы на хранение и доставку.
 
-Here's how we can process videos once they're uploaded by the content team (or users in YouTube's case) and are queued for processing in our [message queue](https://karanpratapsingh.com/courses/system-design/message-queues).
+Вот как мы можем обрабатывать видео после того, как оно загружено командой разработчиков контента (или пользователями в случае YouTube) и поставлено в очередь на обработку в нашей [очереди сообщений](https://karanpratapsingh.com/courses/system-design/message-queues).
 
-Let's discuss how this works:
+Давайте обсудим, как это работает:
 
-- **File Chunker**
+- **Файловый чанкер**
 
 ![file-chunking](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/netflix/file-chunking.png)
 
-This is the first step of our processing pipeline. File chunking is the process of splitting a file into smaller pieces called chunks. It can help us eliminate duplicate copies of repeating data on storage, and reduces the amount of data sent over the network by only selecting changed chunks.
+Это первый шаг нашего конвейера обработки. Разбивка файла на части - это процесс разделения файла на более мелкие части, называемые кусками. Это помогает нам избавиться от дубликатов повторяющихся данных в хранилище и сократить объем данных, передаваемых по сети, выбирая только измененные фрагменты.
 
-Usually, a video file can be split into equal size chunks based on timestamps but Netflix instead splits chunks based on scenes. This slight variation becomes a huge factor for a better user experience since whenever the client requests a chunk from the server, there is a lower chance of interruption as a complete scene will be retrieved.
+Обычно видеофайл можно разделить на одинаковые по размеру фрагменты по временным меткам, но Netflix вместо этого делит фрагменты по сценам. Это небольшое различие становится важным фактором для улучшения качества работы пользователей, поскольку при запросе клиентом фрагмента с сервера вероятность прерывания меньше, так как будет получена полная сцена.
 
-- **Content Filter**
+- **Фильтр контента**
 
-This step checks if the video adheres to the content policy of the platform. This can be pre-approved as in the case of Netflix according to [content rating](https://en.wikipedia.org/wiki/Motion_picture_content_rating_system) of the media or can be strictly enforced like by YouTube.
+На этом этапе проверяется, соответствует ли видео контентной политике платформы. Она может быть предварительно одобрена, как в случае с Netflix, в соответствии с [рейтингом контента] (https://en.wikipedia.org/wiki/Motion_picture_content_rating_system) медиа или строго соблюдаться, как на YouTube.
 
-This entire process is done by a machine learning model which performs copyright, piracy, and NSFW checks. If issues are found, we can push the task to a [dead-letter queue (DLQ)](https://karanpratapsingh.com/courses/system-design/message-queues#dead-letter-queues) and someone from the moderation team can do further inspection.
+Весь этот процесс осуществляется с помощью модели машинного обучения, которая выполняет проверку на авторские права, пиратство и NSFW. Если обнаружены проблемы, мы можем перенести задание в [очередь мертвых букв (DLQ)](https://karanpratapsingh.com/courses/system-design/message-queues#dead-letter-queues), и кто-то из команды модераторов сможет провести дальнейшую проверку.
 
-- **Transcoder**
+- **Транскодер**
 
-[Transcoding](https://en.wikipedia.org/wiki/Transcoding) is a process in which the original data is decoded to an intermediate uncompressed format, which is then encoded into the target format. This process uses different [codecs](https://en.wikipedia.org/wiki/Video_codec) to perform bitrate adjustment, image downsampling, or re-encoding the media.
+[Транскодирование](https://en.wikipedia.org/wiki/Transcoding) - это процесс, в котором исходные данные декодируются в промежуточный несжатый формат, который затем кодируется в целевой формат. В этом процессе используются различные [кодеки](https://en.wikipedia.org/wiki/Video_codec) для регулировки битрейта, понижения дискретизации изображения или повторного кодирования носителя.
 
-This results in a smaller size file and a much more optimized format for the target devices. Standalone solutions such as [FFmpeg](https://ffmpeg.org) or cloud-based solutions like [AWS Elemental MediaConvert](https://aws.amazon.com/mediaconvert) can be used to implement this step of the pipeline.
+В результате получается файл меньшего размера и гораздо более оптимизированный формат для целевых устройств. Для реализации этого этапа конвейера можно использовать автономные решения, такие как [FFmpeg](https://ffmpeg.org), или облачные решения, например [AWS Elemental MediaConvert](https://aws.amazon.com/mediaconvert).
 
-- **Quality Conversion**
+- **Преобразование качества**.
 
-This is the last step of the processing pipeline and as the name suggests, this step handles the conversion of the transcoded media from the previous step into different resolutions such as 4K, 1440p, 1080p, 720p, etc.
+Это последний этап конвейера обработки, и, как следует из названия, на этом этапе происходит преобразование транскодированного медиафайла, полученного на предыдущем этапе, в различные разрешения, такие как 4K, 1440p, 1080p, 720p и т. д.
 
-It allows us to fetch the desired quality of the video as per the user's request, and once the media file finishes processing, it gets uploaded to a distributed file storage such as [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs), [GlusterFS](https://www.gluster.org), or an [object storage](https://karanpratapsingh.com/courses/system-design/storage#object-storage) such as [Amazon S3](https://aws.amazon.com/s3) for later retrieval during streaming.
+Это позволяет нам получить желаемое качество видео в соответствии с запросом пользователя, и как только медиафайл завершает обработку, он загружается в распределенное файловое хранилище, такое как [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs), [GlusterFS](https://www.gluster.org), или [объектное хранилище](https://karanpratapsingh.com/courses/system-design/storage#object-storage), такое как [Amazon S3](https://aws.amazon.com/s3), для последующего получения во время потоковой передачи.
 
-_Note: We can add additional steps such as subtitles and thumbnails generation as part of our pipeline._
+_Примечание: Мы можем добавить дополнительные шаги, такие как создание субтитров и миниатюр, как часть нашего конвейера._
 
-**Why are we using a message queue?**
+**Почему мы используем очередь сообщений?**
 
-Processing videos as a long-running task and using a [message queue](https://karanpratapsingh.com/courses/system-design/message-queues) makes much more sense. It also decouples our video processing pipeline from the upload functionality. We can use something like [Amazon SQS](https://aws.amazon.com/sqs) or [RabbitMQ](https://www.rabbitmq.com) to support this.
+Обработка видео как длительная задача с использованием [очереди сообщений] (https://karanpratapsingh.com/courses/system-design/message-queues) имеет гораздо больше смысла. Она также отделяет наш конвейер обработки видео от функциональности загрузки. Мы можем использовать что-то вроде [Amazon SQS](https://aws.amazon.com/sqs) или [RabbitMQ](https://www.rabbitmq.com) для поддержки этого.
 
-### Video streaming
+### Видеопоток
 
-Video streaming is a challenging task from both the client and server perspectives. Moreover, internet connection speeds vary quite a lot between different users. To make sure users don't re-fetch the same content, we can use a [Content Delivery Network (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network).
+Передача потокового видео - сложная задача как с точки зрения клиента, так и с точки зрения сервера. Кроме того, скорость интернет-соединения у разных пользователей сильно различается. Чтобы пользователи не получали повторно один и тот же контент, мы можем использовать [Сеть доставки контента (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network).
 
-Netflix takes this a step further with its [Open Connect](https://openconnect.netflix.com) program. In this approach, they partner with thousands of Internet Service Providers (ISPs) to localize their traffic and deliver their content more efficiently.
+Netflix делает еще один шаг вперед благодаря своей программе [Open Connect](https://openconnect.netflix.com). В рамках этого подхода компания сотрудничает с тысячами интернет-провайдеров (ISP), чтобы локализовать свой трафик и доставлять контент более эффективно.
 
-**What is the difference between Netflix's Open Connect and a traditional Content Delivery Network (CDN)?**
+**В чем разница между Open Connect от Netflix и традиционной сетью доставки контента (CDN)?**
 
-Netflix Open Connect is a purpose-built [Content Delivery Network (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) responsible for serving Netflix's video traffic. Around 95% of the traffic globally is delivered via direct connections between Open Connect and the ISPs their customers use to access the internet.
+Netflix Open Connect - это специально созданная [Сеть доставки контента (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network), отвечающая за обслуживание видеотрафика Netflix. Около 95 % трафика по всему миру доставляется через прямые соединения между Open Connect и провайдерами, через которых их клиенты выходят в Интернет.
 
-Currently, they have Open Connect Appliances (OCAs) in over 1000 separate locations around the world. In case of issues, Open Connect Appliances (OCAs) can failover, and the traffic can be re-routed to Netflix servers.
+В настоящее время устройства Open Connect Appliances (OCA) установлены в более чем 1000 отдельных точках по всему миру. В случае возникновения проблем устройства Open Connect Appliances (OCA) могут отказать, и трафик может быть перенаправлен на серверы Netflix.
 
-Additionally, we can use [Adaptive bitrate streaming](https://en.wikipedia.org/wiki/Adaptive_bitrate_streaming) protocols such as [HTTP Live Streaming (HLS)](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) which is designed for reliability and it dynamically adapts to network conditions by optimizing playback for the available speed of the connections.
+Кроме того, мы можем использовать протоколы [Adaptive bitrate streaming](https://en.wikipedia.org/wiki/Adaptive_bitrate_streaming), такие как [HTTP Live Streaming (HLS)](https://en.wikipedia.org/wiki/HTTP_Live_Streaming), которые разработаны для обеспечения надежности и динамически адаптируются к условиям сети, оптимизируя воспроизведение под доступную скорость соединения.
 
-Lastly, for playing the video from where the user left off (part of our extended requirements), we can simply use the `offset` property we stored in the `views` table to retrieve the scene chunk at that particular timestamp and resume the playback for the user.
+Наконец, для воспроизведения видео с того места, на котором пользователь остановился (часть наших расширенных требований), мы можем просто использовать свойство `offset`, сохраненное в таблице `views`, чтобы получить чанк сцены в конкретную временную метку и возобновить воспроизведение для пользователя.
 
-### Searching
+### Поиск
 
-Sometimes traditional DBMS are not performant enough, we need something which allows us to store, search, and analyze huge volumes of data quickly and in near real-time and give results within milliseconds. [Elasticsearch](https://www.elastic.co) can help us with this use case.
+Иногда традиционные СУБД недостаточно производительны, нам нужно что-то, что позволяет хранить, искать и анализировать огромные объемы данных быстро и практически в режиме реального времени, выдавая результаты в течение миллисекунд. В этом нам может помочь [Elasticsearch](https://www.elastic.co).
 
-[Elasticsearch](https://www.elastic.co) is a distributed, free and open search and analytics engine for all types of data, including textual, numerical, geospatial, structured, and unstructured. It is built on top of [Apache Lucene](https://lucene.apache.org).
+[Elasticsearch](https://www.elastic.co) - это распределенная, бесплатная и открытая поисковая и аналитическая система для всех типов данных, включая текстовые, числовые, геопространственные, структурированные и неструктурированные. Он построен на основе [Apache Lucene](https://lucene.apache.org).
 
-**How do we identify trending content?**
+**Как мы будем определять трендовый контент?**
 
-Trending functionality will be based on top of the search functionality. We can cache the most frequently searched queries in the last `N` seconds and update them every `M` seconds using some sort of batch job mechanism.
+Функциональность трендов будет основана на функциональности поиска. Мы можем кэшировать наиболее часто встречающиеся запросы за последние `N` секунд и обновлять их каждые `M` секунд, используя некий механизм пакетной работы.
 
 ### Sharing
 
-Sharing content is an important part of any platform, for this, we can have some sort of URL shortener service in place that can generate short URLs for the users to share.
+Обмен контентом - важная часть любой платформы, для этого мы можем использовать службу укорачивания URL, которая будет генерировать короткие URL для пользователей.
 
-_For more details, refer to the [URL Shortener](https://karanpratapsingh.com/courses/system-design/url-shortener) system design._
+За более подробной информацией обратитесь к проекту системы [URL Shortener](https://karanpratapsingh.com/courses/system-design/url-shortener).
 
-## Detailed design
+## Детальный дизайн
 
-It's time to discuss our design decisions in detail.
+Пришло время обсудить наши проектные решения в деталях.
 
-### Data Partitioning
+### Разбиение данных
 
-To scale out our databases we will need to partition our data. Horizontal partitioning (aka [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) can be a good first step. We can use partitions schemes such as:
+Чтобы масштабировать наши базы данных, нам нужно разделить данные. Горизонтальное разделение (оно же [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) может быть хорошим первым шагом. Мы можем использовать такие схемы разбиения, как:
 
 - Hash-Based Partitioning
-- List-Based Partitioning
-- Range Based Partitioning
-- Composite Partitioning
+- Разбиение на основе списков
+- Разбиение на основе диапазонов
+- составные разделы
 
-The above approaches can still cause uneven data and load distribution, we can solve this using [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
+Вышеперечисленные подходы могут привести к неравномерному распределению данных и нагрузки, но мы можем решить эту проблему с помощью [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-_For more details, refer to [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) and [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
+Более подробную информацию вы найдете в разделах [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) и [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-### Geo-blocking
+### Гео-блокировка
 
-Platforms like Netflix and YouTube use [Geo-blocking](https://en.wikipedia.org/wiki/Geo-blocking) to restrict content in certain geographical areas or countries. This is primarily done due to legal distribution laws that Netflix has to adhere to when they make a deal with the production and distribution companies. In the case of YouTube, this will be controlled by the user during the publishing of the content.
+Такие платформы, как Netflix и YouTube, используют [Геоблокировку](https://en.wikipedia.org/wiki/Geo-blocking) для ограничения контента в определенных географических зонах или странах. В первую очередь это связано с законами о распространении, которых Netflix должен придерживаться при заключении сделок с компаниями-производителями и дистрибьюторами. В случае с YouTube это будет контролироваться пользователем во время публикации контента.
 
-We can determine the user's location either using their [IP](https://karanpratapsingh.com/courses/system-design/ip) or region settings in their profile then use services like [Amazon CloudFront](https://aws.amazon.com/cloudfront) which supports a geographic restrictions feature or a [geolocation routing policy](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-geo.html) with [Amazon Route53](https://aws.amazon.com/route53) to restrict the content and re-route the user to an error page if the content is not available in that particular region or country.
+Мы можем определить местоположение пользователя, используя его [IP](https://karanpratapsingh.com/courses/system-design/ip) или настройки региона в его профиле, а затем использовать такие сервисы, как [Amazon CloudFront](https://aws.amazon.com/cloudfront), который поддерживает функцию географических ограничений, или [геолокационную политику маршрутизации](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-geo.html) с [Amazon Route53](https://aws.amazon.com/route53) для ограничения контента и перенаправления пользователя на страницу ошибки, если контент недоступен в данном регионе или стране.
 
-### Recommendations
+### Рекомендации
 
-Netflix uses a machine learning model which uses the user's viewing history to predict what the user might like to watch next, an algorithm like [Collaborative Filtering](https://en.wikipedia.org/wiki/Collaborative_filtering) can be used.
+Netflix использует модель машинного обучения, которая использует историю просмотров пользователя, чтобы предсказать, что пользователь может захотеть посмотреть следующим, может быть использован такой алгоритм, как [Collaborative Filtering](https://en.wikipedia.org/wiki/Collaborative_filtering).
 
-However, Netflix (like YouTube) uses its own algorithm called Netflix Recommendation Engine which can track several data points such as:
+Однако Netflix (как и YouTube) использует свой собственный алгоритм под названием Netflix Recommendation Engine, который может отслеживать несколько точек данных, таких как:
 
-- User profile information like age, gender, and location.
-- Browsing and scrolling behavior of the user.
-- Time and date a user watched a title.
-- The device which was used to stream the content.
-- The number of searches and what terms were searched.
+- Информация о профиле пользователя, такая как возраст, пол и местоположение.
+- Поведение пользователя при просмотре и прокрутке.
+- Время и дата просмотра пользователем заголовка.
+- Устройство, с которого осуществлялась потоковая передача контента.
+- Количество поисковых запросов и то, по каким запросам осуществлялся поиск.
 
-_For more detail, refer to [Netflix recommendation research](https://research.netflix.com/research-area/recommendations)._
+_Более подробную информацию см. в [исследовании рекомендаций Netflix](https://research.netflix.com/research-area/recommendations)._
 
-### Metrics and Analytics
+### Метрики и аналитика
 
-Recording analytics and metrics is one of our extended requirements. We can capture the data from different services and run analytics on the data using [Apache Spark](https://spark.apache.org) which is an open-source unified analytics engine for large-scale data processing. Additionally, we can store critical metadata in the views table to increase data points within our data.
+Запись аналитики и метрик - одно из наших расширенных требований. Мы можем получать данные из различных сервисов и проводить аналитику с помощью [Apache Spark](https://spark.apache.org), который является унифицированным аналитическим движком с открытым исходным кодом для обработки крупномасштабных данных. Кроме того, мы можем хранить важные метаданные в таблице представлений, чтобы увеличить количество точек данных в наших данных.
 
-### Caching
+### Кэширование
 
-In a streaming platform, caching is important. We have to be able to cache as much static media content as possible to improve user experience. We can use solutions like [Redis](https://redis.io) or [Memcached](https://memcached.org) but what kind of cache eviction policy would best fit our needs?
+Для потоковой платформы кэширование имеет большое значение. Мы должны иметь возможность кэшировать как можно больше статического медиаконтента, чтобы улучшить пользовательский опыт. Мы можем использовать такие решения, как [Redis](https://redis.io) или [Memcached](https://memcached.org), но какая политика вытеснения кэша лучше всего подойдет для наших нужд?
 
-**Which cache eviction policy to use?**
+**Какую политику вытеснения кэша использовать?**
 
-[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) can be a good policy for our system. In this policy, we discard the least recently used key first.
+[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) может быть хорошей политикой для нашей системы. В этой политике мы сначала удаляем наименее недавно использованный ключ.
 
-**How to handle cache miss?**
+**Как обрабатывать пропуски кэша?**
 
-Whenever there is a cache miss, our servers can hit the database directly and update the cache with the new entries.
+Когда происходит пропуск кэша, наши серверы могут напрямую обращаться к базе данных и обновлять кэш новыми записями.
 
-_For more details, refer to [Caching](https://karanpratapsingh.com/courses/system-design/caching)._
+_Более подробную информацию см. в разделе [Кэширование](https://karanpratapsingh.com/courses/system-design/caching)._
 
-### Media streaming and storage
+### Потоковое воспроизведение и хранение медиафайлов
 
-As most of our storage space will be used for storing media files such as thumbnails and videos. Per our discussion earlier, the media service will be handling both the upload and processing of media files.
+Большая часть нашего пространства для хранения будет использоваться для хранения медиафайлов, таких как миниатюры и видео. Как мы обсуждали ранее, медиасервис будет заниматься как загрузкой, так и обработкой медиафайлов.
 
-We will use distributed file storage such as [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs), [GlusterFS](https://www.gluster.org), or an [object storage](https://karanpratapsingh.com/courses/system-design/storage#object-storage) such as [Amazon S3](https://aws.amazon.com/s3) for storage and streaming of the content.
+Для хранения и потоковой передачи контента мы будем использовать распределенные файловые хранилища, такие как [HDFS](https://karanpratapsingh.com/courses/system-design/storage#hdfs), [GlusterFS](https://www.gluster.org) или [объектные хранилища](https://karanpratapsingh.com/courses/system-design/storage#object-storage), например [Amazon S3](https://aws.amazon.com/s3).
 
 ### Content Delivery Network (CDN)
 
-[Content Delivery Network (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) increases content availability and redundancy while reducing bandwidth costs. Generally, static files such as images, and videos are served from CDN. We can use services like [Amazon CloudFront](https://aws.amazon.com/cloudfront) or [Cloudflare CDN](https://www.cloudflare.com/cdn) for this use case.
+[Сеть доставки контента (CDN)](https://karanpratapsingh.com/courses/system-design/content-delivery-network) повышает доступность и избыточность контента, снижая при этом затраты на пропускную способность. Как правило, статические файлы, такие как изображения и видео, обслуживаются из CDN. Для этого случая мы можем использовать такие сервисы, как [Amazon CloudFront](https://aws.amazon.com/cloudfront) или [Cloudflare CDN](https://www.cloudflare.com/cdn).
 
-## Identify and resolve bottlenecks
+## Выявление и устранение узких мест
 
 ![netflix-advanced-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/netflix/netflix-advanced-design.png)
 
-Let us identify and resolve bottlenecks such as single points of failure in our design:
+Давайте определим и устраним узкие места, такие как единые точки отказа в нашем дизайне:
 
-- "What if one of our services crashes?"
-- "How will we distribute our traffic between our components?"
-- "How can we reduce the load on our database?"
-- "How to improve the availability of our cache?"
+- "Что, если один из наших сервисов сломается?"
+- "Как мы будем распределять трафик между компонентами?"
+- "Как мы можем снизить нагрузку на нашу базу данных?"
+- "Как повысить доступность нашего кэша?".
 
-To make our system more resilient we can do the following:
+Чтобы сделать нашу систему более устойчивой, мы можем сделать следующее:
 
-- Running multiple instances of each of our services.
-- Introducing [load balancers](https://karanpratapsingh.com/courses/system-design/load-balancing) between clients, servers, databases, and cache servers.
-- Using multiple read replicas for our databases.
-- Multiple instances and replicas for our distributed cache.
+- Запустить несколько экземпляров каждого из наших сервисов.
+- Внедрение [балансировщиков нагрузки](https://karanpratapsingh.com/courses/system-design/load-balancing) между клиентами, серверами, базами данных и серверами кэша.
+- Использование нескольких реплик чтения для наших баз данных.
+- Несколько экземпляров и реплик для нашего распределенного кэша.
 
 # Uber
 
-Let's design an [Uber](https://uber.com) like ride-hailing service, similar to services like [Lyft](https://www.lyft.com), [OLA Cabs](https://www.olacabs.com), etc.
+Давайте спроектируем [Uber](https://uber.com), похожий на сервис поездок, аналогичный таким сервисам, как [Lyft](https://www.lyft.com), [OLA Cabs](https://www.olacabs.com) и т. д.
 
-## What is Uber?
+## Что такое Uber?
 
-Uber is a mobility service provider, allowing users to book rides and a driver to transport them in a way similar to a taxi. It is available on the web and mobile platforms such as Android and iOS.
+Uber - это провайдер услуг мобильности, позволяющий пользователям заказывать поездки и водителя для их перевозки по аналогии с такси. Он доступен в Интернете и на мобильных платформах, таких как Android и iOS.
 
-## Requirements
+## Требования
 
-Our system should meet the following requirements:
+Наша система должна отвечать следующим требованиям:
 
-### Functional requirements
+### Функциональные требования
 
-We will design our system for two types of users: Customers and Drivers.
+Мы разработаем нашу систему для двух типов пользователей: Клиентов и Водителей.
 
-**Customers**
+**Клиенты**.
 
-- Customers should be able to see all the cabs in the vicinity with an ETA and pricing information.
-- Customers should be able to book a cab to a destination.
-- Customers should be able to see the location of the driver.
+- Клиенты должны иметь возможность видеть все такси поблизости с информацией о времени прибытия и ценах.
+- Клиенты должны иметь возможность заказать такси до места назначения.
+- Клиенты должны иметь возможность видеть местоположение водителя.
 
 **Drivers**
 
-- Drivers should be able to accept or deny the customer-requested ride.
-- Once a driver accepts the ride, they should see the pickup location of the customer.
-- Drivers should be able to mark the trip as complete on reaching the destination.
+- Водители должны иметь возможность принять или отклонить заявку клиента на поездку.
+- После того как водитель примет поездку, он должен увидеть местоположение клиента.
+- Водители должны иметь возможность отметить поездку как завершенную по достижении места назначения.
 
-### Non-Functional requirements
+### Нефункциональные требования
 
-- High reliability.
-- High availability with minimal latency.
-- The system should be scalable and efficient.
+- Высокая надежность.
+- Высокая доступность при минимальных задержках.
+- Система должна быть масштабируемой и эффективной.
 
-### Extended requirements
+### Расширенные требования
 
-- Customers can rate the trip after it's completed.
-- Payment processing.
-- Metrics and analytics.
+- Клиенты могут оценивать поездку после ее завершения.
+- Обработка платежей.
+- Метрики и аналитика.
 
-## Estimation and Constraints
+## Оценка и ограничения
 
-Let's start with the estimation and constraints.
+Давайте начнем с оценки и ограничений.
 
-_Note: Make sure to check any scale or traffic-related assumptions with your interviewer._
+_Примечание: Обязательно уточните у интервьюера все допущения, связанные с масштабом или трафиком._
 
-### Traffic
+### Трафик
 
-Let us assume we have 100 million daily active users (DAU) with 1 million drivers and on average our platform enables 10 million rides daily.
+Предположим, что у нас 100 миллионов ежедневных активных пользователей (DAU) и 1 миллион водителей, а в среднем наша платформа обеспечивает 10 миллионов поездок в день.
 
-If on average each user performs 10 actions (such as request a check available rides, fares, book rides, etc.) we will have to handle 1 billion requests daily.
+Если в среднем каждый пользователь выполняет 10 действий (например, запрашивает информацию о доступных поездках, тарифах, бронирует поездки и т. д.), нам придется обрабатывать 1 миллиард запросов ежедневно.
 
 $$
 100 \space million \times 10 \space actions = 1 \space billion/day
 $$
 
-**What would be Requests Per Second (RPS) for our system?**
+**Какова будет скорость запросов в секунду (RPS) для нашей системы?**
 
-1 billion requests per day translate into 12K requests per second.
+1 миллиард запросов в день - это 12 тысяч запросов в секунду.
 
 $$
 \frac{1 \space billion}{(24 \space hrs \times 3600 \space seconds)} = \sim 12K \space requests/second
 $$
 
-### Storage
+### Хранилище
 
-If we assume each message on average is 400 bytes, we will require about 400 GB of database storage every day.
+Если мы предположим, что каждое сообщение в среднем составляет 400 байт, то нам потребуется около 400 ГБ хранилища базы данных каждый день.
 
 $$
 1 \space billion \times 400 \space bytes = \sim 400 \space GB/day
 $$
 
-And for 10 years, we will require about 1.4 PB of storage.
+А за 10 лет нам потребуется около 1,4 Pb хранилища.
 
 $$
 400 \space GB \times 10 \space years \times 365 \space days = \sim 1.4 \space PB
 $$
 
-### Bandwidth
+### Пропускная способность
 
-As our system is handling 400 GB of ingress every day, we will require a minimum bandwidth of around 4 MB per second.
+Поскольку наша система ежедневно обрабатывает 400 ГБ входящего потока, нам потребуется минимальная пропускная способность около 4 МБ в секунду.
 
 $$
 \frac{400 \space GB}{(24 \space hrs \times 3600 \space seconds)} = \sim 5 \space MB/second
 $$
 
-### High-level estimate
+### Оценка высокого уровня
 
-Here is our high-level estimate:
+Вот наша смета высокого уровня:
 
-| Type                      | Estimate    |
+| Тип | Смета |
 | ------------------------- | ----------- |
-| Daily active users (DAU)  | 100 million |
-| Requests per second (RPS) | 12K/s       |
-| Storage (per day)         | ~400 GB     |
-| Storage (10 years)        | ~1.4 PB     |
-| Bandwidth                 | ~5 MB/s     |
+| Ежедневные активные пользователи (DAU) | 100 миллионов |
+| Запросы в секунду (RPS) | 12K/s |
+| Хранение (в день)| ~400 ГБ |
+| Хранение (10 лет)| ~1,4 ПБ |
+| Пропускная способность | ~5 МБ/с |
 
-## Data model design
+## Разработка модели данных
 
-This is the general data model which reflects our requirements.
+Это общая модель данных, которая отражает наши требования.
 
 ![uber-datamodel](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/uber/uber-datamodel.png)
 
-We have the following tables:
+У нас есть следующие таблицы:
 
-**customers**
+**customers**.
 
-This table will contain a customer's information such as `name`, `email`, and other details.
+Эта таблица будет содержать информацию о клиенте, такую как `имя`, `электронная почта` и другие данные.
 
 **drivers**
 
-This table will contain a driver's information such as `name`, `email`, `dob` and other details.
+Эта таблица содержит информацию о водителе, такую как `имя`, `email`, `dob` и другие данные.
 
 **trips**
 
-This table represents the trip taken by the customer and stores data such as `source`, `destination`, and `status` of the trip.
+Эта таблица представляет поездку, совершенную клиентом, и хранит такие данные, как `источник`, `пункт назначения` и `статус` поездки.
 
 **cabs**
 
-This table stores data such as the registration number, and type (like Uber Go, Uber XL, etc.) of the cab that the driver will be driving.
+В этой таблице хранятся такие данные, как регистрационный номер и тип (например, Uber Go, Uber XL и т. д.) такси, которым будет управлять водитель.
 
-**ratings**
+**ratings**.
 
-As the name suggests, this table stores the `rating` and `feedback` for the trip.
+Как следует из названия, в этой таблице хранятся `рейтинг` и `отзывы` о поездке.
 
 **payments**
 
-The payments table contains the payment-related data with the corresponding `tripID`.
+Таблица payments содержит данные о платежах с соответствующим `tripID`.
 
-### What kind of database should we use?
+### Какую базу данных мы должны использовать?
 
-While our data model seems quite relational, we don't necessarily need to store everything in a single database, as this can limit our scalability and quickly become a bottleneck.
+Хотя наша модель данных кажется вполне реляционной, нам не обязательно хранить все в одной базе данных, поскольку это может ограничить масштабируемость и быстро превратиться в узкое место.
 
-We will split the data between different services each having ownership over a particular table. Then we can use a relational database such as [PostgreSQL](https://www.postgresql.org) or a distributed NoSQL database such as [Apache Cassandra](https://cassandra.apache.org/_/index.html) for our use case.
+Мы разделим данные между различными службами, каждая из которых будет владеть определенной таблицей. Тогда мы можем использовать реляционную базу данных, например [PostgreSQL](https://www.postgresql.org), или распределенную базу данных NoSQL, например [Apache Cassandra](https://cassandra.apache.org/_/index.html), для нашего случая.
 
-## API design
+## Дизайн API
 
-Let us do a basic API design for our services:
+Давайте сделаем базовый дизайн API для наших сервисов:
 
 ### Request a Ride
 
-Through this API, customers will be able to request a ride.
+Через этот API клиенты смогут запросить поездку.
 
 ```tsx
 requestRide(customerID: UUID, source: Tuple<float>, destination: Tuple<float>, cabType: Enum<string>, paymentMethod: Enum<string>): Ride
 ```
 
-**Parameters**
+**Параметры**
 
-Customer ID (`UUID`): ID of the customer.
+Идентификатор клиента (`UUID`): Идентификатор клиента.
 
-Source (`Tuple<float>`): Tuple containing the latitude and longitude of the trip's starting location.
+Источник (`Tuple<float>`): Кортеж, содержащий широту и долготу начального местоположения поездки.
 
-Destination (`Tuple<float>`): Tuple containing the latitude and longitude of the trip's destination.
+Destination (`Tuple<float>`): Кортеж, содержащий широту и долготу места назначения поездки.
 
-**Returns**
+**Возврат**.
 
-Result (`Ride`): Associated ride information of the trip.
+Result (`Ride`): Сопутствующая информация о поездке.
 
 ### Cancel the Ride
 
