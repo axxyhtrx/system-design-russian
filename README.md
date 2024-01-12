@@ -5369,312 +5369,311 @@ Destination (`Tuple<float>`): Кортеж, содержащий широту и
 
 Result (`Ride`): Сопутствующая информация о поездке.
 
-### Cancel the Ride
+### Отменить поездку
 
-This API will allow customers to cancel the ride.
+Этот API позволит клиентам отменить поездку.
 
 ```tsx
 cancelRide(customerID: UUID, reason?: string): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-Customer ID (`UUID`): ID of the customer.
+Customer ID (`UUID`): ID клиента.
 
-Reason (`UUID`): Reason for canceling the ride _(optional)_.
+Reason (`UUID`): Причина отмены поездки _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Отражает, была ли операция успешной или нет.
 
-### Accept or Deny the Ride
+### Принять или отклонить поездку
 
-This API will allow the driver to accept or deny the trip.
+Этот API позволяет водителю принять или отклонить поездку.
 
 ```tsx
 acceptRide(driverID: UUID, rideID: UUID): boolean
 denyRide(driverID: UUID, rideID: UUID): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-Driver ID (`UUID`): ID of the driver.
+Driver ID (`UUID`): ID водителя.
 
-Ride ID (`UUID`): ID of the customer requested ride.
+Ride ID (`UUID`): ID запрошенной клиентом поездки.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Отражает, была ли операция успешной или нет.
 
-### Start or End the Trip
+### Начало или окончание поездки
 
-Using this API, a driver will be able to start and end the trip.
+Используя этот API, водитель сможет начать и закончить поездку.
 
 ```tsx
 startTrip(driverID: UUID, tripID: UUID): boolean
 endTrip(driverID: UUID, tripID: UUID): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-Driver ID (`UUID`): ID of the driver.
+Driver ID (`UUID`): Идентификатор водителя.
 
-Trip ID (`UUID`): ID of the requested trip.
+Trip ID (`UUID`): Идентификатор запрашиваемой поездки.
 
-**Returns**
+**Возврат**.
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Результат (`Boolean`): Отражает, была ли операция успешной или нет.
 
-### Rate the Trip
+### Оценить поездку
 
-This API will enable customers to rate the trip.
+Этот API позволит клиентам оценить поездку.
 
 ```tsx
 rateTrip(customerID: UUID, tripID: UUID, rating: int, feedback?: string): boolean
 ```
 
-**Parameters**
+**Параметры**
 
-Customer ID (`UUID`): ID of the customer.
+Client ID (`UUID`): ID клиента.
 
-Trip ID (`UUID`): ID of the completed trip.
+Ride ID (`UUID`): ID завершенной поездки.
 
-Rating (`int`): Rating of the trip.
+Raiting (`int`): Оценка поездки.
 
-Feedback (`string`): Feedback about the trip by the customer _(optional)_.
+Feedback (`string`): Отзыв клиента о поездке _(необязательно)_.
 
-**Returns**
+**Возврат**
 
-Result (`boolean`): Represents whether the operation was successful or not.
+Result (`boolean`): Отражает, была ли операция успешной или нет.
 
-## High-level design
+## Высокоуровневый дизайн
 
-Now let us do a high-level design of our system.
+Теперь давайте сделаем высокоуровневый дизайн нашей системы.
 
-### Architecture
+### Архитектура
 
-We will be using [microservices architecture](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices) since it will make it easier to horizontally scale and decouple our services. Each service will have ownership of its own data model. Let's try to divide our system into some core services.
+Мы будем использовать [архитектуру микросервисов](https://karanpratapsingh.com/courses/system-design/monoliths-microservices#microservices), так как она облегчает горизонтальное масштабирование и разделение наших сервисов. Каждый сервис будет владеть своей собственной моделью данных. Давайте попробуем разделить нашу систему на несколько основных сервисов.
 
-**Customer Service**
+**Клиентский сервис**.
 
-This service handles customer-related concerns such as authentication and customer information.
+Этот сервис занимается вопросами, связанными с клиентами, такими как аутентификация и информация о клиенте.
 
-**Driver Service**
+**Сервис водителя**
 
-This service handles driver-related concerns such as authentication and driver information.
+Эта служба занимается вопросами, связанными с водителем, такими как аутентификация и информация о водителе.
 
-**Ride Service**
+**Сервис поездок**
 
-This service will be responsible for ride matching and quadtree aggregation. It will be discussed in detail separately.
+Эта служба будет отвечать за подбор поездок и агрегацию квадтри. Он будет подробно рассмотрен отдельно.
 
-**Trip Service**
+**Сервис поездок**
 
-This service handles trip-related functionality in our system.
+Этот сервис отвечает за функциональность, связанную с поездками в нашей системе.
 
-**Payment Service**
+**Платежный сервис**
 
-This service will be responsible for handling payments in our system.
+Этот сервис будет отвечать за обработку платежей в нашей системе.
 
-**Notification Service**
+**Сервис уведомлений**
 
-This service will simply send push notifications to the users. It will be discussed in detail separately.
+Этот сервис будет просто отправлять пользователям push-уведомления. Подробнее об этом будет рассказано отдельно.
 
-**Analytics Service**
+**Аналитический сервис**
 
-This service will be used for metrics and analytics use cases.
+Этот сервис будет использоваться для метрик и аналитики.
 
-**What about inter-service communication and service discovery?**
+**А как насчет межсервисного взаимодействия и обнаружения сервисов?
 
-Since our architecture is microservices-based, services will be communicating with each other as well. Generally, REST or HTTP performs well but we can further improve the performance using [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc) which is more lightweight and efficient.
+Поскольку наша архитектура основана на микросервисах, сервисы также будут взаимодействовать друг с другом. Как правило, REST или HTTP работают хорошо, но мы можем еще больше повысить производительность, используя [gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc#grpc), который является более легким и эффективным.
 
-[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) is another thing we will have to take into account. We can also use a service mesh that enables managed, observable, and secure communication between individual services.
+[Service discovery](https://karanpratapsingh.com/courses/system-design/service-discovery) - это еще одна вещь, которую мы должны принять во внимание. Мы также можем использовать сетку сервисов, которая обеспечивает управляемую, наблюдаемую и безопасную связь между отдельными сервисами.
 
-_Note: Learn more about [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) and how they compare with each other._
+_Примечание: Узнайте больше о [REST, GraphQL, gRPC](https://karanpratapsingh.com/courses/system-design/rest-graphql-grpc) и их сравнении друг с другом._
 
-### How is the service expected to work?
+### Как должен работать сервис?
 
-Here's how our service is expected to work:
+Вот как должен работать наш сервис:
 
 ![uber-working](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/uber/uber-working.png)
 
-1. Customer requests a ride by specifying the source, destination, cab type, payment method, etc.
-2. Ride service registers this request, finds nearby drivers, and calculates the estimated time of arrival (ETA).
-3. The request is then broadcasted to the nearby drivers for them to accept or deny.
-4. If the driver accepts, the customer is notified about the live location of the driver with the estimated time of arrival (ETA) while they wait for pickup.
-5. The customer is picked up and the driver can start the trip.
-6. Once the destination is reached, the driver will mark the ride as complete and collect payment.
-7. After the payment is complete, the customer can leave a rating and feedback for the trip if they like.
+1. Клиент запрашивает поездку, указывая источник, пункт назначения, тип такси, способ оплаты и т. д.
+2. Сервис регистрирует запрос, находит ближайших водителей и рассчитывает расчетное время прибытия (ETA).
+3. Запрос передается ближайшим водителям, чтобы они приняли его или отклонили.
+4. Если водитель принимает запрос, клиент получает уведомление о местонахождении водителя с указанием расчетного времени прибытия (ETA), пока он ждет попутку.
+5. Клиента забирают, и водитель может начать поездку.
+6. Как только место назначения будет достигнуто, водитель отметит поездку как завершенную и получит оплату.
+7. После оплаты клиент может оставить оценку и отзыв о поездке, если захочет.
 
-### Location Tracking
+### Отслеживание местоположения
 
-How do we efficiently send and receive live location data from the client (customers and drivers) to our backend? We have two different options:
+Как мы можем эффективно передавать и получать данные о местоположении клиента (клиента и водителя) в бэкэнд? У нас есть два варианта:
 
-**Pull model**
+**Модель "Push-Pull"**.
 
-The client can periodically send an HTTP request to servers to report its current location and receive ETA and pricing information. This can be achieved via something like [Long polling](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#long-polling).
+_Клиент может периодически отправлять HTTP-запрос на серверы, чтобы сообщить о своем текущем местоположении и получить информацию о времени прибытия и цене. Этого можно добиться с помощью чего-то вроде [Long polling](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#long-polling)._
 
 **Push model**
 
-The client opens a long-lived connection with the server and once new data is available it will be pushed to the client. We can use [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets) or [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse) for this.
+Клиент открывает долговременное соединение с сервером, и как только появляются новые данные, они передаются клиенту. Для этого мы можем использовать [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets) или [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse).
 
-The pull model approach is not scalable as it will create unnecessary request overhead on our servers and most of the time the response will be empty, thus wasting our resources. To minimize latency, using the push model with [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets) is a better choice because then we can push data to the client once it's available without any delay, given the connection is open with the client. Also, WebSockets provide full-duplex communication, unlike [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse) which are only unidirectional.
+Подход с использованием модели pull не является масштабируемым, поскольку он создает ненужные накладные расходы на запросы на наших серверах, и в большинстве случаев ответ будет пустым, что приводит к потере наших ресурсов. Для минимизации задержек лучше использовать модель push с [WebSockets](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#websockets), так как в этом случае мы можем передавать данные клиенту, как только они становятся доступными, без задержек, при условии, что соединение с клиентом открыто. Кроме того, WebSockets обеспечивают полнодуплексную связь, в отличие от [Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events#server-sent-events-sse), которые являются только однонаправленными.
 
-Additionally, the client application should have some sort of background job mechanism to ping GPS location while the application is in the background.
+Кроме того, клиентское приложение должно иметь некий механизм фоновой работы, чтобы пинговать местоположение GPS, пока приложение находится в фоновом режиме.
 
-_Note: Learn more about [Long polling, WebSockets, Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events)._
+_Примечание: Узнайте больше о [Длинный опрос, WebSockets, Server-Sent Events (SSE)](https://karanpratapsingh.com/courses/system-design/long-polling-websockets-server-sent-events)._
 
-### Ride Matching
+### Поиск попутчиков
 
-We need a way to efficiently store and query nearby drivers. Let's explore different solutions we can incorporate into our design.
+Нам нужен способ эффективно хранить и запрашивать ближайших водителей. Давайте рассмотрим различные решения, которые мы можем включить в наш дизайн.
 
 **SQL**
 
-We already have access to the latitude and longitude of our customers, and with databases like [PostgreSQL](https://www.postgresql.org) and [MySQL](https://www.mysql.com) we can perform a query to find nearby driver locations given a latitude and longitude (X, Y) within a radius (R).
+У нас уже есть доступ к широте и долготе наших клиентов, и с помощью таких баз данных, как [PostgreSQL](https://www.postgresql.org) и [MySQL](https://www.mysql.com), мы можем выполнить запрос, чтобы найти местоположение ближайших водителей, задав широту и долготу (X, Y) в радиусе (R).
 
-```sql
+```ql
 SELECT * FROM locations WHERE lat BETWEEN X-R AND X+R AND long BETWEEN Y-R AND Y+R
 ```
 
-However, this is not scalable, and performing this query on large datasets will be quite slow.
+Однако этот способ не масштабируется, и выполнение этого запроса на больших наборах данных будет довольно медленным.
 
 **Geohashing**
 
-[Geohashing](/courses/sytem-design/geohashing-and-quadtrees#geohashing) is a [geocoding](https://en.wikipedia.org/wiki/Address_geocoding) method used to encode geographic coordinates such as latitude and longitude into short alphanumeric strings. It was created by [Gustavo Niemeyer](https://twitter.com/gniemeyer) in 2008.
+[Geohashing](/courses/sytem-design/geohashing-and-quadtrees#geohashing) - это метод [геокодирования](https://en.wikipedia.org/wiki/Address_geocoding), используемый для кодирования географических координат, таких как широта и долгота, в короткие буквенно-цифровые строки. Он был создан [Густаво Нимейером](https://twitter.com/gniemeyer) в 2008 году.
 
-Geohash is a hierarchical spatial index that uses Base-32 alphabet encoding, the first character in a geohash identifies the initial location as one of the 32 cells. This cell will also contain 32 cells. This means that to represent a point, the world is recursively divided into smaller and smaller cells with each additional bit until the desired precision is attained. The precision factor also determines the size of the cell.
+Geohash - это иерархический пространственный индекс, использующий кодировку алфавита Base-32. Первый символ в geohash идентифицирует начальное местоположение как одну из 32 ячеек. Эта ячейка также будет содержать 32 ячейки. Это означает, что для представления точки мир рекурсивно делится на все меньшие и меньшие ячейки с каждым дополнительным битом, пока не будет достигнута необходимая точность. Коэффициент точности также определяет размер ячейки.
 
 ![geohashing](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/geohashing-and-quadtrees/geohashing.png)
 
-For example, San Francisco with coordinates `37.7564, -122.4016` can be represented in geohash as `9q8yy9mf`.
+Например, Сан-Франциско с координатами `37.7564, -122.4016` может быть представлен в геохаше как `9q8yy9mf`.
 
-Now, using the customer's geohash we can determine the nearest available driver by simply comparing it with the driver's geohash. For better performance, we will index and store the geohash of the driver in memory for faster retrieval.
+Теперь, используя геохэш клиента, мы можем определить ближайшего доступного водителя, просто сравнив его с геохэшем водителя. Для повышения производительности мы будем индексировать и хранить геохэш водителя в памяти для более быстрого поиска.
 
-**Quadtrees**
+**Квадтреи**
 
-A [Quadtree](/courses/sytem-design/geohashing-and-quadtrees#quadtrees) is a tree data structure in which each internal node has exactly four children. They are often used to partition a two-dimensional space by recursively subdividing it into four quadrants or regions. Each child or leaf node stores spatial information. Quadtrees are the two-dimensional analog of [Octrees](https://en.wikipedia.org/wiki/Octree) which are used to partition three-dimensional space.
+[Quadtree](/courses/sytem-design/geohashing-and-quadtrees#quadtrees) - это древовидная структура данных, в которой каждый внутренний узел имеет ровно четыре дочерних. Они часто используются для разбиения двумерного пространства путем рекурсивного разбиения его на четыре квадранта или области. Каждый дочерний или листовой узел хранит пространственную информацию. Квадтри - это двумерный аналог [Octrees](https://en.wikipedia.org/wiki/Octree), который используется для разбиения трехмерного пространства.
 
 ![quadtree](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/geohashing-and-quadtrees/quadtree.png)
 
-Quadtrees enable us to search points within a two-dimensional range efficiently, where those points are defined as latitude/longitude coordinates or as cartesian (x, y) coordinates.
-
-We can save further computation by only subdividing a node after a certain threshold.
+Квадтри позволяет эффективно искать точки в двумерном диапазоне, где эти точки определены как координаты широты/долготы или как декартовы координаты (x, y).
+Мы можем сэкономить дальнейшие вычисления, подразделяя узел только после определенного порога.
 
 ![quadtree-subdivision](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-IV/geohashing-and-quadtrees/quadtree-subdivision.png)
 
-[Quadtree](/courses/sytem-design/geohashing-and-quadtrees#quadtrees) seems perfect for our use case, we can update the Quadtree every time we receive a new location update from the driver. To reduce the load on the quadtree servers we can use an in-memory datastore such as [Redis](https://redis.io) to cache the latest updates. And with the application of mapping algorithms such as the [Hilbert curve](https://en.wikipedia.org/wiki/Hilbert_curve), we can perform efficient range queries to find nearby drivers for the customer.
+[Quadtree](/courses/sytem-design/geohashing-and-quadtrees#quadtrees) кажется идеальным для нашего случая использования, мы можем обновлять Quadtree каждый раз, когда получаем новое обновление местоположения от водителя. Для снижения нагрузки на серверы квадтри мы можем использовать хранилище данных in-memory, например [Redis](https://redis.io), для кэширования последних обновлений. А с применением алгоритмов отображения, таких как [кривая Гильберта](https://en.wikipedia.org/wiki/Hilbert_curve), мы можем выполнять эффективные запросы диапазона для поиска ближайших водителей для клиента.
 
-**What about race conditions?**
+**А как насчет условий гонки?**
 
-Race conditions can easily occur when a large number of customers will be requesting rides simultaneously. To avoid this, we can wrap our ride matching logic in a [Mutex](<https://en.wikipedia.org/wiki/Lock_(computer_science)>) to avoid any race conditions. Furthermore, every action should be transactional in nature.
+Условия гонки могут легко возникнуть, если большое количество клиентов будет запрашивать поездки одновременно. Чтобы избежать этого, мы можем обернуть нашу логику подбора водителей в [Mutex](<https://en.wikipedia.org/wiki/Lock_(computer_science)>), чтобы избежать любых условий гонки. Кроме того, каждое действие должно быть транзакционным по своей природе.
 
-_For more details, refer to [Transactions](https://karanpratapsingh.com/courses/system-design/transactions) and [Distributed Transactions](https://karanpratapsingh.com/courses/system-design/distributed-transactions)._
+_За более подробной информацией обращайтесь к разделам [Транзакции](https://karanpratapsingh.com/courses/system-design/transactions) и [Распределенные транзакции](https://karanpratapsingh.com/courses/system-design/distributed-transactions)._
 
-**How to find the best drivers nearby?**
+**Как найти лучших водителей поблизости?**
 
-Once we have a list of nearby drivers from the Quadtree servers, we can perform some sort of ranking based on parameters like average ratings, relevance, past customer feedback, etc. This will allow us to broadcast notifications to the best available drivers first.
+Получив список ближайших водителей с серверов Quadtree, мы можем провести некое ранжирование на основе таких параметров, как средний рейтинг, релевантность, отзывы клиентов и т. д. Это позволит нам отправлять уведомления в первую очередь наиболее доступным водителям.
 
-**Dealing with high demand**
+**Решение проблемы высокого спроса**
 
-In cases of high demand, we can use the concept of Surge Pricing. Surge pricing is a dynamic pricing method where prices are temporarily increased as a reaction to increased demand and mostly limited supply. This surge price can be added to the base price of the trip.
+В случае высокого спроса мы можем использовать концепцию Surge Pricing. Всплеск цен - это динамический метод ценообразования, при котором цены временно повышаются как реакция на повышенный спрос и ограниченное предложение. Эта цена может быть добавлена к базовой цене поездки.
 
-_For more details, learn how [surge pricing works](https://www.uber.com/us/en/drive/driver-app/how-surge-works) with Uber._
+_Для получения более подробной информации узнайте о том, как работает [суррогатное ценообразование](https://www.uber.com/us/en/drive/driver-app/how-surge-works) в Uber._
 
-### Payments
+### Платежи
 
-Handling payments at scale is challenging, to simplify our system we can use a third-party payment processor like [Stripe](https://stripe.com) or [PayPal](https://www.paypal.com). Once the payment is complete, the payment processor will redirect the user back to our application and we can set up a [webhook](https://en.wikipedia.org/wiki/Webhook) to capture all the payment-related data.
+Обработка платежей в масштабе - сложная задача, поэтому для упрощения нашей системы мы можем использовать сторонний платежный процессор, например [Stripe](https://stripe.com) или [PayPal](https://www.paypal.com). После завершения платежа платежный процессор перенаправит пользователя обратно в наше приложение, и мы можем настроить [webhook](https://en.wikipedia.org/wiki/Webhook) для сбора всех данных, связанных с оплатой.
 
-### Notifications
+### Уведомления
 
-Push notifications will be an integral part of our platform. We can use a message queue or a message broker such as [Apache Kafka](https://kafka.apache.org) with the notification service to dispatch requests to [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) or [Apple Push Notification Service (APNS)](https://developer.apple.com/documentation/usernotifications) which will handle the delivery of the push notifications to user devices.
+Push-уведомления станут неотъемлемой частью нашей платформы. Мы можем использовать очередь сообщений или брокер сообщений, например [Apache Kafka](https://kafka.apache.org), вместе со службой уведомлений для отправки запросов в [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) или [Apple Push Notification Service (APNS)](https://developer.apple.com/documentation/usernotifications), которые будут заниматься доставкой push-уведомлений на пользовательские устройства.
 
-_For more details, refer to the [WhatsApp](https://karanpratapsingh.com/courses/system-design/whatsapp#notifications) system design where we discuss push notifications in detail._
+_За более подробной информацией обратитесь к проекту системы [WhatsApp](https://karanpratapsingh.com/courses/system-design/whatsapp#notifications), где мы подробно обсуждаем push-уведомления._
 
-## Detailed design
+## Детальный дизайн
 
-It's time to discuss our design decisions in detail.
+Пришло время обсудить наши проектные решения в деталях.
 
-### Data Partitioning
+### Разбиение данных
 
-To scale out our databases we will need to partition our data. Horizontal partitioning (aka [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) can be a good first step. We can shard our database either based on existing [partition schemes](https://karanpratapsingh.com/courses/system-design/sharding#partitioning-criteria) or regions. If we divide the locations into regions using let's say zip codes, we can effectively store all the data in a given region on a fixed node. But this can still cause uneven data and load distribution, we can solve this using [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
+Чтобы масштабировать наши базы данных, нам нужно разделить данные. Горизонтальное разделение (оно же [Sharding](https://karanpratapsingh.com/courses/system-design/sharding)) может стать хорошим первым шагом. Мы можем разделить нашу базу данных либо на основе существующих [схем разделов](https://karanpratapsingh.com/courses/system-design/sharding#partitioning-criteria), либо на основе регионов. Если мы разделим местоположения на регионы, используя, например, почтовые индексы, мы сможем эффективно хранить все данные в данном регионе на фиксированном узле. Но это все равно может привести к неравномерному распределению данных и нагрузки, что можно решить с помощью [Consistent hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing).
 
-_For more details, refer to [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) and [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
+_Более подробную информацию вы найдете в разделах [Sharding](https://karanpratapsingh.com/courses/system-design/sharding) и [Consistent Hashing](https://karanpratapsingh.com/courses/system-design/consistent-hashing)._
 
-### Metrics and Analytics
+### Метрики и аналитика
 
-Recording analytics and metrics is one of our extended requirements. We can capture the data from different services and run analytics on the data using [Apache Spark](https://spark.apache.org) which is an open-source unified analytics engine for large-scale data processing. Additionally, we can store critical metadata in the views table to increase data points within our data.
+Запись аналитики и метрик - одно из наших расширенных требований. Мы можем получать данные из различных сервисов и выполнять аналитику на основе этих данных, используя [Apache Spark](https://spark.apache.org), который является унифицированным аналитическим движком с открытым исходным кодом для обработки крупномасштабных данных. Кроме того, мы можем хранить важные метаданные в таблице представлений, чтобы увеличить количество точек данных в наших данных.
 
-### Caching
+### Кэширование
 
-In a location services-based platform, caching is important. We have to be able to cache the recent locations of the customers and drivers for fast retrieval. We can use solutions like [Redis](https://redis.io) or [Memcached](https://memcached.org) but what kind of cache eviction policy would best fit our needs?
+В платформе, основанной на сервисах определения местоположения, кэширование играет важную роль. Мы должны иметь возможность кэшировать последние местоположения клиентов и водителей для быстрого поиска. Мы можем использовать такие решения, как [Redis](https://redis.io) или [Memcached](https://memcached.org), но какая политика вытеснения кэша лучше всего подойдет для наших нужд?
 
-**Which cache eviction policy to use?**
+**Какую политику вытеснения кэша использовать?**
 
-[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) can be a good policy for our system. In this policy, we discard the least recently used key first.
+[Least Recently Used (LRU)](<https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)>) может быть хорошей политикой для нашей системы. В этой политике мы сначала удаляем наименее недавно использованный ключ.
 
-**How to handle cache miss?**
+**Как обрабатывать пропуски кэша?**
 
-Whenever there is a cache miss, our servers can hit the database directly and update the cache with the new entries.
+Когда происходит пропуск кэша, наши серверы могут напрямую обращаться к базе данных и обновлять кэш новыми записями.
 
-_For more details, refer to [Caching](https://karanpratapsingh.com/courses/system-design/caching)._
+_Более подробную информацию см. в разделе [Кэширование](https://karanpratapsingh.com/courses/system-design/caching)._
 
-## Identify and resolve bottlenecks
+## Выявление и устранение узких мест
 
 ![uber-advanced-design](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-V/uber/uber-advanced-design.png)
 
-Let us identify and resolve bottlenecks such as single points of failure in our design:
+Давайте определим и устраним узкие места, такие как единые точки отказа в нашем дизайне:
 
-- "What if one of our services crashes?"
-- "How will we distribute our traffic between our components?"
-- "How can we reduce the load on our database?"
-- "How to improve the availability of our cache?"
-- "How can we make our notification system more robust?"
+- "Что, если один из наших сервисов сломается?"
+- "Как мы будем распределять трафик между компонентами?"
+- "Как мы можем снизить нагрузку на нашу базу данных?"
+- "Как повысить доступность нашего кэша?"
+- "Как сделать нашу систему уведомлений более надежной?"
 
-To make our system more resilient we can do the following:
+Чтобы сделать нашу систему более устойчивой, мы можем сделать следующее:
 
-- Running multiple instances of each of our services.
-- Introducing [load balancers](https://karanpratapsingh.com/courses/system-design/load-balancing) between clients, servers, databases, and cache servers.
-- Using multiple read replicas for our databases.
-- Multiple instances and replicas for our distributed cache.
-- Exactly once delivery and message ordering is challenging in a distributed system, we can use a dedicated [message broker](https://karanpratapsingh.com/courses/system-design/message-brokers) such as [Apache Kafka](https://kafka.apache.org) or [NATS](https://nats.io) to make our notification system more robust.
+- Запустить несколько экземпляров каждого из наших сервисов.
+- Внедрение [балансировщиков нагрузки](https://karanpratapsingh.com/courses/system-design/load-balancing) между клиентами, серверами, базами данных и серверами кэша.
+- Использование нескольких реплик чтения для наших баз данных.
+- Несколько экземпляров и реплик для нашего распределенного кэша.
+- Именно тогда, когда доставка и упорядочивание сообщений в распределенной системе являются сложной задачей, мы можем использовать специальный [брокер сообщений](https://karanpratapsingh.com/courses/system-design/message-brokers), такой как [Apache Kafka](https://kafka.apache.org) или [NATS](https://nats.io), чтобы сделать нашу систему уведомлений более надежной.
 
-# Next Steps
+# Следующие шаги
 
-Congratulations, you've finished the course!
+Поздравляем, вы закончили курс!
 
-Now that you know the fundamentals of System Design, here are some additional resources:
+Теперь, когда вы знаете основы системного проектирования, вот некоторые дополнительные ресурсы:
 
-- [Distributed Systems](https://www.youtube.com/watch?v=UEAMfLPZZhE&list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB) (by Dr. Martin Kleppmann)
+- [Распределенные системы](https://www.youtube.com/watch?v=UEAMfLPZZhE&list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB) (автор д-р Мартин Клеппманн)
 - [System Design Interview: An Insider's Guide](https://www.amazon.in/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
-- [Microservices](https://microservices.io) (by Chris Richardson)
-- [Serverless computing](https://en.wikipedia.org/wiki/Serverless_computing)
+- [Микросервисы](https://microservices.io) (автор Крис Ричардсон)
+- [Бессерверные вычисления](https://en.wikipedia.org/wiki/Serverless_computing)
 - [Kubernetes](https://kubernetes.io)
 
-It is also recommended to actively follow engineering blogs of companies putting what we learned in the course into practice at scale:
+Также рекомендуем активно следить за инженерными блогами компаний, применяющих полученные на курсе знания на практике в масштабах:
 
 - [Microsoft Engineering](https://engineering.microsoft.com)
 - [Google Research Blog](http://googleresearch.blogspot.com)
 - [Netflix Tech Blog](http://techblog.netflix.com)
 - [AWS Blog](https://aws.amazon.com/blogs/aws)
 - [Facebook Engineering](https://www.facebook.com/Engineering)
-- [Uber Engineering Blog](http://eng.uber.com)
+- [Блог Uber Engineering](http://eng.uber.com)
 - [Airbnb Engineering](http://nerds.airbnb.com)
-- [GitHub Engineering Blog](https://github.blog/category/engineering)
+- [Блог инженера GitHub](https://github.blog/category/engineering)
 - [Intel Software Blog](https://software.intel.com/en-us/blogs)
 - [LinkedIn Engineering](http://engineering.linkedin.com/blog)
 - [Paypal Developer Blog](https://medium.com/paypal-engineering)
 - [Twitter Engineering](https://blog.twitter.com/engineering)
 
-Last but not least, volunteer for new projects at your company, and learn from senior engineers and architects to further improve your system design skills.
+И последнее, но не менее важное: станьте добровольцем в новых проектах вашей компании и учитесь у старших инженеров и архитекторов, чтобы еще больше усовершенствовать свои навыки проектирования систем.
 
-I hope this course was a great learning experience. I would love to hear feedback from you.
+Я надеюсь, что этот курс был отличным опытом обучения. Я буду рад услышать от вас отзывы.
 
-Wishing you all the best for further learning!
+Желаю вам всего наилучшего в дальнейшем обучении!
 
-# References
+# Ссылки
 
-Here are the resources that were referenced while creating this course.
+Вот ресурсы, на которые ссылались при создании этого курса.
 
-- [Cloudflare learning center](https://www.cloudflare.com/learning)
+- [Учебный центр Cloudflare](https://www.cloudflare.com/learning)
 - [IBM Blogs](https://www.ibm.com/blogs)
 - [Fastly Blogs](https://www.fastly.com/blog)
 - [NS1 Blogs](https://ns1.com/blog)
@@ -5684,7 +5683,7 @@ Here are the resources that were referenced while creating this course.
 - [AWS Blogs](https://aws.amazon.com/blogs)
 - [Architecture Patterns by Microsoft](https://learn.microsoft.com/en-us/azure/architecture/patterns)
 - [Martin Fowler](https://martinfowler.com)
-- [PagerDuty resources](https://www.pagerduty.com/resources)
+- [Ресурсы PagerDuty](https://www.pagerduty.com/resources)
 - [VMWare Blogs](https://blogs.vmware.com/learning)
 
-_All the diagrams were made using [Excalidraw](https://excalidraw.com) and are available [here](https://github.com/karanpratapsingh/system-design/tree/main/diagrams)._
+Все диаграммы были сделаны с помощью [Excalidraw](https://excalidraw.com) и доступны [здесь](https://github.com/karanpratapsingh/system-design/tree/main/diagrams)._
